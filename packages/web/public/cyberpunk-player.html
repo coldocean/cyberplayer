@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cyberpunk Music Player</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0a0a14;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .player {
+    width: 860px;
+    background: #08080f;
+    border: 1px solid #1a1a2e;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(0,0,0,0.8);
+  }
+
+  /* scanline overlay */
+  .player::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* ── TOP NAV ── */
+  .nav {
+    display: flex;
+    align-items: stretch;
+    background: #0d0d1a;
+    border-bottom: 2px solid #e0174a;
+    height: 32px;
+  }
+
+  .nav-trigger {
+    padding: 0 10px;
+    color: #fff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    border: 1px solid #e0174a;
+    display: flex;
+    align-items: center;
+    background: #0d0d1a;
+    letter-spacing: 1px;
+  }
+
+  .nav-item {
+    padding: 0 18px;
+    color: #c0153d;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    letter-spacing: 1px;
+    border-right: 1px solid #1a0a12;
+    transition: color 0.15s;
+    text-transform: uppercase;
+  }
+
+  .nav-item:hover { color: #ff2060; }
+
+  .nav-item.active {
+    background: #00e5c8;
+    color: #000;
+    font-weight: bold;
+  }
+
+  /* ── BODY ── */
+  .body {
+    display: flex;
+    gap: 0;
+    padding: 24px 28px 12px 28px;
+    min-height: 340px;
+  }
+
+  /* ── TRACK LIST ── */
+  .tracklist {
+    width: 260px;
+    flex-shrink: 0;
+  }
+
+  .track {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    cursor: pointer;
+    color: #c0153d;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(224,23,74,0.08);
+    transition: color 0.15s;
+  }
+
+  .track:hover { color: #ff2060; }
+
+  .track.active {
+    color: #00e5c8;
+  }
+
+  .track-name { flex: 1; }
+  .track-dur { color: inherit; opacity: 0.85; }
+
+  /* ── RIGHT PANEL ── */
+  .right-panel {
+    flex: 1;
+    padding-left: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .now-playing-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 28px;
+    color: #00e5c8;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 18px rgba(0,229,200,0.5);
+    margin-top: 4px;
+  }
+
+  /* ── WAVEFORM ── */
+  .waveform-wrap {
+    position: relative;
+    height: 120px;
+    background: rgba(0,229,200,0.02);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  #waveCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* ── TIMER ── */
+  .timer {
+    text-align: right;
+    font-size: 22px;
+    color: #00e5c8;
+    letter-spacing: 3px;
+    text-shadow: 0 0 14px rgba(0,229,200,0.6);
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    height: 10px;
+    background: #1a0a12;
+    border-radius: 1px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: #e0174a;
+    width: 55%;
+    transition: width 0.3s linear;
+    box-shadow: 0 0 8px #e0174a;
+  }
+
+  /* ── CONTROLS ── */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ctrl-btn {
+    width: 46px;
+    height: 40px;
+    background: #00e5c8;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    clip-path: polygon(0 0, 100% 0, 100% 80%, 88% 100%, 0 100%);
+    transition: background 0.15s;
+  }
+
+  .ctrl-btn:hover { background: #00fff0; }
+  .ctrl-btn:active { background: #00b89e; }
+
+  .ctrl-btn svg {
+    fill: #000;
+    width: 16px;
+    height: 16px;
+  }
+
+  /* hatched square (decorative) */
+  .hatch {
+    margin-left: auto;
+    width: 46px;
+    height: 40px;
+    background: repeating-linear-gradient(
+      45deg,
+      #1a1a2e,
+      #1a1a2e 3px,
+      #0d0d1a 3px,
+      #0d0d1a 8px
+    );
+    border: 1px solid #222240;
+    opacity: 0.7;
+  }
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
+    display: flex;
+    align-items: center;
+    padding: 8px 28px;
+    border-top: 2px solid #e0174a;
+    background: #0a0a14;
+    gap: 8px;
+  }
+
+  .bottom-icon {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #e0174a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bottom-icon::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #e0174a;
+  }
+
+  .bottom-label {
+    color: #e0174a;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-left: 4px;
+  }
+
+  .bottom-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .bottom-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .bottom-dot {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+  }
+
+  .bottom-dot span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #e0174a;
+  }
+
+  .bottom-dot span:last-child { opacity: 0.5; }
+
+  .bottom-action {
+    color: #e0174a;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .bottom-action:hover { color: #ff2060; }
+
+  /* glow pulse on active track */
+  @keyframes pulse-glow {
+    0%, 100% { text-shadow: 0 0 6px rgba(0,229,200,0.4); }
+    50%       { text-shadow: 0 0 18px rgba(0,229,200,0.9); }
+  }
+
+  .track.active .track-name {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+</style>
+</head>
+<body>
+
+<div class="player">
+
+  <!-- TOP NAV -->
+  <div class="nav">
+    <div class="nav-trigger">ZL</div>
+    <div class="nav-item">INTRO</div>
+    <div class="nav-item">STORY MODE</div>
+    <div class="nav-item">ARCADE</div>
+    <div class="nav-item">HIGHSCORES</div>
+    <div class="nav-item active">MUSIC PLAYER</div>
+    <div class="nav-item">SETTINGS</div>
+    <div class="nav-trigger" style="margin-left:auto">ZR</div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- TRACK LIST -->
+    <div class="tracklist" id="tracklist">
+      <!-- injected by JS -->
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+      <div class="now-playing-title" id="nowTitle">PHANTOM_RANGER</div>
+
+      <!-- WAVEFORM -->
+      <div class="waveform-wrap">
+        <canvas id="waveCanvas"></canvas>
+      </div>
+
+      <!-- TIMER -->
+      <div class="timer" id="timer">-01:57</div>
+
+      <!-- PROGRESS -->
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <!-- CONTROLS -->
+      <div class="controls">
+        <!-- Play -->
+        <button class="ctrl-btn" id="btnPlay" title="PLAY">
+          <svg viewBox="0 0 16 16"><polygon points="3,1 14,8 3,15"/></svg>
+        </button>
+        <!-- Pause -->
+        <button class="ctrl-btn" id="btnPause" title="PAUSE">
+          <svg viewBox="0 0 16 16">
+            <rect x="2" y="1" width="4" height="14"/>
+            <rect x="10" y="1" width="4" height="14"/>
+          </svg>
+        </button>
+        <!-- Stop -->
+        <button class="ctrl-btn" id="btnStop" title="STOP">
+          <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12"/></svg>
+        </button>
+        <!-- Hatched deco -->
+        <div class="hatch"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <div class="bottom-icon"></div>
+    <span class="bottom-label">SELECT TRACK</span>
+    <div class="bottom-right">
+      <div class="bottom-btn-group">
+        <div class="bottom-dot"><span></span><span></span></div>
+        <span class="bottom-action" id="actionPlay">PLAY</span>
+      </div>
+      <div class="bottom-btn-group">
+        <div class="bottom-dot"><span></span><span></span></div>
+        <span class="bottom-action" id="actionPause">PAUSE</span>
+      </div>
+      <div class="bottom-btn-group">
+        <div class="bottom-dot"><span></span><span></span></div>
+        <span class="bottom-action" id="actionStop">STOP</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+const tracks = [
+  { name: 'PHANTOM_RANGER',      dur: '02:53', total: 173 },
+  { name: 'CYBERPUNK_GIRL',      dur: '03:23', total: 203 },
+  { name: 'DRONE',               dur: '04:05', total: 245 },
+  { name: 'GLITCHED_FEELINGS',   dur: '03:56', total: 236 },
+  { name: 'RUNAWAY',             dur: '03:09', total: 189 },
+  { name: 'STARWAY',             dur: '03:46', total: 226 },
+  { name: 'STARWAY_SB',          dur: '04:08', total: 248 },
+  { name: 'RUNFAST_SB',          dur: '03:54', total: 234 },
+  { name: 'GLITCHED_FEELINGS_SB',dur: '04:11', total: 251 },
+  { name: 'ADVENTURE_TIME_SB',   dur: '03:57', total: 237 },
+  { name: 'ACTION_FORCE_SB',     dur: '03:20', total: 200 },
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let currentIdx = 0;
+let elapsed    = 56; // starting point to match screenshot (~-01:57 remaining on 02:53)
+let playing    = false;
+let interval   = null;
+
+// ── DOM REFS ──────────────────────────────────────────────────────────────
+const tracklist    = document.getElementById('tracklist');
+const nowTitle     = document.getElementById('nowTitle');
+const timer        = document.getElementById('timer');
+const progressFill = document.getElementById('progressFill');
+const progressWrap = document.getElementById('progressWrap');
+const btnPlay      = document.getElementById('btnPlay');
+const btnPause     = document.getElementById('btnPause');
+const btnStop      = document.getElementById('btnStop');
+const canvas       = document.getElementById('waveCanvas');
+const ctx          = canvas.getContext('2d');
+
+// ── RENDER TRACKLIST ──────────────────────────────────────────────────────
+function renderList() {
+  tracklist.innerHTML = '';
+  tracks.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.className = 'track' + (i === currentIdx ? ' active' : '');
+    div.innerHTML = `<span class="track-name">${t.name}</span><span class="track-dur">${t.dur}</span>`;
+    div.addEventListener('click', () => selectTrack(i));
+    tracklist.appendChild(div);
+  });
+}
+
+// ── SELECT TRACK ──────────────────────────────────────────────────────────
+function selectTrack(i) {
+  currentIdx = i;
+  elapsed    = 0;
+  playing    = false;
+  clearInterval(interval);
+  updateUI();
+  renderList();
+  drawWave(false);
+}
+
+// ── UI UPDATE ─────────────────────────────────────────────────────────────
+function updateUI() {
+  const t      = tracks[currentIdx];
+  nowTitle.textContent = t.name;
+  const remain = t.total - elapsed;
+  const m      = Math.floor(Math.abs(remain) / 60).toString().padStart(2, '0');
+  const s      = (Math.abs(remain) % 60).toString().padStart(2, '0');
+  timer.textContent = remain >= 0 ? `-${m}:${s}` : `+${m}:${s}`;
+  const pct = Math.min((elapsed / t.total) * 100, 100);
+  progressFill.style.width = pct + '%';
+}
+
+// ── PROGRESS CLICK ────────────────────────────────────────────────────────
+progressWrap.addEventListener('click', e => {
+  const rect = progressWrap.getBoundingClientRect();
+  const pct  = (e.clientX - rect.left) / rect.width;
+  elapsed    = Math.floor(pct * tracks[currentIdx].total);
+  updateUI();
+  if (playing) drawWave(true);
+});
+
+// ── PLAY ──────────────────────────────────────────────────────────────────
+function play() {
+  if (playing) return;
+  playing = true;
+  drawWave(true);
+  interval = setInterval(() => {
+    elapsed++;
+    if (elapsed >= tracks[currentIdx].total) {
+      // auto next
+      currentIdx = (currentIdx + 1) % tracks.length;
+      elapsed    = 0;
+      renderList();
+      updateUI();
+    } else {
+      updateUI();
+    }
+  }, 1000);
+}
+
+// ── PAUSE ─────────────────────────────────────────────────────────────────
+function pause() {
+  playing = false;
+  clearInterval(interval);
+  drawWave(false);
+}
+
+// ── STOP ──────────────────────────────────────────────────────────────────
+function stop() {
+  playing = false;
+  clearInterval(interval);
+  elapsed = 0;
+  updateUI();
+  drawWave(false);
+}
+
+// ── CONTROLS ──────────────────────────────────────────────────────────────
+btnPlay.addEventListener('click', play);
+btnPause.addEventListener('click', pause);
+btnStop.addEventListener('click', stop);
+document.getElementById('actionPlay').addEventListener('click', play);
+document.getElementById('actionPause').addEventListener('click', pause);
+document.getElementById('actionStop').addEventListener('click', stop);
+
+// ── WAVEFORM CANVAS ───────────────────────────────────────────────────────
+function resizeCanvas() {
+  canvas.width  = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+}
+
+// static bars (seed-based so they look consistent per track)
+function seededBars(seed, count) {
+  const bars = [];
+  let s = seed;
+  for (let i = 0; i < count; i++) {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    bars.push(0.15 + (((s >>> 0) / 0xffffffff) * 0.85));
+  }
+  return bars;
+}
+
+let waveAnim   = null;
+let wavePhase  = 0;
+
+function drawWave(animate) {
+  cancelAnimationFrame(waveAnim);
+  resizeCanvas();
+  const W   = canvas.width;
+  const H   = canvas.height;
+  const BAR = 3;
+  const GAP = 2;
+  const count = Math.floor(W / (BAR + GAP));
+  const seed  = currentIdx * 7919 + 42;
+  const bars  = seededBars(seed, count);
+  const cx    = W / 2;
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(0,229,200,0)';
+    ctx.fillRect(0, 0, W, H);
+
+    for (let i = 0; i < count; i++) {
+      const x = i * (BAR + GAP);
+
+      // animate: add sine ripple
+      let h;
+      if (animate) {
+        const dist = Math.abs(x - cx);
+        const wave = Math.sin(wavePhase - dist * 0.04) * 0.25 + 1;
+        h = bars[i] * wave * (H * 0.88);
+      } else {
+        h = bars[i] * H * 0.88;
+      }
+
+      const y      = (H - h) / 2;
+      const gAlpha = 0.65 + bars[i] * 0.35;
+
+      // glow
+      ctx.shadowColor = '#00e5c8';
+      ctx.shadowBlur  = animate ? 8 : 4;
+
+      // gradient per bar
+      const grad = ctx.createLinearGradient(0, y, 0, y + h);
+      grad.addColorStop(0,   `rgba(0,229,200,${gAlpha * 0.6})`);
+      grad.addColorStop(0.5, `rgba(0,229,200,${gAlpha})`);
+      grad.addColorStop(1,   `rgba(0,229,200,${gAlpha * 0.6})`);
+      ctx.fillStyle = grad;
+
+      ctx.beginPath();
+      ctx.roundRect(x, y, BAR, h, 1);
+      ctx.fill();
+    }
+
+    ctx.shadowBlur = 0;
+
+    if (animate) {
+      wavePhase += 0.06;
+      waveAnim = requestAnimationFrame(frame);
+    }
+  }
+
+  frame();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+renderList();
+updateUI();
+window.addEventListener('resize', () => drawWave(playing));
+// initial draw after fonts settle
+setTimeout(() => drawWave(false), 100);
+</script>
+</body>
+</html>
