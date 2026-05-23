@@ -3324,13 +3324,13 @@ const RADIO_DIR = {
 };
 
 // ── STATE ──
-let radAudio = null;
-let radPlaying = false;
-let radCurrentStation = null;
-let radReconnectTimer = null;
-let radReconnectAttempts = 0;
-let radBufferInterval = null;
-const RAD_MAX_RECONNECT = 5;
+var radAudio = null;
+var radPlaying = false;
+var radCurrentStation = null;
+var radReconnectTimer = null;
+var radReconnectAttempts = 0;
+var radBufferInterval = null;
+var RAD_MAX_RECONNECT = 5;
 // ── RENDER RADIO DIRECTORY INTO #arcRadioTracklist (M2 radio panel) ──
 // Full scrollable list — CYBERPUNK PLAYLIST style
 window.radRenderArcRadio = function(){
@@ -4122,7 +4122,7 @@ window.jesusFromSky = function(coinText) {
 // ════════════════════════════════════════════════
 // TRACK INFO BAR (name + duration)
 // ════════════════════════════════════════════════
-let tiInterval = null;
+var tiInterval = null;
 function updateTrackInfoBar() {
   const bar = document.getElementById('trackInfoBar');
   const nameEl = document.getElementById('tiName');
