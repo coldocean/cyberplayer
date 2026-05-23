@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CYBER_PLAYER</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --red: #e0174a;
+  --red-bright: #ff2060;
+  --cyan: #00e5c8;
+  --cyan-dim: rgba(0,229,200,0.15);
+  --bg: #0a0a14;
+  --panel: #08080f;
+  --panel2: #0d0d1a;
+}
+
+body {
+  background: var(--bg);
+  min-height: 100vh;
+  font-family: 'Share Tech Mono', monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════════
+   MODE SWITCH BUTTON
+═══════════════════════════════════════════════ */
+#modeBtn {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 9999;
+  background: #0d0d1a;
+  border: 1px solid var(--red);
+  color: var(--red);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+#modeBtn:hover { background: var(--red); color: #fff; }
+
+/* ═══════════════════════════════════════════════
+   ██  MODE 1 — NEOMUSIC PORTRAIT
+═══════════════════════════════════════════════ */
+#mode1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.neo-shell {
+  width: 360px;
+  background: #080810;
+  border: 2px solid var(--red);
+  box-shadow: 0 0 0 1px #000, 0 0 40px rgba(224,23,74,0.3), inset 0 0 60px rgba(0,0,20,0.8);
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* scanlines */
+.neo-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(to bottom, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* corner accents */
+.neo-shell::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px; right: -1px; bottom: -1px;
+  border: 1px solid rgba(224,23,74,0.2);
+  pointer-events: none;
+  z-index: 51;
+}
+
+/* ── DISPLAY ── */
+.neo-display {
+  background: #060614;
+  border: 1px solid rgba(0,60,200,0.4);
+  margin: 10px 10px 0 10px;
+  padding: 10px;
+  position: relative;
+  min-height: 280px;
+}
+
+.neo-display-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.neo-trk-info { color: rgba(60,120,255,0.7); font-size: 10px; letter-spacing: 1px; }
+.neo-trk-num { font-size: 18px; color: rgba(60,120,255,0.9); }
+.neo-trk-label { font-size: 9px; color: rgba(60,120,255,0.5); }
+
+.neo-timer-big {
+  font-size: 36px;
+  color: #3a6fff;
+  letter-spacing: 3px;
+  text-align: right;
+  text-shadow: 0 0 20px rgba(58,111,255,0.6);
+  line-height: 1;
+}
+.neo-timer-remain {
+  font-size: 10px;
+  color: rgba(60,120,255,0.6);
+  text-align: right;
+  margin-top: 2px;
+  letter-spacing: 1px;
+}
+
+/* album row */
+.neo-album-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.neo-art {
+  width: 76px;
+  height: 76px;
+  background: #111130;
+  border: 1px solid rgba(60,120,255,0.3);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.neo-art canvas { width: 100%; height: 100%; display: block; }
+
+.neo-track-meta { flex: 1; }
+.neo-track-title {
+  font-size: 15px;
+  color: #fff;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.neo-artist {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.neo-quality {
+  font-size: 9px;
+  color: rgba(60,120,255,0.6);
+  letter-spacing: 1px;
+}
+
+/* EQ bars area */
+.neo-eq-area {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  height: 70px;
+}
+
+#neoEqCanvas { width: 100%; height: 100%; display: block; }
+
+/* ── BRAND ── */
+.neo-brand {
+  text-align: center;
+  padding: 10px 0 6px;
+  font-size: 14px;
+  letter-spacing: 8px;
+  color: var(--red);
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(224,23,74,0.5);
+}
+
+/* ── PROGRESS ── */
+.neo-progress-wrap {
+  margin: 0 10px 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.neo-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: #1a0010;
+  position: relative;
+  cursor: pointer;
+}
+
+.neo-progress-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, var(--red) 0, var(--red) 4px, transparent 4px, transparent 8px);
+  opacity: 0.3;
+}
+
+.neo-progress-fill {
+  height: 100%;
+  background: var(--red);
+  box-shadow: 0 0 8px var(--red);
+  position: relative;
+  transition: width 0.3s linear;
+}
+
+.neo-progress-thumb {
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  background: var(--red-bright);
+  box-shadow: 0 0 6px var(--red-bright);
+}
+
+/* ── MAIN CONTROLS ── */
+.neo-main-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 10px 8px;
+}
+
+.neo-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.neo-btn-face {
+  width: 52px;
+  height: 46px;
+  background: #0d0d1e;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: border-color 0.15s;
+}
+
+.neo-btn:hover .neo-btn-face { border-color: rgba(255,255,255,0.4); }
+
+.neo-btn.pause-btn .neo-btn-face {
+  border: 2px solid var(--red);
+  box-shadow: 0 0 12px rgba(224,23,74,0.4), inset 0 0 8px rgba(224,23,74,0.1);
+}
+
+.neo-btn.pause-btn .neo-btn-face::after {
+  content: '';
+  position: absolute;
+  top: 3px; right: 3px;
+  width: 5px; height: 5px;
+  background: var(--red);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--red);
+}
+
+.neo-btn-icon { color: #fff; font-size: 16px; line-height: 1; }
+.neo-btn-label { font-size: 8px; letter-spacing: 2px; color: rgba(255,255,255,0.4); text-transform: uppercase; }
+.neo-btn.pause-btn .neo-btn-label { color: var(--red); }
+
+/* ── SECONDARY CONTROLS ── */
+.neo-secondary-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 10px 10px;
+}
+
+.neo-sec-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  width: 64px;
+}
+
+.neo-sec-face {
+  width: 54px;
+  height: 44px;
+  background: #0d0d1e;
+  border: 1px solid rgba(255,255,255,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: rgba(255,255,255,0.6);
+  transition: all 0.15s;
+}
+
+.neo-sec-btn:hover .neo-sec-face { border-color: rgba(255,255,255,0.35); color: #fff; }
+.neo-sec-btn.active .neo-sec-face { border-color: var(--red); color: var(--red); box-shadow: 0 0 8px rgba(224,23,74,0.3); }
+
+.neo-sec-label { font-size: 8px; letter-spacing: 1px; color: rgba(255,255,255,0.35); text-transform: uppercase; text-align: center; }
+.neo-sec-btn.active .neo-sec-label { color: var(--red); }
+
+/* ── KNOBS ── */
+.neo-knobs {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding: 4px 14px 10px;
+  border-top: 1px solid rgba(224,23,74,0.15);
+}
+
+.neo-knob-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.neo-knob {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #2a2a3a, #0d0d18 60%, #050508);
+  border: 2px solid rgba(224,23,74,0.6);
+  box-shadow: 0 0 14px rgba(224,23,74,0.2), inset 0 2px 4px rgba(0,0,0,0.8);
+  position: relative;
+  cursor: pointer;
+}
+
+.neo-knob.vol { width: 68px; height: 68px; border-color: rgba(224,23,74,0.8); box-shadow: 0 0 20px rgba(224,23,74,0.3), inset 0 2px 6px rgba(0,0,0,0.8); }
+
+.neo-knob::after {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 40%;
+  background: var(--cyan);
+  left: 50%;
+  transform-origin: bottom center;
+  border-radius: 2px;
+  box-shadow: 0 0 6px var(--cyan);
+}
+
+.neo-knob.bass::after { transform: translateX(-50%) rotate(-30deg); top: 8%; }
+.neo-knob.vol::after  { transform: translateX(-50%) rotate(20deg); top: 8%; }
+.neo-knob.treble::after { transform: translateX(-50%) rotate(45deg); top: 8%; }
+
+.neo-knob-label { font-size: 8px; letter-spacing: 2px; color: rgba(255,255,255,0.35); text-transform: uppercase; }
+
+/* ── BOTTOM TAB BAR ── */
+.neo-tabbar {
+  display: flex;
+  border-top: 1px solid rgba(224,23,74,0.3);
+}
+
+.neo-tab {
+  flex: 1;
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  background: #0a0a12;
+  border-right: 1px solid rgba(224,23,74,0.15);
+  transition: background 0.15s;
+}
+
+.neo-tab:last-child { border-right: none; }
+.neo-tab:hover { background: #111120; }
+
+.neo-tab-icon { font-size: 14px; color: rgba(255,255,255,0.4); }
+.neo-tab-label { font-size: 8px; letter-spacing: 1px; color: rgba(255,255,255,0.3); text-transform: uppercase; }
+
+
+/* ═══════════════════════════════════════════════
+   ██  MODE 2 — ARCADE WIDE
+═══════════════════════════════════════════════ */
+#mode2 {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.arc-shell {
+  width: min(900px, 98vw);
+  background: #060610;
+  border: 2px solid var(--red);
+  box-shadow: 0 0 0 1px #000, 0 0 50px rgba(224,23,74,0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+/* scanlines */
+.arc-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(to bottom, transparent, transparent 3px, rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 6px);
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* ── ARC NAV ── */
+.arc-nav {
+  display: flex;
+  align-items: stretch;
+  background: #0a0a16;
+  border-bottom: 2px solid var(--red);
+  height: 34px;
+}
+
+.arc-trigger {
+  padding: 0 12px;
+  color: #fff;
+  font-size: 11px;
+  border: 1px solid var(--red);
+  display: flex;
+  align-items: center;
+  background: #0d0d1a;
+  letter-spacing: 1px;
+}
+
+.arc-nav-item {
+  padding: 0 18px;
+  color: #c0153d;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  letter-spacing: 1px;
+  border-right: 1px solid #1a0a12;
+  transition: color 0.15s;
+  text-transform: uppercase;
+}
+
+.arc-nav-item:hover { color: var(--red-bright); }
+.arc-nav-item.active { background: var(--cyan); color: #000; font-weight: bold; }
+
+/* ── ARC BODY ── */
+.arc-body {
+  display: flex;
+  gap: 0;
+  padding: 22px 24px 14px;
+  min-height: 340px;
+}
+
+/* track list */
+.arc-tracklist {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+.arc-track {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  cursor: pointer;
+  color: var(--red);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(224,23,74,0.08);
+  transition: color 0.15s;
+}
+
+.arc-track:hover { color: var(--red-bright); }
+.arc-track.active { color: var(--cyan); }
+.arc-track-name { flex: 1; }
+.arc-track-dur { opacity: 0.8; }
+
+@keyframes arc-pulse {
+  0%, 100% { text-shadow: 0 0 6px rgba(0,229,200,0.4); }
+  50%       { text-shadow: 0 0 18px rgba(0,229,200,0.9); }
+}
+.arc-track.active .arc-track-name { animation: arc-pulse 2s ease-in-out infinite; }
+
+/* right panel */
+.arc-right {
+  flex: 1;
+  padding-left: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.arc-title {
+  font-size: 30px;
+  color: var(--cyan);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-shadow: 0 0 20px rgba(0,229,200,0.5);
+}
+
+.arc-waveform {
+  position: relative;
+  height: 120px;
+  background: rgba(0,229,200,0.02);
+  overflow: hidden;
+}
+
+#arcWaveCanvas { width: 100%; height: 100%; display: block; }
+
+.arc-timer {
+  text-align: right;
+  font-size: 24px;
+  color: var(--red-bright);
+  letter-spacing: 3px;
+  text-shadow: 0 0 12px rgba(224,23,74,0.6);
+}
+
+.arc-progress {
+  height: 8px;
+  background: #1a0010;
+  cursor: pointer;
+  position: relative;
+  overflow: visible;
+}
+
+.arc-progress-fill {
+  height: 100%;
+  background: var(--red);
+  box-shadow: 0 0 8px var(--red);
+  transition: width 0.3s linear;
+}
+
+.arc-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.arc-btn {
+  width: 50px;
+  height: 42px;
+  background: var(--cyan);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: polygon(0 0, 100% 0, 100% 78%, 86% 100%, 0 100%);
+  transition: background 0.15s;
+}
+
+.arc-btn:hover { background: #00fff0; }
+.arc-btn svg { fill: #000; width: 16px; height: 16px; }
+
+.arc-hatch {
+  margin-left: auto;
+  width: 50px;
+  height: 42px;
+  background: repeating-linear-gradient(45deg, #1a1a2e, #1a1a2e 3px, #0d0d1a 3px, #0d0d1a 8px);
+  border: 1px solid #222240;
+  opacity: 0.7;
+}
+
+/* ── ARC BOTTOM ── */
+.arc-bottom {
+  display: flex;
+  align-items: center;
+  padding: 8px 24px;
+  border-top: 2px solid var(--red);
+  background: #0a0a14;
+  gap: 8px;
+}
+
+.arc-bottom-icon {
+  width: 18px; height: 18px;
+  border: 2px solid var(--red);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.arc-bottom-icon::after {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+}
+
+.arc-bottom-label {
+  color: var(--red);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.arc-bottom-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.arc-bottom-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.arc-bottom-dots { display: flex; gap: 2px; align-items: center; }
+.arc-bottom-dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--red); }
+.arc-bottom-dots span:last-child { opacity: 0.5; }
+
+.arc-bottom-action {
+  color: var(--red);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.arc-bottom-action:hover { color: var(--red-bright); }
+
+</style>
+</head>
+<body>
+
+<button id="modeBtn" onclick="toggleMode()">MODE 2 ▶</button>
+
+<!-- ═══════════════════════════════════════════
+     MODE 1 — NEOMUSIC
+════════════════════════════════════════════ -->
+<div id="mode1">
+  <div class="neo-shell">
+
+    <!-- DISPLAY -->
+    <div class="neo-display">
+      <div class="neo-display-header">
+        <div class="neo-trk-info">
+          <div class="neo-trk-num" id="neoTrkNum">410</div>
+          <div class="neo-trk-label">TRK</div>
+        </div>
+        <div>
+          <div class="neo-timer-big" id="neoTimerBig">00:56</div>
+          <div class="neo-timer-remain" id="neoTimerRemain">-04:04</div>
+        </div>
+      </div>
+
+      <div class="neo-album-row">
+        <div class="neo-art">
+          <canvas id="neoArtCanvas"></canvas>
+        </div>
+        <div class="neo-track-meta">
+          <div class="neo-track-title" id="neoTrackTitle">IT'S A SIN</div>
+          <div class="neo-artist" id="neoArtist">PET SHOP BOYS</div>
+          <div class="neo-quality">320kbps / 44.1kHz</div>
+        </div>
+      </div>
+
+      <!-- EQ bars -->
+      <div class="neo-eq-area">
+        <canvas id="neoEqCanvas"></canvas>
+      </div>
+    </div>
+
+    <!-- BRAND -->
+    <div class="neo-brand">N E O M U S I C</div>
+
+    <!-- PROGRESS -->
+    <div class="neo-progress-wrap">
+      <div class="neo-progress-bar" id="neoProgressBar" style="flex:1">
+        <div class="neo-progress-fill" id="neoProgressFill" style="width:18%">
+          <div class="neo-progress-thumb"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTROLS -->
+    <div class="neo-main-controls">
+      <div class="neo-btn" id="neoBtnPrev" onclick="neoPrev()">
+        <div class="neo-btn-face">
+          <span class="neo-btn-icon">⏮</span>
+        </div>
+        <span class="neo-btn-label">PREV</span>
+      </div>
+
+      <div class="neo-btn pause-btn" id="neoBtnPause" onclick="neoTogglePlay()">
+        <div class="neo-btn-face">
+          <span class="neo-btn-icon" id="neoPauseIcon">⏸</span>
+        </div>
+        <span class="neo-btn-label" id="neoPauseLabel">PAUSE</span>
+      </div>
+
+      <div class="neo-btn" id="neoBtnNext" onclick="neoNext()">
+        <div class="neo-btn-face">
+          <span class="neo-btn-icon">⏭</span>
+        </div>
+        <span class="neo-btn-label">NEXT</span>
+      </div>
+    </div>
+
+    <!-- SECONDARY -->
+    <div class="neo-secondary-controls">
+      <div class="neo-sec-btn" onclick="neoToggleSec(this)">
+        <div class="neo-sec-face">📝</div>
+        <span class="neo-sec-label">LYRICS</span>
+      </div>
+      <div class="neo-sec-btn active" onclick="neoToggleSec(this)">
+        <div class="neo-sec-face">✕</div>
+        <span class="neo-sec-label">SHUFFLE</span>
+      </div>
+      <div class="neo-sec-btn" onclick="neoToggleSec(this)">
+        <div class="neo-sec-face">≡</div>
+        <span class="neo-sec-label">TRACKS</span>
+      </div>
+      <div class="neo-sec-btn" onclick="neoToggleSec(this)">
+        <div class="neo-sec-face">↺</div>
+        <span class="neo-sec-label">RPT OFF</span>
+      </div>
+    </div>
+
+    <!-- KNOBS -->
+    <div class="neo-knobs">
+      <div class="neo-knob-wrap">
+        <div class="neo-knob bass" id="knobBass"></div>
+        <span class="neo-knob-label">BASS</span>
+      </div>
+      <div class="neo-knob-wrap">
+        <div class="neo-knob vol" id="knobVol"></div>
+        <span class="neo-knob-label">VOLUME</span>
+      </div>
+      <div class="neo-knob-wrap">
+        <div class="neo-knob treble" id="knobTreble"></div>
+        <span class="neo-knob-label">TREBLE</span>
+      </div>
+    </div>
+
+    <!-- TAB BAR -->
+    <div class="neo-tabbar">
+      <div class="neo-tab">
+        <span class="neo-tab-icon">📁</span>
+        <span class="neo-tab-label">ARC</span>
+      </div>
+      <div class="neo-tab">
+        <span class="neo-tab-icon">📊</span>
+        <span class="neo-tab-label">EQ</span>
+      </div>
+      <div class="neo-tab">
+        <span class="neo-tab-icon">⚙</span>
+        <span class="neo-tab-label">SYS</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     MODE 2 — ARCADE
+════════════════════════════════════════════ -->
+<div id="mode2">
+  <div class="arc-shell">
+
+    <!-- NAV -->
+    <div class="arc-nav">
+      <div class="arc-trigger">ZL</div>
+      <div class="arc-nav-item">INTRO</div>
+      <div class="arc-nav-item">STORY MODE</div>
+      <div class="arc-nav-item">ARCADE</div>
+      <div class="arc-nav-item">HIGHSCORES</div>
+      <div class="arc-nav-item active">MUSIC PLAYER</div>
+      <div class="arc-nav-item">SETTINGS</div>
+      <div class="arc-trigger" style="margin-left:auto">ZR</div>
+    </div>
+
+    <!-- BODY -->
+    <div class="arc-body">
+
+      <!-- TRACK LIST -->
+      <div class="arc-tracklist" id="arcTracklist"></div>
+
+      <!-- RIGHT -->
+      <div class="arc-right">
+        <div class="arc-title" id="arcTitle">PHANTOM_RANGER</div>
+
+        <div class="arc-waveform">
+          <canvas id="arcWaveCanvas"></canvas>
+        </div>
+
+        <div class="arc-timer" id="arcTimer">-01:57</div>
+
+        <div class="arc-progress" id="arcProgressWrap">
+          <div class="arc-progress-fill" id="arcProgressFill" style="width:30%"></div>
+        </div>
+
+        <div class="arc-controls">
+          <button class="arc-btn" id="arcBtnPlay" title="PLAY">
+            <svg viewBox="0 0 16 16"><polygon points="3,1 14,8 3,15"/></svg>
+          </button>
+          <button class="arc-btn" id="arcBtnPause" title="PAUSE">
+            <svg viewBox="0 0 16 16"><rect x="2" y="1" width="4" height="14"/><rect x="10" y="1" width="4" height="14"/></svg>
+          </button>
+          <button class="arc-btn" id="arcBtnStop" title="STOP">
+            <svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12"/></svg>
+          </button>
+          <div class="arc-hatch"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM -->
+    <div class="arc-bottom">
+      <div class="arc-bottom-icon"></div>
+      <span class="arc-bottom-label">SELECT TRACK</span>
+      <div class="arc-bottom-right">
+        <div class="arc-bottom-group" onclick="arcPlay()">
+          <div class="arc-bottom-dots"><span></span><span></span></div>
+          <span class="arc-bottom-action">PLAY</span>
+        </div>
+        <div class="arc-bottom-group" onclick="arcPause()">
+          <div class="arc-bottom-dots"><span></span><span></span></div>
+          <span class="arc-bottom-action">PAUSE</span>
+        </div>
+        <div class="arc-bottom-group" onclick="arcStop()">
+          <div class="arc-bottom-dots"><span></span><span></span></div>
+          <span class="arc-bottom-action">STOP</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+// ════════════════════════════════════════════
+// SHARED DATA
+// ════════════════════════════════════════════
+const tracks = [
+  { name: 'PHANTOM_RANGER',       artist: 'UNKNOWN',       dur: '02:53', total: 173 },
+  { name: 'CYBERPUNK_GIRL',       artist: 'SYNTH ZERO',    dur: '03:23', total: 203 },
+  { name: 'DRONE',                artist: 'CIRCUIT_X',     dur: '04:05', total: 245 },
+  { name: 'GLITCHED_FEELINGS',    artist: 'ERRORSOUND',    dur: '03:56', total: 236 },
+  { name: 'RUNAWAY',              artist: 'VOIDRUNNER',    dur: '03:09', total: 189 },
+  { name: 'STARWAY',              artist: 'NEO SIGNAL',    dur: '03:46', total: 226 },
+  { name: 'STARWAY_SB',           artist: 'NEO SIGNAL',    dur: '04:08', total: 248 },
+  { name: 'RUNFAST_SB',           artist: 'VOIDRUNNER',    dur: '03:54', total: 234 },
+  { name: 'GLITCHED_FEELINGS_SB', artist: 'ERRORSOUND',    dur: '04:11', total: 251 },
+  { name: 'ADVENTURE_TIME_SB',    artist: 'CIRCUIT_X',     dur: '03:57', total: 237 },
+  { name: 'ACTION_FORCE_SB',      artist: 'SYNTH ZERO',    dur: '03:20', total: 200 },
+];
+
+// ════════════════════════════════════════════
+// MODE TOGGLE
+// ════════════════════════════════════════════
+let currentMode = 1;
+
+function toggleMode() {
+  currentMode = currentMode === 1 ? 2 : 1;
+  document.getElementById('mode1').style.display = currentMode === 1 ? 'flex' : 'none';
+  document.getElementById('mode2').style.display = currentMode === 2 ? 'flex' : 'none';
+  document.getElementById('modeBtn').textContent = currentMode === 1 ? 'MODE 2 ▶' : '◀ MODE 1';
+  if (currentMode === 2) {
+    setTimeout(() => { arcRenderList(); arcDrawWave(arcPlaying); resizeArcCanvas(); }, 50);
+  } else {
+    setTimeout(() => { neoDrawEq(neoPlaying); neoDrawArt(); }, 50);
+  }
+}
+
+// ════════════════════════════════════════════
+// ██  MODE 1 — NEO
+// ════════════════════════════════════════════
+let neoIdx     = 0;
+let neoElapsed = 56;
+let neoPlaying = false;
+let neoInterval = null;
+let neoWaveAnim = null;
+let neoPhase = 0;
+
+const neoProgressFill = document.getElementById('neoProgressFill');
+const neoProgressBar  = document.getElementById('neoProgressBar');
+const neoTimerBig     = document.getElementById('neoTimerBig');
+const neoTimerRemain  = document.getElementById('neoTimerRemain');
+const neoTrkNum       = document.getElementById('neoTrkNum');
+const neoTrackTitle   = document.getElementById('neoTrackTitle');
+const neoArtist       = document.getElementById('neoArtist');
+const neoPauseIcon    = document.getElementById('neoPauseIcon');
+const neoPauseLabel   = document.getElementById('neoPauseLabel');
+
+const neoEqCanvas  = document.getElementById('neoEqCanvas');
+const neoEqCtx     = neoEqCanvas.getContext('2d');
+const neoArtCanvas = document.getElementById('neoArtCanvas');
+const neoArtCtx    = neoArtCanvas.getContext('2d');
+
+function neoUpdateUI() {
+  const t = tracks[neoIdx];
+  neoTrkNum.textContent    = neoIdx + 1;
+  neoTrackTitle.textContent = t.name.replace(/_/g,' ');
+  neoArtist.textContent    = t.artist;
+
+  const elapsed = neoElapsed;
+  const em = Math.floor(elapsed / 60).toString().padStart(2,'0');
+  const es = (elapsed % 60).toString().padStart(2,'0');
+  neoTimerBig.textContent = `${em}:${es}`;
+
+  const remain = t.total - elapsed;
+  const rm = Math.floor(Math.abs(remain)/60).toString().padStart(2,'0');
+  const rs = (Math.abs(remain)%60).toString().padStart(2,'0');
+  neoTimerRemain.textContent = remain >= 0 ? `-${rm}:${rs}` : `+${rm}:${rs}`;
+
+  const pct = Math.min((elapsed / t.total)*100, 100);
+  neoProgressFill.style.width = pct + '%';
+}
+
+function neoSelectTrack(i) {
+  neoIdx = i;
+  neoElapsed = 0;
+  neoPlaying = false;
+  clearInterval(neoInterval);
+  neoPauseIcon.textContent = '▶';
+  neoPauseLabel.textContent = 'PLAY';
+  neoUpdateUI();
+  neoDrawArt();
+  neoDrawEq(false);
+}
+
+function neoTogglePlay() {
+  if (neoPlaying) {
+    neoPlaying = false;
+    clearInterval(neoInterval);
+    neoPauseIcon.textContent = '▶';
+    neoPauseLabel.textContent = 'PLAY';
+    neoDrawEq(false);
+  } else {
+    neoPlaying = true;
+    neoPauseIcon.textContent = '⏸';
+    neoPauseLabel.textContent = 'PAUSE';
+    neoDrawEq(true);
+    neoInterval = setInterval(() => {
+      neoElapsed++;
+      if (neoElapsed >= tracks[neoIdx].total) { neoIdx = (neoIdx+1)%tracks.length; neoElapsed=0; neoDrawArt(); }
+      neoUpdateUI();
+    }, 1000);
+  }
+}
+
+function neoPrev() {
+  neoIdx = (neoIdx - 1 + tracks.length) % tracks.length;
+  neoElapsed = 0;
+  neoUpdateUI();
+  neoDrawArt();
+  if (neoPlaying) neoDrawEq(true);
+}
+
+function neoNext() {
+  neoIdx = (neoIdx + 1) % tracks.length;
+  neoElapsed = 0;
+  neoUpdateUI();
+  neoDrawArt();
+  if (neoPlaying) neoDrawEq(true);
+}
+
+function neoToggleSec(el) {
+  el.classList.toggle('active');
+}
+
+neoProgressBar.addEventListener('click', e => {
+  const rect = neoProgressBar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  neoElapsed = Math.floor(pct * tracks[neoIdx].total);
+  neoUpdateUI();
+});
+
+// ── EQ Bars ──
+function seededBars(seed, count) {
+  const bars = []; let s = seed;
+  for (let i = 0; i < count; i++) {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    bars.push(0.1 + ((s >>> 0) / 0xffffffff) * 0.9);
+  }
+  return bars;
+}
+
+function neoDrawEq(animate) {
+  cancelAnimationFrame(neoWaveAnim);
+  neoEqCanvas.width  = neoEqCanvas.offsetWidth  || 300;
+  neoEqCanvas.height = neoEqCanvas.offsetHeight || 70;
+  const W = neoEqCanvas.width, H = neoEqCanvas.height;
+  const BAR = 5, GAP = 3;
+  const count = Math.floor(W / (BAR + GAP));
+  const bars = seededBars(neoIdx * 999 + 1, count);
+
+  function frame() {
+    neoEqCtx.clearRect(0,0,W,H);
+    for (let i = 0; i < count; i++) {
+      const x = i * (BAR + GAP);
+      let h = bars[i];
+      if (animate) h = h * (0.4 + 0.6 * Math.abs(Math.sin(neoPhase + i * 0.3)));
+      h = h * H * 0.9;
+      const y = H - h;
+      // gradient: bottom blue to top blue-dim
+      const grad = neoEqCtx.createLinearGradient(0, y, 0, H);
+      grad.addColorStop(0, 'rgba(40,100,255,0.9)');
+      grad.addColorStop(1, 'rgba(40,100,255,0.4)');
+      neoEqCtx.fillStyle = grad;
+      neoEqCtx.shadowColor = 'rgba(40,100,255,0.5)';
+      neoEqCtx.shadowBlur = animate ? 6 : 2;
+      neoEqCtx.fillRect(x, y, BAR, h);
+    }
+    neoEqCtx.shadowBlur = 0;
+    if (animate) { neoPhase += 0.05; neoWaveAnim = requestAnimationFrame(frame); }
+  }
+  frame();
+}
+
+// ── Album Art (pixel-art style) ──
+function neoDrawArt() {
+  neoArtCanvas.width  = neoArtCanvas.offsetWidth  || 76;
+  neoArtCanvas.height = neoArtCanvas.offsetHeight || 76;
+  const W = neoArtCanvas.width, H = neoArtCanvas.height;
+  const c = neoArtCtx;
+  c.clearRect(0,0,W,H);
+  // dark background
+  c.fillStyle = '#090920';
+  c.fillRect(0,0,W,H);
+  // random pixel art based on track index
+  const seed = neoIdx * 12345 + 42;
+  let s = seed;
+  const sz = 8;
+  const cols = Math.ceil(W/sz), rows = Math.ceil(H/sz);
+  for (let r = 0; r < rows; r++) {
+    for (let col = 0; col < cols; col++) {
+      s = (s * 1664525 + 1013904223) & 0xffffffff;
+      const v = (s>>>0)/0xffffffff;
+      if (v > 0.65) {
+        const hue = (neoIdx * 37 + r * 7 + col * 13) % 360;
+        c.fillStyle = `hsla(${hue},60%,${20+v*40}%,${0.3+v*0.7})`;
+        c.fillRect(col*sz, r*sz, sz, sz);
+      }
+    }
+  }
+  // grid overlay
+  c.strokeStyle = 'rgba(40,100,255,0.2)';
+  c.lineWidth = 0.5;
+  for (let col = 0; col <= cols; col++) { c.beginPath(); c.moveTo(col*sz,0); c.lineTo(col*sz,H); c.stroke(); }
+  for (let r = 0; r <= rows; r++) { c.beginPath(); c.moveTo(0,r*sz); c.lineTo(W,r*sz); c.stroke(); }
+}
+
+// ── INIT MODE 1 ──
+neoUpdateUI();
+setTimeout(() => { neoDrawArt(); neoDrawEq(false); }, 100);
+window.addEventListener('resize', () => { neoDrawEq(neoPlaying); neoDrawArt(); });
+
+
+// ════════════════════════════════════════════
+// ██  MODE 2 — ARCADE
+// ════════════════════════════════════════════
+let arcIdx     = 0;
+let arcElapsed = 56;
+let arcPlaying = false;
+let arcInterval = null;
+let arcWaveAnim = null;
+let arcPhase = 0;
+
+const arcTracklist   = document.getElementById('arcTracklist');
+const arcTitle       = document.getElementById('arcTitle');
+const arcTimer       = document.getElementById('arcTimer');
+const arcProgressFill = document.getElementById('arcProgressFill');
+const arcProgressWrap = document.getElementById('arcProgressWrap');
+const arcWaveCanvas  = document.getElementById('arcWaveCanvas');
+const arcWaveCtx     = arcWaveCanvas.getContext('2d');
+
+function arcRenderList() {
+  arcTracklist.innerHTML = '';
+  tracks.forEach((t, i) => {
+    const d = document.createElement('div');
+    d.className = 'arc-track' + (i === arcIdx ? ' active' : '');
+    d.innerHTML = `<span class="arc-track-name">${t.name}</span><span class="arc-track-dur">${t.dur}</span>`;
+    d.addEventListener('click', () => arcSelect(i));
+    arcTracklist.appendChild(d);
+  });
+}
+
+function arcUpdateUI() {
+  const t = tracks[arcIdx];
+  arcTitle.textContent = t.name;
+  const remain = t.total - arcElapsed;
+  const rm = Math.floor(Math.abs(remain)/60).toString().padStart(2,'0');
+  const rs = (Math.abs(remain)%60).toString().padStart(2,'0');
+  arcTimer.textContent = remain >= 0 ? `-${rm}:${rs}` : `+${rm}:${rs}`;
+  arcProgressFill.style.width = Math.min((arcElapsed/t.total)*100,100)+'%';
+}
+
+function arcSelect(i) {
+  arcIdx = i;
+  arcElapsed = 0;
+  arcPlaying = false;
+  clearInterval(arcInterval);
+  arcRenderList();
+  arcUpdateUI();
+  arcDrawWave(false);
+}
+
+function arcPlay() {
+  if (arcPlaying) return;
+  arcPlaying = true;
+  arcDrawWave(true);
+  arcInterval = setInterval(() => {
+    arcElapsed++;
+    if (arcElapsed >= tracks[arcIdx].total) {
+      arcIdx = (arcIdx+1)%tracks.length;
+      arcElapsed = 0;
+      arcRenderList();
+    }
+    arcUpdateUI();
+  }, 1000);
+}
+
+function arcPause() {
+  arcPlaying = false;
+  clearInterval(arcInterval);
+  arcDrawWave(false);
+}
+
+function arcStop() {
+  arcPlaying = false;
+  clearInterval(arcInterval);
+  arcElapsed = 0;
+  arcUpdateUI();
+  arcDrawWave(false);
+}
+
+document.getElementById('arcBtnPlay').addEventListener('click', arcPlay);
+document.getElementById('arcBtnPause').addEventListener('click', arcPause);
+document.getElementById('arcBtnStop').addEventListener('click', arcStop);
+
+arcProgressWrap.addEventListener('click', e => {
+  const rect = arcProgressWrap.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  arcElapsed = Math.floor(pct * tracks[arcIdx].total);
+  arcUpdateUI();
+});
+
+function resizeArcCanvas() {
+  arcWaveCanvas.width  = arcWaveCanvas.offsetWidth  || 500;
+  arcWaveCanvas.height = arcWaveCanvas.offsetHeight || 120;
+}
+
+function arcDrawWave(animate) {
+  cancelAnimationFrame(arcWaveAnim);
+  resizeArcCanvas();
+  const W = arcWaveCanvas.width, H = arcWaveCanvas.height;
+  const BAR = 4, GAP = 2;
+  const count = Math.floor(W / (BAR + GAP));
+  const bars = seededBars(arcIdx * 7919 + 42, count);
+  const cx = W / 2;
+
+  function frame() {
+    arcWaveCtx.clearRect(0,0,W,H);
+    for (let i = 0; i < count; i++) {
+      const x = i * (BAR + GAP);
+      let h;
+      if (animate) {
+        const dist = Math.abs(x - cx);
+        const wave = Math.sin(arcPhase - dist * 0.04) * 0.25 + 1;
+        h = bars[i] * wave * (H * 0.88);
+      } else {
+        h = bars[i] * H * 0.88;
+      }
+      const y = (H - h) / 2;
+      const gAlpha = 0.65 + bars[i] * 0.35;
+
+      arcWaveCtx.shadowColor = '#00e5c8';
+      arcWaveCtx.shadowBlur  = animate ? 10 : 4;
+
+      const grad = arcWaveCtx.createLinearGradient(0, y, 0, y+h);
+      grad.addColorStop(0,   `rgba(0,229,200,${gAlpha*0.5})`);
+      grad.addColorStop(0.5, `rgba(0,229,200,${gAlpha})`);
+      grad.addColorStop(1,   `rgba(0,229,200,${gAlpha*0.5})`);
+      arcWaveCtx.fillStyle = grad;
+      arcWaveCtx.fillRect(x, y, BAR, h);
+    }
+    arcWaveCtx.shadowBlur = 0;
+    if (animate) { arcPhase += 0.06; arcWaveAnim = requestAnimationFrame(frame); }
+  }
+  frame();
+}
+
+// ── INIT MODE 2 (runs when switched to) ──
+// pre-render on load for fast switch
+arcRenderList();
+arcUpdateUI();
+window.addEventListener('resize', () => { if (currentMode === 2) arcDrawWave(arcPlaying); });
+</script>
+</body>
+</html>

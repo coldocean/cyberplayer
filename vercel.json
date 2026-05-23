@@ -1,11 +1,6 @@
 {
-  "buildCommand": "cd packages/web && npx vite build",
-  "outputDirectory": "packages/web/dist",
+  "buildCommand": "cp packages/web/public/index.html packages/web/dist-static/index.html && cp packages/web/public/cyberpunk-player.html packages/web/dist-static/cyberpunk-player.html",
+  "outputDirectory": "packages/web/dist-static",
   "installCommand": "bun install",
-  "framework": null,
-  "rewrites": [
-    { "source": "/api/auth/(.*)", "destination": "/api/[[...route]]" },
-    { "source": "/api/(.*)", "destination": "/api/[[...route]]" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
-  ]
+  "framework": null
 }
