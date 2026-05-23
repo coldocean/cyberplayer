@@ -1145,7 +1145,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
   <div class="wamp">
     <!-- TITLE BAR -->
     <div class="wamp-title">
-      <span>playa@demonslayerplus</span>
+      <span id="wampUserTag">darksoul@darksidePlayers</span>
       <div class="wamp-title-btns">
         <div class="wamp-tbtn">_</div>
         <div class="wamp-tbtn">□</div>
@@ -1361,45 +1361,45 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
     </div>
 
     <!-- RADIO BODY — full scrollable list view -->
-    <div class="arc-body" id="arcBodyRadio" style="display:none;min-height:340px;">
-      <!-- Big bold header -->
-      <div class="rad-header-bar">
-        <div class="rad-header-title">R A D I O</div>
-        <div class="rad-header-count">
-          <div style="color:#333;font-size:8px;letter-spacing:2px;">STATIONS</div>
-          <div id="radCountNum" style="font-size:22px;font-family:'VT323',monospace;color:#aaff00;line-height:1;text-align:right;">0</div>
+    <div class="arc-body" id="arcBodyRadio" style="display:none;min-height:340px;padding:0;">
+      <!-- Bordered container matching PLAYLIST style -->
+      <div style="display:flex;flex-direction:column;width:100%;height:100%;min-height:340px;border:1px solid #2a2a00;background:#000;box-sizing:border-box;">
+        <!-- PLAY LIST-style header: yellow bold title + count -->
+        <div class="wamp-pl-title" style="font-family:'VT323',monospace;font-size:22px;letter-spacing:8px;padding:6px 14px;border-bottom:1px solid #2a2a00;color:#aaff00;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+          <span>R A D I O</span>
+          <span id="radCountNum" style="font-size:14px;font-family:'Share Tech Mono',monospace;letter-spacing:2px;color:#444;">0 stations</span>
         </div>
+        <!-- Now-playing strip -->
+        <div class="rad-now-strip" style="flex-shrink:0;">
+          <div class="rad-now-dot" id="arcRadioDot"></div>
+          <div style="flex:1;min-width:0;">
+            <div class="rad-now-name" id="arcRadioName">NO STATION TUNED IN</div>
+            <div style="font-size:7px;color:#333;letter-spacing:1px;margin-top:1px;" id="arcRadioGenre">click a station below</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
+            <span style="font-size:7px;color:#333;letter-spacing:1px;">VOL</span>
+            <input type="range" id="arcRadioVol" min="0" max="100" value="80"
+              style="width:48px;height:2px;-webkit-appearance:none;background:#1a1a00;outline:none;cursor:pointer;accent-color:#aaff00;"
+              oninput="radSetVol(this.value)">
+          </div>
+          <div class="rad-signal" id="arcRadioSignal" title="Signal">
+            <div class="rad-signal-bar" id="arcSigB1" style="height:4px;"></div>
+            <div class="rad-signal-bar" id="arcSigB2" style="height:6px;"></div>
+            <div class="rad-signal-bar" id="arcSigB3" style="height:8px;"></div>
+            <div class="rad-signal-bar" id="arcSigB4" style="height:10px;"></div>
+            <div class="rad-signal-bar" id="arcSigB5" style="height:13px;"></div>
+          </div>
+          <div class="arc-radio-bufbar" style="width:40px;flex-shrink:0;"><div id="arcRadioBufFill" class="rad-cache-fill"></div></div>
+          <div class="arc-radio-buftext" id="arcRadioBufText" style="font-size:7px;color:#333;min-width:60px;">IDLE</div>
+          <button id="arcRadioStopBtn" onclick="radStop()"
+            style="display:none;background:none;border:1px solid var(--red);color:var(--red);padding:3px 8px;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:1px;cursor:pointer;white-space:nowrap;flex-shrink:0;">■ STOP</button>
+          <button id="radFindSongBtn" onclick="radFindSong()"
+            style="background:none;border:1px solid #aaff00;color:#aaff00;padding:3px 8px;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:1px;cursor:pointer;white-space:nowrap;flex-shrink:0;" title="Identify song">🎵 ID</button>
+        </div>
+        <div id="radFindSongResult" style="font-size:9px;color:#aaa;font-family:'Share Tech Mono',monospace;display:none;line-height:1.6;border-bottom:1px solid #111;padding:6px 16px;background:#050500;flex-shrink:0;"></div>
+        <!-- Full scrollable station list -->
+        <div id="arcRadioTracklist" style="flex:1;overflow-y:auto;min-height:200px;"></div>
       </div>
-      <!-- Now-playing strip -->
-      <div class="rad-now-strip">
-        <div class="rad-now-dot" id="arcRadioDot"></div>
-        <div style="flex:1;min-width:0;">
-          <div class="rad-now-name" id="arcRadioName">SELECT A STATION</div>
-          <div style="font-size:7px;color:#333;letter-spacing:1px;margin-top:1px;" id="arcRadioGenre">click a station to tune in</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
-          <span style="font-size:7px;color:#333;letter-spacing:1px;">VOL</span>
-          <input type="range" id="arcRadioVol" min="0" max="100" value="80"
-            style="width:48px;height:2px;-webkit-appearance:none;background:#1a1a00;outline:none;cursor:pointer;accent-color:#aaff00;"
-            oninput="radSetVol(this.value)">
-        </div>
-        <div class="rad-signal" id="arcRadioSignal" title="Signal">
-          <div class="rad-signal-bar" id="arcSigB1" style="height:4px;"></div>
-          <div class="rad-signal-bar" id="arcSigB2" style="height:6px;"></div>
-          <div class="rad-signal-bar" id="arcSigB3" style="height:8px;"></div>
-          <div class="rad-signal-bar" id="arcSigB4" style="height:10px;"></div>
-          <div class="rad-signal-bar" id="arcSigB5" style="height:13px;"></div>
-        </div>
-        <div class="arc-radio-bufbar" style="width:40px;flex-shrink:0;"><div id="arcRadioBufFill" class="rad-cache-fill"></div></div>
-        <div class="arc-radio-buftext" id="arcRadioBufText" style="font-size:7px;color:#333;min-width:70px;">IDLE</div>
-        <button id="arcRadioStopBtn" onclick="radStop()"
-          style="display:none;background:none;border:1px solid var(--red);color:var(--red);padding:3px 9px;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:1px;cursor:pointer;white-space:nowrap;flex-shrink:0;">■ STOP</button>
-        <button id="radFindSongBtn" onclick="radFindSong()"
-          style="background:none;border:1px solid #aaff00;color:#aaff00;padding:3px 9px;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:1px;cursor:pointer;white-space:nowrap;flex-shrink:0;" title="Identify song">🎵 ID</button>
-      </div>
-      <div id="radFindSongResult" style="font-size:9px;color:#aaa;font-family:'Share Tech Mono',monospace;display:none;line-height:1.6;border-bottom:1px solid #111;padding:6px 16px;background:#050500;flex-shrink:0;"></div>
-      <!-- Full scrollable station list -->
-      <div id="arcRadioTracklist" style="flex:1;overflow-y:auto;"></div>
     </div>
     <div class="arc-bottom">
       <div class="arc-bottom-icon"></div>
@@ -3206,7 +3206,7 @@ window.radRenderArcRadio = function(){
 
   // Update station count in header
   const countEl = document.getElementById('radCountNum');
-  if(countEl) countEl.textContent = totalStations;
+  if(countEl) countEl.textContent = totalStations + ' stations';
 };
 
 // ── RENDER FLAT STATION LIST FOR WINAMP / CLI ──
@@ -3321,7 +3321,7 @@ window.radPlayStation = function(station, genrePath){
 function radStartBufferedStream(url){
   radAudio = new Audio();
   radAudio.preload = 'auto';
-  const volEl = document.getElementById('radVolume');
+  const volEl = document.getElementById('arcRadioVol') || document.getElementById('radVolume');
   radAudio.volume = volEl ? volEl.value / 100 : 0.8;
 
   radAudio.addEventListener('loadstart', () => radSetCacheStatus('buffering', 'BUFFERING...'));
@@ -3344,8 +3344,12 @@ function radStartBufferedStream(url){
   radAudio.addEventListener('ended', () => radAttemptReconnect(url));
 
   // Proxy ALL streams through server — fixes both mixed-content (http://) and CORS blocks
-  const proxyUrl = '/api/radio-proxy?url=' + encodeURIComponent(url) + '&_t=' + Date.now();
-  radAudio.src = proxyUrl;
+  // HTTPS streams: use directly — they have CORS headers and no mixed-content block
+  // HTTP streams: must proxy through server to avoid mixed-content block
+  const streamSrc = url.startsWith('https://')
+    ? url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now()
+    : '/api/radio-proxy?url=' + encodeURIComponent(url) + '&_t=' + Date.now();
+  radAudio.src = streamSrc;
   radAudio.load();
 }
 
@@ -3766,23 +3770,52 @@ async function authDoVerifyEmail(token) {
 function authUpdateUI() {
   const bar = document.getElementById('userStatusBar');
   const nameEl = document.getElementById('userStatusName');
+  const wampTag = document.getElementById('wampUserTag');
   if (authUser) {
     bar.style.display = 'block';
     const roleTag = authUser.role === 'superadmin' ? '👑' : authUser.role === 'admin' ? '⚡' : '◈';
     nameEl.textContent = roleTag + ' ' + authUser.name.toUpperCase();
+    // Dynamic user tag in title bar
+    const uname = (authUser.name || 'user').toLowerCase().replace(/\s+/g, '');
+    if (wampTag) wampTag.textContent = uname + '@delightfullPlayer';
     // Hide coin HUD for admins
     if (authUser.role === 'superadmin' || authUser.role === 'admin') {
       document.getElementById('coinHud').style.display = 'none';
     }
+    // Registered users get daily +100 coins via server
+    loadRegisteredUserCoins();
     // Show admin panel in voting mode
     if (authUser.role === 'superadmin') {
       document.getElementById('voteAdminPanel').style.display = 'block';
     }
   } else {
+    // Guest
+    if (wampTag) wampTag.textContent = 'darksoul@darksidePlayers';
     bar.style.display = 'none';
   }
   // Load server tracks whenever auth state updates
   loadServerTracks();
+}
+
+async function loadRegisteredUserCoins() {
+  // Registered/admin users get +100 daily bonus tracked by user account
+  if (!authUser) return;
+  try {
+    const storageKey = 'cp_daily_' + authUser.id;
+    const lastDaily = parseInt(localStorage.getItem(storageKey) || '0');
+    const now = Math.floor(Date.now() / 1000);
+    if (now - lastDaily >= 86400) {
+      localStorage.setItem(storageKey, now.toString());
+      // Show +100 daily bonus notification briefly
+      const coinHud = document.getElementById('coinHud');
+      if (coinHud) {
+        coinHud.style.display = 'block';
+        document.getElementById('coinCount').textContent = '∞';
+        const msg = document.getElementById('coinDailyMsg');
+        if (msg) { msg.textContent = '+100 daily'; setTimeout(() => { msg.textContent = ''; coinHud.style.display = 'none'; }, 4000); }
+      }
+    }
+  } catch(e) {}
 }
 
 function authShowProfile() {
@@ -3797,6 +3830,8 @@ async function authDoLogout() {
   authToken = null; authUser = null; loggedInUser = null;
   localStorage.removeItem('cp_token');
   document.getElementById('userStatusBar').style.display = 'none';
+  const wampTag = document.getElementById('wampUserTag');
+  if (wampTag) wampTag.textContent = 'darksoul@darksidePlayers';
   authShowOverlay();
 }
 

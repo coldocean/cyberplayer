@@ -15,22 +15,13 @@ export default async function handler(req, res) {
   const { action } = req.query;
   const now = NOW();
 
-  // GET /api/coins — get balance + trigger daily top-up
+  // GET /api/coins — get balance only (no auto top-up for guests — they get ONE-TIME 100 via dark-soul join)
   if (req.method === 'GET') {
     await query(`INSERT INTO coins (ip, count, last_daily) VALUES (?, 0, 0) ON CONFLICT(ip) DO NOTHING`, [ip]);
-    let row = (await query('SELECT * FROM coins WHERE ip = ?', [ip]))[0];
-    let count = Number(row?.count || 0);
-    let last_daily = Number(row?.last_daily || 0);
-    let added = 0;
-
-    // Daily top-up: give 100 coins if last_daily was >24h ago
-    if (now - last_daily >= DAY) {
-      added = DAILY_COINS;
-      count += added;
-      await query('UPDATE coins SET count = ?, last_daily = ? WHERE ip = ?', [count, now, ip]);
-    }
-
-    return res.json({ coins: count, added, daily: DAILY_COINS, next_daily: last_daily + DAY });
+    const row = (await query('SELECT * FROM coins WHERE ip = ?', [ip]))[0];
+    const count = Number(row?.count || 0);
+    const last_daily = Number(row?.last_daily || 0);
+    return res.json({ coins: count, added: 0, daily: DAILY_COINS, next_daily: last_daily + DAY });
   }
 
   // POST /api/coins { action: 'spend', amount }
