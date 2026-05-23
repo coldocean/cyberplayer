@@ -793,6 +793,38 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 .cli-radio-station:hover{color:#00aa00;}
 .cli-radio-station.active{color:#aaff00;}
 /* ── DAFOE-JESUS & COIN ANIMATION ── */
+/* ── Jesus sky animation ── */
+.jesus-sky{position:fixed;z-index:100001;pointer-events:none;width:100px;height:100px;bottom:-120px;right:50%;transform:translateX(50%);transition:none;}
+.jesus-sky img{width:100%;height:100%;object-fit:contain;border-radius:50%;border:2px solid gold;filter:drop-shadow(0 0 20px gold) drop-shadow(0 0 40px rgba(255,215,0,.6));}
+.jesus-sky .jesus-coin-txt{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:14px;color:#ffd700;font-family:'Share Tech Mono',monospace;letter-spacing:2px;text-shadow:0 0 8px gold;white-space:nowrap;}
+@keyframes jesusRise{0%{bottom:-120px;opacity:0;}15%{opacity:1;}50%{bottom:40vh;}85%{opacity:1;}100%{bottom:110vh;opacity:0;}}
+@keyframes jesusCoinPulse{0%,100%{transform:translateX(-50%) scale(1);}50%{transform:translateX(-50%) scale(1.3);}}
+/* ── Vote track items ── */
+.vote-track{border:1px solid #222;padding:12px;background:#0a0a14;display:flex;align-items:center;gap:12px;transition:border-color .2s;}
+.vote-track:hover{border-color:#444;}
+.vote-track .vt-info{flex:1;min-width:0;}
+.vote-track .vt-title{font-size:12px;color:var(--green,#00ff88);letter-spacing:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.vote-track .vt-meta{font-size:9px;color:#555;letter-spacing:1px;margin-top:3px;}
+.vote-track .vt-score{font-size:16px;font-weight:bold;min-width:40px;text-align:center;}
+.vote-track .vt-score.positive{color:#00ff88;}
+.vote-track .vt-score.negative{color:#ff4444;}
+.vote-track .vt-score.neutral{color:#555;}
+.vote-btn{background:transparent;border:1px solid #333;color:#555;padding:6px 10px;font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;transition:all .2s;}
+.vote-btn:hover{border-color:#888;color:#888;}
+.vote-btn.voted-up{border-color:#00ff88;color:#00ff88;background:rgba(0,255,136,.1);}
+.vote-btn.voted-down{border-color:#ff4444;color:#ff4444;background:rgba(255,0,0,.1);}
+.vote-admin-btn{background:transparent;border:1px solid #ff4444;color:#ff4444;padding:4px 8px;font-family:'Share Tech Mono',monospace;font-size:8px;cursor:pointer;letter-spacing:1px;}
+/* ── Record indicator ── */
+.rec-indicator{display:none;position:fixed;top:10px;right:120px;z-index:99998;font-family:'Share Tech Mono',monospace;font-size:10px;color:#ff4444;letter-spacing:2px;background:#0a0a14;border:1px solid #ff4444;padding:4px 10px;border-radius:2px;}
+.rec-indicator.active{display:flex;align-items:center;gap:6px;}
+.rec-dot{width:8px;height:8px;border-radius:50%;background:#ff4444;animation:recBlink 1s infinite;}
+@keyframes recBlink{0%,100%{opacity:1;}50%{opacity:.2;}}
+/* ── Track info bar ── */
+#trackInfoBar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99997;background:rgba(10,10,20,.95);border-top:1px solid #222;padding:6px 16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#888;letter-spacing:1px;backdrop-filter:blur(4px);}
+#trackInfoBar .ti-name{color:var(--green,#00ff88);font-size:11px;}
+#trackInfoBar .ti-dur{color:#555;margin-left:auto;}
+/* ── User status bar ── */
+#userStatusBar{display:none;position:fixed;top:10px;right:10px;z-index:99998;font-family:'Share Tech Mono',monospace;font-size:9px;color:#00ff88;letter-spacing:2px;background:#0a0a14;border:1px solid #222;padding:4px 10px;border-radius:2px;cursor:pointer;}
 #dafoeJesusWrap{position:fixed;bottom:18px;right:18px;z-index:99999;width:82px;height:82px;pointer-events:none;opacity:.55;transition:opacity .4s,filter .4s,transform .3s;filter:drop-shadow(0 0 6px rgba(255,215,0,.3));}
 #dafoeJesusWrap:hover{opacity:.85;}
 #dafoeJesusWrap img{width:100%;height:100%;object-fit:contain;border-radius:50%;border:2px solid rgba(255,215,0,.35);}
@@ -819,12 +851,80 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
   🪙 <span id="coinCount">0</span> <span id="coinDailyMsg" style="font-size:9px;color:#888;"></span>
 </div>
 
+<!-- TRACK INFO BAR (bottom) -->
+<div id="trackInfoBar">
+  <span class="ti-name" id="tiName">—</span>
+  <span class="ti-dur" id="tiDur">0:00 / 0:00</span>
+</div>
+
+<!-- REC INDICATOR -->
+<div class="rec-indicator" id="recIndicator"><span class="rec-dot"></span>REC <span id="recTimer">0:00</span></div>
+
+<!-- USER STATUS BAR -->
+<div id="userStatusBar" onclick="authShowProfile()"><span id="userStatusName"></span></div>
+
 <!-- MODE SWITCHER -->
 <div id="modeBtns">
   <button class="modebtn active" onclick="setMode(1)">M1</button>
   <button class="modebtn" onclick="setMode(2)">M2</button>
   <button class="modebtn" onclick="setMode(3)">M3</button>
   <button class="modebtn" onclick="setMode(4)">M4</button>
+  <button class="modebtn" onclick="setMode(5)" style="position:relative;">M5<span style="position:absolute;top:-6px;right:-8px;background:#ff4444;color:#fff;font-size:6px;padding:1px 3px;border-radius:2px;letter-spacing:1px;">NEW</span></button>
+</div>
+
+<!-- AUTH OVERLAY (shown for non-registered users) -->
+<div id="authOverlay" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.92);flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;">
+  <div id="authDafoeThumbsDown" style="margin-bottom:20px;">
+    <img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2Frrcm-9aWWtfF9Gt1nIaND%2Fdafoe_small.png" style="width:120px;height:120px;border-radius:50%;border:3px solid #ff4444;filter:grayscale(.4) hue-rotate(180deg) drop-shadow(0 0 20px rgba(255,0,0,.5));transform:scaleX(-1);" alt="Sad Jesus">
+    <div style="color:#ff4444;font-size:14px;letter-spacing:3px;text-align:center;margin-top:10px;text-shadow:0 0 10px rgba(255,0,0,.5);">👎 THUMBS DOWN</div>
+  </div>
+  <div style="color:#ff6666;font-size:12px;letter-spacing:2px;text-align:center;max-width:340px;line-height:1.8;margin-bottom:24px;">
+    You are the sinner and I am ready to make your life better — <span style="color:#ffd700;">REGISTER</span>
+  </div>
+
+  <!-- LOGIN FORM -->
+  <div id="authLoginBox" style="border:1px solid #333;padding:20px;width:320px;background:#0a0a14;">
+    <div style="color:#00ff88;font-size:11px;letter-spacing:3px;margin-bottom:14px;">◈ LOGIN</div>
+    <input id="authLoginName" type="text" placeholder="USERNAME" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
+    <input id="authLoginPass" type="password" placeholder="PASSWORD" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
+    <button onclick="authDoLogin()" style="width:100%;background:#00ff88;color:#000;border:none;padding:10px;font-family:inherit;font-size:11px;letter-spacing:3px;cursor:pointer;font-weight:bold;">LOGIN ▶</button>
+    <div id="authLoginError" style="color:#ff4444;font-size:10px;letter-spacing:1px;margin-top:8px;display:none;"></div>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button onclick="authShowRegister()" style="flex:1;background:transparent;border:1px solid #ffd700;color:#ffd700;padding:8px;font-family:inherit;font-size:9px;letter-spacing:2px;cursor:pointer;">REGISTER</button>
+      <button onclick="authShowForgot()" style="flex:1;background:transparent;border:1px solid #555;color:#555;padding:8px;font-family:inherit;font-size:9px;letter-spacing:2px;cursor:pointer;">FORGOT PASS</button>
+    </div>
+  </div>
+
+  <!-- REGISTER FORM -->
+  <div id="authRegisterBox" style="border:1px solid #333;padding:20px;width:320px;background:#0a0a14;display:none;">
+    <div style="color:#ffd700;font-size:11px;letter-spacing:3px;margin-bottom:14px;">◈ REGISTER</div>
+    <input id="authRegName" type="text" placeholder="USERNAME" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
+    <input id="authRegEmail" type="email" placeholder="EMAIL" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
+    <input id="authRegPass" type="password" placeholder="PASSWORD (6+ chars)" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
+    <input id="authRegPass2" type="password" placeholder="CONFIRM PASSWORD" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
+    <button onclick="authDoRegister()" style="width:100%;background:#ffd700;color:#000;border:none;padding:10px;font-family:inherit;font-size:11px;letter-spacing:3px;cursor:pointer;font-weight:bold;">REGISTER ▶</button>
+    <div id="authRegError" style="color:#ff4444;font-size:10px;letter-spacing:1px;margin-top:8px;display:none;"></div>
+    <div id="authRegSuccess" style="color:#00ff88;font-size:10px;letter-spacing:1px;margin-top:8px;display:none;"></div>
+    <button onclick="authShowLogin()" style="margin-top:12px;width:100%;background:transparent;border:1px solid #555;color:#555;padding:8px;font-family:inherit;font-size:9px;letter-spacing:2px;cursor:pointer;">← BACK TO LOGIN</button>
+  </div>
+
+  <!-- FORGOT PASSWORD FORM -->
+  <div id="authForgotBox" style="border:1px solid #333;padding:20px;width:320px;background:#0a0a14;display:none;">
+    <div style="color:#ff4444;font-size:11px;letter-spacing:3px;margin-bottom:14px;">◈ RESET PASSWORD</div>
+    <input id="authForgotEmail" type="email" placeholder="YOUR EMAIL" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
+    <button onclick="authDoForgot()" style="width:100%;background:#ff4444;color:#fff;border:none;padding:10px;font-family:inherit;font-size:11px;letter-spacing:3px;cursor:pointer;font-weight:bold;">SEND RESET LINK ▶</button>
+    <div id="authForgotMsg" style="color:#00ff88;font-size:10px;letter-spacing:1px;margin-top:8px;display:none;"></div>
+    <button onclick="authShowLogin()" style="margin-top:12px;width:100%;background:transparent;border:1px solid #555;color:#555;padding:8px;font-family:inherit;font-size:9px;letter-spacing:2px;cursor:pointer;">← BACK TO LOGIN</button>
+  </div>
+
+  <!-- RESET PASSWORD FORM (shown via URL param) -->
+  <div id="authResetBox" style="border:1px solid #333;padding:20px;width:320px;background:#0a0a14;display:none;">
+    <div style="color:#ffd700;font-size:11px;letter-spacing:3px;margin-bottom:14px;">◈ NEW PASSWORD</div>
+    <input id="authResetPass" type="password" placeholder="NEW PASSWORD (6+ chars)" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
+    <input id="authResetPass2" type="password" placeholder="CONFIRM PASSWORD" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
+    <button onclick="authDoReset()" style="width:100%;background:#ffd700;color:#000;border:none;padding:10px;font-family:inherit;font-size:11px;letter-spacing:3px;cursor:pointer;font-weight:bold;">SET NEW PASSWORD ▶</button>
+    <div id="authResetMsg" style="color:#00ff88;font-size:10px;letter-spacing:1px;margin-top:8px;display:none;"></div>
+  </div>
 </div>
 
 <!-- ════════════════════════════════════
@@ -882,6 +982,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
         <button class="wamp-btn" title="Eject" onclick="document.getElementById('wampFileInput').click()">⏏</button>
         <button class="wamp-btn wide" id="wampShuffleBtn" onclick="wampToggleShuffle()">SHF</button>
         <button class="wamp-btn wide" id="wampRepeatBtn" onclick="wampToggleRepeat()">REP</button>
+        <button class="wamp-btn wide" id="wampRecBtn" onclick="toggleRecBtn('wamp')" title="Record" style="color:#ff4444;">🔴</button>
         <div class="wamp-vol-wrap">
           <span class="wamp-vol-lbl">VOL</span>
           <input type="range" class="wamp-vol" id="wampVol" min="0" max="100" value="80" oninput="wampSetVol(this.value)">
@@ -975,6 +1076,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
           <button class="arc-btn" id="arcBtnPlay" title="PLAY"><svg viewBox="0 0 16 16"><polygon points="3,1 14,8 3,15"/></svg></button>
           <button class="arc-btn" id="arcBtnPause" title="PAUSE"><svg viewBox="0 0 16 16"><rect x="2" y="1" width="4" height="14"/><rect x="10" y="1" width="4" height="14"/></svg></button>
           <button class="arc-btn" id="arcBtnStop" title="STOP"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12"/></svg></button>
+          <button class="arc-btn" id="arcBtnRec" title="RECORD" onclick="toggleRecBtn('arc')" style="color:#ff4444;font-size:10px;font-family:'Share Tech Mono',monospace;">🔴</button>
           <div class="arc-hatch"></div>
         </div>
       </div>
@@ -1168,6 +1270,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
         <span>— Playlist —</span>
         <span class="cli-pl-toggle" onclick="cliToggleShuffle()" id="cliShuffleLabel">[Shuffle]</span>
         <span class="cli-pl-toggle" onclick="cliToggleRepeat()" id="cliRepeatLabel">[Repeat: Off]</span>
+        <span class="cli-pl-toggle" onclick="toggleRecBtn('cli')" id="cliRecLabel" style="color:#ff4444;">[🔴 REC]</span>
         <span style="margin-left:auto;">—</span>
       </div>
 
@@ -1393,54 +1496,75 @@ function switchPlaylist(n) {
 }
 
 // ── ARC LOGIN / LOGOUT ──
+// Legacy USERS kept for backward compat (password check now via API)
 const USERS = {
-  'deemah':   { pass: 'noT1333Deemahseeq',                   id: 1, label: 'DEEMAH' },
-  'rastix':   { pass: 'yesyes1337Sanj0ch3k',                  id: 2, label: 'RASTIX' },
-  'robbmobb': { pass: 'yesm8myNameIsRobbThaSecretMobb1337',   id: 3, label: 'ROBBMOBB' },
+  'deemah':   { id: 1, label: 'DEEMAH' },
+  'rastix':   { id: 2, label: 'RASTIX' },
+  'robbmobb': { id: 3, label: 'ROBBMOBB' },
 };
 
 function arcDoLogin() {
   const user = document.getElementById('arcLoginUser').value.trim().toLowerCase();
   const pass = document.getElementById('arcLoginPass').value;
   const err  = document.getElementById('arcLoginError');
-  const u = USERS[user];
-  if (u && pass === u.pass) {
-    loggedInUser = u.id;
-    document.getElementById('arcLoginForm').style.display = 'none';
-    err.style.display = 'none';
-    const panel = document.getElementById('arcUploadPanel');
-    panel.style.display = 'block';
-    // show logged-in label
-    let lbl = document.getElementById('arcLoggedInLabel');
-    if (!lbl) {
-      lbl = document.createElement('div');
-      lbl.id = 'arcLoggedInLabel';
-      lbl.style.cssText = 'font-size:9px;letter-spacing:2px;color:#00ff88;margin-bottom:8px;';
-      panel.prepend(lbl);
+  // Use new auth API
+  fetch('/api/auth-user?action=login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: user, password: pass })
+  }).then(r => r.json()).then(d => {
+    if (d.ok) {
+      authToken = d.token;
+      authUser = d.user;
+      localStorage.setItem('cp_token', d.token);
+      const nameMap = { 'DEEMAH': 1, 'RASTIX': 2, 'ROBBMOBB': 3 };
+      loggedInUser = nameMap[(d.user.name||'').toUpperCase()] || d.user.id;
+      document.getElementById('arcLoginForm').style.display = 'none';
+      err.style.display = 'none';
+      const panel = document.getElementById('arcUploadPanel');
+      panel.style.display = 'block';
+      let lbl = document.getElementById('arcLoggedInLabel');
+      if (!lbl) {
+        lbl = document.createElement('div');
+        lbl.id = 'arcLoggedInLabel';
+        lbl.style.cssText = 'font-size:9px;letter-spacing:2px;color:#00ff88;margin-bottom:8px;';
+        panel.prepend(lbl);
+      }
+      lbl.textContent = '◈ LOGGED IN AS ' + d.user.name.toUpperCase();
+      let logoutBtn = document.getElementById('arcLogoutBtn');
+      if (!logoutBtn) {
+        logoutBtn = document.createElement('button');
+        logoutBtn.id = 'arcLogoutBtn';
+        logoutBtn.className = 'arc-btn';
+        logoutBtn.style.cssText = 'margin-top:8px;font-size:8px;letter-spacing:2px;';
+        logoutBtn.textContent = 'LOGOUT';
+        logoutBtn.onclick = arcLogout;
+        panel.appendChild(logoutBtn);
+      }
+      logoutBtn.style.display = 'inline-block';
+      authUpdateUI();
+      cliSyncUploadLabel();
+    } else {
+      err.textContent = d.error || 'WRONG USER/PASS';
+      err.style.display = 'block';
+      document.getElementById('arcLoginPass').value = '';
+      if (typeof reportWrongAttempt === 'function') reportWrongAttempt('pass');
+      setTimeout(() => err.style.display = 'none', 2000);
     }
-    lbl.textContent = `◈ LOGGED IN AS ${u.label}`;
-    // show logout btn
-    let logoutBtn = document.getElementById('arcLogoutBtn');
-    if (!logoutBtn) {
-      logoutBtn = document.createElement('button');
-      logoutBtn.id = 'arcLogoutBtn';
-      logoutBtn.className = 'arc-btn';
-      logoutBtn.style.cssText = 'margin-top:8px;font-size:8px;letter-spacing:2px;';
-      logoutBtn.textContent = 'LOGOUT';
-      logoutBtn.onclick = arcLogout;
-      panel.appendChild(logoutBtn);
-    }
-    logoutBtn.style.display = 'inline-block';
-    cliSyncUploadLabel();
-  } else {
+  }).catch(() => {
+    err.textContent = 'API ERROR';
     err.style.display = 'block';
-    document.getElementById('arcLoginPass').value = '';
     setTimeout(() => err.style.display = 'none', 2000);
-  }
+  });
 }
 
 function arcLogout() {
+  if (authToken) {
+    fetch('/api/auth-user?action=logout', { method: 'POST', headers: authHeaders() }).catch(()=>{});
+  }
   loggedInUser = null;
+  authToken = null; authUser = null;
+  localStorage.removeItem('cp_token');
   document.getElementById('arcUploadPanel').style.display = 'none';
   document.getElementById('arcLoginForm').style.display = 'block';
   document.getElementById('arcLoginUser').value = '';
@@ -1449,8 +1573,8 @@ function arcLogout() {
   if (lbl) lbl.remove();
   const logoutBtn = document.getElementById('arcLogoutBtn');
   if (logoutBtn) logoutBtn.style.display = 'none';
-  // re-show login section (PIN was already passed)
   document.getElementById('arcLoginSection').style.display = 'block';
+  document.getElementById('userStatusBar').style.display = 'none';
   cliSyncUploadLabel();
 }
 
@@ -1467,11 +1591,13 @@ function setMode(m) {
   document.getElementById('mode2').style.display = m===2?'flex':'none';
   document.getElementById('mode3').style.display = m===3?'flex':'none';
   document.getElementById('mode4').style.display = m===4?'flex':'none';
+  document.getElementById('mode5').style.display = m===5?'flex':'none';
   document.querySelectorAll('.modebtn').forEach((b,i)=>b.classList.toggle('active',i+1===m));
   if (m===2) setTimeout(()=>{ arcRenderList(); arcDrawWave(currentAudio&&!currentAudio.paused); resizeArcCanvas(); },50);
   if (m===1) setTimeout(()=>{ wampRenderList(); wampDrawVu(currentAudio&&!currentAudio.paused); },50);
   if (m===3) setTimeout(()=>{ cliRenderList(); cliInitSpectrum(); },50);
   if (m===4) setTimeout(()=>{ const el=document.getElementById('slotCoinCount'); if(el) el.textContent=loggedInUser?'∞':guestCoins; },50);
+  if (m===5) setTimeout(()=>{ if(typeof voteLoadTracks==='function') voteLoadTracks(); },50);
 }
 
 // ════════════════════════════════════════════════
@@ -1563,6 +1689,8 @@ function wampPlay() {
   else if (currentAudio) currentAudio.play().catch(()=>{});
   wampPlaying = true;
   wampDrawVu(true);
+  jesusFromSky();
+  startTrackInfoUpdater();
 }
 
 function wampPause() {
@@ -1575,18 +1703,24 @@ function wampStop() {
   if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
   wampPlaying = false;
   wampDrawVu(false);
+  jesusFromSky();
+  stopTrackInfoUpdater();
 }
 
 function wampPrev() {
   const idx = currentTrackIdx > 0 ? currentTrackIdx-1 : tracks.length-1;
   loadTrack(idx, wampPlaying || (currentAudio && !currentAudio.paused));
   wampRenderList();
+  jesusFromSky();
+  startTrackInfoUpdater();
 }
 
 function wampNext() {
   const idx = (currentTrackIdx+1) % tracks.length;
   loadTrack(idx, wampPlaying || (currentAudio && !currentAudio.paused));
   wampRenderList();
+  jesusFromSky();
+  startTrackInfoUpdater();
 }
 
 function wampToggleShuffle() {
@@ -1729,6 +1863,8 @@ function arcPlay() {
   else if (currentAudio) currentAudio.play().catch(()=>{});
   arcPlaying=true;
   arcDrawWave(true);
+  jesusFromSky();
+  startTrackInfoUpdater();
 }
 
 function arcPause() {
@@ -1741,6 +1877,8 @@ function arcStop() {
   if (currentAudio){currentAudio.pause();currentAudio.currentTime=0;}
   arcPlaying=false;
   arcDrawWave(false);
+  jesusFromSky();
+  stopTrackInfoUpdater();
 }
 
 document.getElementById('arcBtnPlay').addEventListener('click', arcPlay);
@@ -2171,28 +2309,8 @@ window.arcCheckPinGated = async function(val) {
 // Patch the oninput handler
 document.getElementById('arcPinInput').setAttribute('oninput', 'arcCheckPinGated(this.value)');
 
-// ── Patch arcDoLogin to report wrong password ──
-const _origDoLogin = arcDoLogin;
-window.arcDoLogin = async function() {
-  const user = document.getElementById('arcLoginUser').value.trim().toLowerCase();
-  const pass = document.getElementById('arcLoginPass').value;
-  const err  = document.getElementById('arcLoginError');
-  const USERS_LOCAL = {
-    'deemah':   { pass: 'noT1333Deemahseeq',                   id: 1, label: 'DEEMAH' },
-    'rastix':   { pass: 'yesyes1337Sanj0ch3k',                  id: 2, label: 'RASTIX' },
-    'robbmobb': { pass: 'yesm8myNameIsRobbThaSecretMobb1337',   id: 3, label: 'ROBBMOBB' },
-  };
-  const u = USERS_LOCAL[user];
-  if (u && pass === u.pass) {
-    // Correct — call original login logic
-    _origDoLogin();
-  } else {
-    err.style.display = 'block';
-    document.getElementById('arcLoginPass').value = '';
-    await reportWrongAttempt('pass');
-    setTimeout(() => err.style.display = 'none', 2000);
-  }
-};
+// ── arcDoLogin now uses the API directly — no patching needed ──
+// (Legacy patch removed — arcDoLogin handles API auth + wrong attempt reporting internally)
 
 // ── Guest coins ──
 async function loadGuestCoins() {
@@ -2693,6 +2811,9 @@ window.radPlayStation = function(station, genrePath){
   radPlaying = true;
   radReconnectAttempts = 0;
   if(typeof radCoinAnimation==='function') radCoinAnimation();
+  jesusFromSky();
+  window._currentRadioStation = station.name;
+  startTrackInfoUpdater();
 
   // Update M2 radio panel info
   const rName=document.getElementById('arcRadioName');
@@ -2817,6 +2938,9 @@ function radStopInternal(){
 
 window.radStop = function(){
   if(typeof radCoinAnimation==='function') radCoinAnimation();
+  jesusFromSky();
+  window._currentRadioStation = null;
+  stopTrackInfoUpdater();
   radStopInternal();
   radCurrentStation = null;
   radSetSignal(0);
@@ -2927,6 +3051,424 @@ window.radCoinAnimation = function(){
 };
 
 })();
+
+// ════════════════════════════════════════════════
+// AUTH SYSTEM
+// ════════════════════════════════════════════════
+let authUser = null; // { id, name, email, role, email_verified }
+let authToken = localStorage.getItem('cp_token') || null;
+
+function authHeaders() {
+  const h = { 'Content-Type': 'application/json' };
+  if (authToken) h['Authorization'] = 'Bearer ' + authToken;
+  return h;
+}
+
+async function authCheckSession() {
+  if (!authToken) { authShowOverlay(); return; }
+  try {
+    const r = await fetch('/api/auth-user?action=me', { headers: authHeaders() });
+    const d = await r.json();
+    if (d.ok && d.user) {
+      authUser = d.user;
+      authHideOverlay();
+      authUpdateUI();
+      // Map old admin IDs for backward compat
+      if (d.user.role === 'superadmin' || d.user.role === 'admin') {
+        const nameMap = { 'DEEMAH': 1, 'RASTIX': 2, 'ROBBMOBB': 3 };
+        loggedInUser = nameMap[d.user.name.toUpperCase()] || null;
+      }
+    } else { authToken = null; localStorage.removeItem('cp_token'); authShowOverlay(); }
+  } catch { authShowOverlay(); }
+}
+
+function authShowOverlay() {
+  document.getElementById('authOverlay').style.display = 'flex';
+  document.getElementById('authLoginBox').style.display = 'block';
+  document.getElementById('authRegisterBox').style.display = 'none';
+  document.getElementById('authForgotBox').style.display = 'none';
+  document.getElementById('authResetBox').style.display = 'none';
+  // Check for verify/reset URL params
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('verify')) authDoVerifyEmail(params.get('verify'));
+  if (params.get('reset')) {
+    document.getElementById('authLoginBox').style.display = 'none';
+    document.getElementById('authResetBox').style.display = 'block';
+    window._resetToken = params.get('reset');
+  }
+}
+function authHideOverlay() { document.getElementById('authOverlay').style.display = 'none'; }
+function authShowRegister() { document.getElementById('authLoginBox').style.display='none'; document.getElementById('authRegisterBox').style.display='block'; document.getElementById('authForgotBox').style.display='none'; }
+function authShowLogin() { document.getElementById('authLoginBox').style.display='block'; document.getElementById('authRegisterBox').style.display='none'; document.getElementById('authForgotBox').style.display='none'; document.getElementById('authResetBox').style.display='none'; }
+function authShowForgot() { document.getElementById('authLoginBox').style.display='none'; document.getElementById('authForgotBox').style.display='block'; }
+
+async function authDoLogin() {
+  const name = document.getElementById('authLoginName').value.trim();
+  const password = document.getElementById('authLoginPass').value;
+  const errEl = document.getElementById('authLoginError');
+  if (!name || !password) { errEl.textContent = 'Fill in all fields'; errEl.style.display = 'block'; return; }
+  try {
+    const r = await fetch('/api/auth-user?action=login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, password }) });
+    const d = await r.json();
+    if (d.ok) {
+      authToken = d.token;
+      authUser = d.user;
+      localStorage.setItem('cp_token', d.token);
+      authHideOverlay();
+      authUpdateUI();
+      if (d.user.role === 'superadmin' || d.user.role === 'admin') {
+        const nameMap = { 'DEEMAH': 1, 'RASTIX': 2, 'ROBBMOBB': 3 };
+        loggedInUser = nameMap[d.user.name.toUpperCase()] || null;
+      }
+    } else { errEl.textContent = d.error || 'Login failed'; errEl.style.display = 'block'; }
+  } catch { errEl.textContent = 'Network error'; errEl.style.display = 'block'; }
+}
+
+async function authDoRegister() {
+  const name = document.getElementById('authRegName').value.trim();
+  const email = document.getElementById('authRegEmail').value.trim();
+  const pass = document.getElementById('authRegPass').value;
+  const pass2 = document.getElementById('authRegPass2').value;
+  const errEl = document.getElementById('authRegError');
+  const sucEl = document.getElementById('authRegSuccess');
+  errEl.style.display = 'none'; sucEl.style.display = 'none';
+  if (!name || !email || !pass) { errEl.textContent = 'Fill in all fields'; errEl.style.display = 'block'; return; }
+  if (pass !== pass2) { errEl.textContent = 'Passwords don\'t match'; errEl.style.display = 'block'; return; }
+  if (pass.length < 6) { errEl.textContent = 'Password must be at least 6 chars'; errEl.style.display = 'block'; return; }
+  try {
+    const r = await fetch('/api/auth-user?action=register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password: pass }) });
+    const d = await r.json();
+    if (d.ok) { sucEl.textContent = d.message || 'Registered! Check email.'; sucEl.style.display = 'block'; }
+    else { errEl.textContent = d.error || 'Registration failed'; errEl.style.display = 'block'; }
+  } catch { errEl.textContent = 'Network error'; errEl.style.display = 'block'; }
+}
+
+async function authDoForgot() {
+  const email = document.getElementById('authForgotEmail').value.trim();
+  const msgEl = document.getElementById('authForgotMsg');
+  if (!email) return;
+  try {
+    const r = await fetch('/api/auth-user?action=forgot-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+    const d = await r.json();
+    msgEl.textContent = d.message || 'Check your email.'; msgEl.style.display = 'block';
+  } catch { msgEl.textContent = 'Network error'; msgEl.style.display = 'block'; msgEl.style.color = '#ff4444'; }
+}
+
+async function authDoReset() {
+  const pass = document.getElementById('authResetPass').value;
+  const pass2 = document.getElementById('authResetPass2').value;
+  const msgEl = document.getElementById('authResetMsg');
+  if (!pass || pass !== pass2) { msgEl.textContent = 'Passwords don\'t match'; msgEl.style.display = 'block'; msgEl.style.color = '#ff4444'; return; }
+  try {
+    const r = await fetch('/api/auth-user?action=reset-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: window._resetToken, password: pass }) });
+    const d = await r.json();
+    if (d.ok) { msgEl.textContent = 'Password reset! Redirecting...'; msgEl.style.color = '#00ff88'; msgEl.style.display = 'block'; setTimeout(() => { window.location.href = window.location.pathname; }, 2000); }
+    else { msgEl.textContent = d.error || 'Reset failed'; msgEl.style.color = '#ff4444'; msgEl.style.display = 'block'; }
+  } catch { msgEl.textContent = 'Network error'; msgEl.style.color = '#ff4444'; msgEl.style.display = 'block'; }
+}
+
+async function authDoVerifyEmail(token) {
+  try {
+    const r = await fetch('/api/auth-user?action=verify-email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }) });
+    const d = await r.json();
+    if (d.ok) alert('✅ Email verified! You can now login.');
+    else alert('❌ ' + (d.error || 'Verification failed'));
+    window.history.replaceState({}, '', window.location.pathname);
+  } catch { alert('Network error during verification'); }
+}
+
+function authUpdateUI() {
+  const bar = document.getElementById('userStatusBar');
+  const nameEl = document.getElementById('userStatusName');
+  if (authUser) {
+    bar.style.display = 'block';
+    const roleTag = authUser.role === 'superadmin' ? '👑' : authUser.role === 'admin' ? '⚡' : '◈';
+    nameEl.textContent = roleTag + ' ' + authUser.name.toUpperCase();
+    // Hide coin HUD for admins
+    if (authUser.role === 'superadmin' || authUser.role === 'admin') {
+      document.getElementById('coinHud').style.display = 'none';
+    }
+    // Show admin panel in voting mode
+    if (authUser.role === 'superadmin') {
+      document.getElementById('voteAdminPanel').style.display = 'block';
+    }
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+function authShowProfile() {
+  if (!authUser) return;
+  if (confirm('Logged in as ' + authUser.name + ' (' + authUser.role + ')\n\nLogout?')) {
+    authDoLogout();
+  }
+}
+
+async function authDoLogout() {
+  try { await fetch('/api/auth-user?action=logout', { method: 'POST', headers: authHeaders() }); } catch {}
+  authToken = null; authUser = null; loggedInUser = null;
+  localStorage.removeItem('cp_token');
+  document.getElementById('userStatusBar').style.display = 'none';
+  authShowOverlay();
+}
+
+// ════════════════════════════════════════════════
+// RECORD TOGGLE BUTTON
+// ════════════════════════════════════════════════
+window.toggleRecBtn = function(mode) {
+  if (recMediaRecorder && recMediaRecorder.state === 'recording') {
+    stopRecording();
+    // Reset button labels
+    const wBtn = document.getElementById('wampRecBtn');
+    const aBtn = document.getElementById('arcBtnRec');
+    const cBtn = document.getElementById('cliRecLabel');
+    if (wBtn) wBtn.innerHTML = '🔴';
+    if (aBtn) aBtn.innerHTML = '🔴';
+    if (cBtn) cBtn.textContent = '[🔴 REC]';
+  } else {
+    const sourceType = radPlaying ? 'radio' : (currentAudio ? 'track' : null);
+    const sourceName = radPlaying ? (radCurrentStation ? radCurrentStation.name : 'radio') : 
+                       (currentTrackIdx >= 0 && tracks[currentTrackIdx] ? tracks[currentTrackIdx].name : 'unknown');
+    if (!sourceType) { alert('No audio playing to record'); return; }
+    startRecording(sourceType, sourceName);
+    // Update button labels
+    const wBtn = document.getElementById('wampRecBtn');
+    const aBtn = document.getElementById('arcBtnRec');
+    const cBtn = document.getElementById('cliRecLabel');
+    if (wBtn) wBtn.innerHTML = '⏹';
+    if (aBtn) aBtn.innerHTML = '⏹';
+    if (cBtn) cBtn.textContent = '[⏹ STOP]';
+  }
+};
+
+// ════════════════════════════════════════════════
+// JESUS SKY ANIMATION (rises from bottom on action)
+// ════════════════════════════════════════════════
+window.jesusFromSky = function() {
+  const el = document.createElement('div');
+  el.className = 'jesus-sky';
+  el.innerHTML = '<img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2Frrcm-9aWWtfF9Gt1nIaND%2Fdafoe_small.png"><div class="jesus-coin-txt">-1 🪙</div>';
+  document.body.appendChild(el);
+  el.style.animation = 'jesusRise 2.2s ease-out forwards';
+  // Coin text pulse
+  const txt = el.querySelector('.jesus-coin-txt');
+  if (txt) txt.style.animation = 'jesusCoinPulse 0.6s ease infinite';
+  // Deduct coin
+  if (!loggedInUser && authUser) {
+    fetch('/api/coins?action=spend', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: 1 }) })
+      .then(r => r.json()).then(d => { if (d.ok) { guestCoins = d.coins; if (typeof updateCoinHud === 'function') updateCoinHud(null); } });
+  }
+  setTimeout(() => el.remove(), 2500);
+};
+
+// ════════════════════════════════════════════════
+// TRACK INFO BAR (name + duration)
+// ════════════════════════════════════════════════
+let tiInterval = null;
+function updateTrackInfoBar() {
+  const bar = document.getElementById('trackInfoBar');
+  const nameEl = document.getElementById('tiName');
+  const durEl = document.getElementById('tiDur');
+  const audio = radPlaying ? radAudio : currentAudio;
+  if (!audio || (!audio.src && !audio.currentSrc)) {
+    bar.style.display = 'none'; return;
+  }
+  bar.style.display = 'flex';
+  // Get track name
+  let name = '—';
+  if (window._currentRadioStation) name = '📻 ' + window._currentRadioStation;
+  else if (currentTrackIdx >= 0 && tracks[currentTrackIdx]) {
+    name = tracks[currentTrackIdx].name || '—';
+  }
+  nameEl.textContent = name;
+  // Duration
+  const cur = audio.currentTime || 0;
+  const tot = audio.duration || 0;
+  const fmt = (s) => { const m=Math.floor(s/60); const ss=Math.floor(s%60); return m+':'+(ss<10?'0':'')+ss; };
+  durEl.textContent = fmt(cur) + (isFinite(tot) && tot > 0 ? ' / '+fmt(tot) : ' / LIVE');
+}
+function startTrackInfoUpdater() {
+  if (tiInterval) clearInterval(tiInterval);
+  tiInterval = setInterval(updateTrackInfoBar, 500);
+  updateTrackInfoBar();
+}
+function stopTrackInfoUpdater() {
+  const bar = document.getElementById('trackInfoBar');
+  bar.style.display = 'none';
+  if (tiInterval) { clearInterval(tiInterval); tiInterval = null; }
+}
+
+// ════════════════════════════════════════════════
+// RECORDING (client-side MediaRecorder → server upload)
+// ════════════════════════════════════════════════
+let recMediaRecorder = null;
+let recChunks = [];
+let recStartTime = 0;
+let recInterval = null;
+let recId = null;
+const MAX_REC_SECS = 7200; // 2 hours
+
+async function startRecording(sourceType, sourceName) {
+  if (!authUser) { alert('Must be logged in to record'); return; }
+  if (recMediaRecorder && recMediaRecorder.state === 'recording') { alert('Already recording!'); return; }
+  
+  // Use audio context to capture
+  if (!currentAudio) { alert('No audio playing'); return; }
+  
+  try {
+    // Create a MediaStream from the audio element
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = ctx.createMediaElementSource(currentAudio);
+    const dest = ctx.createMediaStreamDestination();
+    source.connect(dest);
+    source.connect(ctx.destination); // Also play through speakers
+    
+    recMediaRecorder = new MediaRecorder(dest.stream, { mimeType: 'audio/webm;codecs=opus' });
+    recChunks = [];
+    recMediaRecorder.ondataavailable = (e) => { if (e.data.size) recChunks.push(e.data); };
+    recMediaRecorder.onstop = async () => { await uploadRecording(sourceType, sourceName); };
+    recMediaRecorder.start(1000); // Collect data every second
+    recStartTime = Date.now();
+    
+    // Start API recording
+    try {
+      const r = await fetch('/api/record?action=start', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ source_type: sourceType, source_name: sourceName }) });
+      const d = await r.json();
+      if (d.recording_id) recId = d.recording_id;
+    } catch {}
+    
+    // Show indicator
+    document.getElementById('recIndicator').classList.add('active');
+    recInterval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - recStartTime) / 1000);
+      const m = Math.floor(elapsed / 60); const s = elapsed % 60;
+      document.getElementById('recTimer').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+      if (elapsed >= MAX_REC_SECS) stopRecording();
+    }, 1000);
+  } catch (e) {
+    console.error('Recording error:', e);
+    alert('Could not start recording. Audio may need to be restarted.');
+  }
+}
+
+function stopRecording() {
+  if (recMediaRecorder && recMediaRecorder.state === 'recording') {
+    recMediaRecorder.stop();
+  }
+  document.getElementById('recIndicator').classList.remove('active');
+  if (recInterval) { clearInterval(recInterval); recInterval = null; }
+}
+
+async function uploadRecording(sourceType, sourceName) {
+  if (!recChunks.length) return;
+  const blob = new Blob(recChunks, { type: 'audio/webm' });
+  const duration = Math.floor((Date.now() - recStartTime) / 1000);
+  
+  // Convert to base64
+  const reader = new FileReader();
+  reader.onload = async () => {
+    const base64 = reader.result.split(',')[1];
+    try {
+      await fetch('/api/record?action=upload', {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ recording_id: recId, audio_base64: base64, duration })
+      });
+      alert('Recording saved! (' + Math.floor(duration / 60) + ' min ' + (duration % 60) + ' sec)');
+    } catch (e) { console.error('Upload error:', e); alert('Failed to save recording'); }
+  };
+  reader.readAsDataURL(blob);
+  recChunks = [];
+}
+
+// ════════════════════════════════════════════════
+// VOTING SYSTEM (Mode 5)
+// ════════════════════════════════════════════════
+let voteTracks = [];
+
+async function voteLoadTracks() {
+  try {
+    const r = await fetch('/api/vote?action=list', { headers: authHeaders() });
+    const d = await r.json();
+    voteTracks = d.tracks || [];
+    voteRenderList();
+  } catch { console.error('Failed to load vote tracks'); }
+}
+
+function voteRenderList() {
+  const container = document.getElementById('voteTrackList');
+  if (!voteTracks.length) {
+    container.innerHTML = '<div style="color:#444;font-size:10px;letter-spacing:2px;text-align:center;padding:40px 0;">No tracks uploaded yet. Upload tracks to start voting!</div>';
+    return;
+  }
+  container.innerHTML = voteTracks.map(t => {
+    const scoreClass = t.vote_score > 0 ? 'positive' : t.vote_score < 0 ? 'negative' : 'neutral';
+    const upClass = t.my_vote === 1 ? 'voted-up' : '';
+    const downClass = t.my_vote === -1 ? 'voted-down' : '';
+    const durStr = t.duration ? Math.floor(t.duration/60) + ':' + (t.duration%60<10?'0':'') + (t.duration%60) : '?:??';
+    const statusBadge = t.status === 'approved' ? '<span style="color:#00ff88;font-size:8px;letter-spacing:1px;"> ✓ APPROVED</span>' :
+                        t.status === 'rejected' ? '<span style="color:#ff4444;font-size:8px;letter-spacing:1px;"> ✗ REJECTED</span>' :
+                        '<span style="color:#ffd700;font-size:8px;letter-spacing:1px;"> ○ VOTING</span>';
+    const adminBtns = authUser && (authUser.role === 'superadmin' || (authUser.role === 'admin' && t.uploaded_by === authUser.id)) ?
+      `<button class="vote-admin-btn" onclick="voteAdminDecide(${t.id},'approved')">✓</button>
+       <button class="vote-admin-btn" onclick="voteAdminDecide(${t.id},'rejected')">✗</button>` +
+      (authUser.role === 'superadmin' ? `<button class="vote-admin-btn" onclick="voteAdminDelete(${t.id})" style="border-color:#ff0000;">DEL</button>` : '') : '';
+    return `<div class="vote-track">
+      <div class="vt-info">
+        <div class="vt-title">${escHtml(t.title)}</div>
+        <div class="vt-meta">${durStr} · ↑${t.upvotes} ↓${t.downvotes}${statusBadge}</div>
+      </div>
+      <div class="vt-score ${scoreClass}">${t.vote_score > 0 ? '+' : ''}${t.vote_score}</div>
+      <button class="vote-btn ${upClass}" onclick="voteCast(${t.id},1)">▲</button>
+      <button class="vote-btn ${downClass}" onclick="voteCast(${t.id},-1)">▼</button>
+      ${adminBtns}
+    </div>`;
+  }).join('');
+}
+
+function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+async function voteCast(trackId, vote) {
+  if (!authUser) { alert('Must be logged in to vote'); return; }
+  try {
+    const r = await fetch('/api/vote?action=cast', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ track_id: trackId, vote }) });
+    const d = await r.json();
+    if (d.ok) {
+      const t = voteTracks.find(x => x.id === trackId);
+      if (t) { t.vote_score = d.vote_score; t.my_vote = vote; }
+      voteRenderList();
+    }
+  } catch { alert('Vote failed'); }
+}
+
+async function voteAdminDecide(trackId, decision) {
+  try {
+    const r = await fetch('/api/vote?action=admin-decide', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ track_id: trackId, decision }) });
+    const d = await r.json();
+    if (d.ok) { const t = voteTracks.find(x => x.id === trackId); if (t) t.status = decision; voteRenderList(); }
+    else alert(d.error || 'Failed');
+  } catch { alert('Failed'); }
+}
+
+async function voteAdminDelete(trackId) {
+  if (!confirm('Permanently delete this track?')) return;
+  try {
+    const r = await fetch('/api/vote?action=delete', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ track_id: trackId }) });
+    const d = await r.json();
+    if (d.ok) { voteTracks = voteTracks.filter(x => x.id !== trackId); voteRenderList(); }
+  } catch { alert('Failed'); }
+}
+
+// ════════════════════════════════════════════════
+// INIT: Check auth on load
+// ════════════════════════════════════════════════
+(function initAuth() {
+  // Run after DOM is loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => authCheckSession());
+  } else {
+    authCheckSession();
+  }
+})();
 </script>
 
 <!-- ════════════════════════════════════
@@ -3013,6 +3555,36 @@ window.radCoinAnimation = function(){
       <a href="mailto:about@digitalslayer.com" style="color:#d4c87a;text-decoration:none;font-size:10px;letter-spacing:2px;">about@digitalslayer.com</a>
     </div>
 
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     MODE 5 — VOTING
+════════════════════════════════════ -->
+<div id="mode5" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:48px;font-family:'Share Tech Mono',monospace;">
+  <div style="width:90%;max-width:600px;margin:0 auto;padding:20px 0;">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="font-size:18px;letter-spacing:6px;color:var(--green,#00ff88);text-shadow:0 0 20px var(--green,#00ff88);">◈ VOTING BOOTH</div>
+      <div style="font-size:9px;letter-spacing:3px;color:#555;margin-top:6px;">UPLOADED TRACKS · VOTE TO KEEP OR REMOVE</div>
+    </div>
+
+    <!-- Track name + duration display -->
+    <div id="voteNowPlaying" style="display:none;border:1px solid #333;padding:12px;margin-bottom:16px;background:rgba(0,255,136,.03);">
+      <div style="font-size:9px;letter-spacing:2px;color:#555;">NOW PLAYING</div>
+      <div id="voteTrackName" style="font-size:13px;color:var(--green,#00ff88);letter-spacing:2px;margin-top:4px;">—</div>
+      <div id="voteTrackDur" style="font-size:10px;color:#666;letter-spacing:1px;margin-top:2px;">0:00 / 0:00</div>
+    </div>
+
+    <!-- Voting list -->
+    <div id="voteTrackList" style="display:flex;flex-direction:column;gap:8px;">
+      <div style="color:#444;font-size:10px;letter-spacing:2px;text-align:center;padding:40px 0;">Loading tracks...</div>
+    </div>
+
+    <!-- Admin controls (superadmin only) -->
+    <div id="voteAdminPanel" style="display:none;border:1px solid #ff4444;padding:16px;margin-top:24px;background:rgba(255,0,0,.03);">
+      <div style="font-size:9px;letter-spacing:3px;color:#ff4444;margin-bottom:10px;">◈ ADMIN CONTROLS</div>
+      <div id="voteAdminInfo" style="font-size:10px;color:#888;letter-spacing:1px;"></div>
+    </div>
   </div>
 </div>
 

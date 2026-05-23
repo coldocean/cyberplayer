@@ -1,23 +1,60 @@
-# Radio Feature Updates
+# MEGA BUILD TASK
 
-## Task 1: Radio auto-expanded by default
-- All genres in M2 (#arcRadioTracklist) should be open by default
-- M1 wamp radio body should be visible by default  
-- M3 CLI radio body should be visible by default
+## Architecture
+- **Frontend**: Static `index.html` with inline JS/CSS (3022 lines)
+- **Backend**: Vercel serverless functions in `/api/` directory
+  - `_db.js` — Turso HTTP helper
+  - `coins.js`, `ban.js`, `spin.js` — existing endpoints
+  - `[[...route]].ts` — catch-all routing to Hono app (better-auth + tracks CRUD)
+- **DB**: Turso (libsql) — tables: bans, coins, attempts
+- **Deploy**: Vercel static + serverless, `dist-static/` as output
 
-## Task 2: Coin-to-Dafoe-Jesus animation
-- On radio station switch, stop, or play: animate a coin with stardust flying to a Dafoe-Jesus figure
-- Dafoe-Jesus image: https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2Frrcm-9aWWtfF9Gt1nIaND%2Fdafoe_small.png
-- Fixed position in corner, coin flies from center of screen to the figure
-- Stardust trail behind the coin
+## What to Build
 
-## Changes needed:
-1. In `radRenderArcRadio()` - init `_radOpenGenres` with all genres open
-2. In M1 wampRadioBody - default display:block, render on init
-3. In M3 cliRadioBody - default display:block, render on init
-4. Add CSS for coin animation + stardust + Dafoe Jesus figure
-5. Add HTML for the fixed Dafoe Jesus overlay
-6. Add `radCoinAnimation()` function
-7. Call `radCoinAnimation()` from `radPlayStation()` and `radStop()`
+### 1. Radio in Playlist Dropdown
+- Add RADIO 📻 as a collapsible section inside each mode's playlist area
+- Shows all genres/stations inline within the playlist panel
 
-## Status: IN PROGRESS
+### 2. Track Name & Duration Display
+- Show current track name and elapsed time in the player UI
+- Use audio element's metadata for duration when available
+
+### 3. RECORD Feature
+- Server-side recording to S3
+- New API endpoint: `/api/record` — start/stop recording
+- Records radio stream or current mix for up to 2hrs
+- Saves to S3, creates track entry
+
+### 4. User Registration & Auth
+- Use better-auth (already configured) with Turso
+- New tables: user, session, account, verification (better-auth schema)
+- Resend for email verification & password reset
+- Migrate 3 admins to DB with hashed passwords
+- Non-registered users see "Jesus thumbs down" crying — must register
+- Frontend: registration/login forms in the player
+
+### 5. Jesus Animation (New)
+- Keep existing coin-to-Jesus animation
+- ADD: Jesus rises from bottom of screen with thumbs up on play/stop/next
+- Deducts 1 coin per action
+- Shows coin flying up to sky
+
+### 6. Mode 5: Voting (NEW label)
+- Custom voting in Turso
+- New table: `votes` (track_id, user_id, vote, created_at)
+- All uploaded songs go to voting
+- Users vote to keep/remove tracks
+- deemaah (superadmin) can override — always add/delete
+- rastix/robbmobb are limited admins
+
+### 7. Role System
+- superadmin (deemaah): full control, add/delete anything
+- admin (rastix, robbmobb): limited powers (manage own playlists)
+- registered user: can vote, play with coins
+- guest: sees Jesus crying, must register
+
+## Execution Order
+1. Create DB tables (users, votes, recordings)
+2. Create API endpoints (auth, register, vote, record)
+3. Update index.html (radio in playlist, track info, record UI, voting mode, auth UI, Jesus animations)
+4. Copy to all targets, deploy
