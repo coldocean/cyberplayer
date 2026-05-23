@@ -39,7 +39,7 @@ body{
 /* ════════════════════════════════════════
    MODE 1 — WINAMP
 ════════════════════════════════════════ */
-#mode1{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;width:100%;}
+#mode1{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:10px;}
 
 /* SKIN SWITCHER */
 .skin-bar{
@@ -454,12 +454,13 @@ body.skin-5 #mode1{background:#05000a;}
    MODE 3 — CLIAMP (terminal)
 ════════════════════════════════════════ */
 #mode3{
-  display:none;flex-direction:column;align-items:center;justify-content:center;
+  display:none;flex-direction:column;align-items:center;justify-content:flex-start;
   min-height:100vh;width:100%;
   background:#0a0a0a;
+  padding:0;
 }
 .cli-shell{
-  width:min(760px,97vw);
+  width:min(760px,100vw);
   background:#000;
   border:1px solid #333;
   box-shadow:0 0 40px rgba(0,255,0,.08);
@@ -578,28 +579,57 @@ body.skin-5 #mode1{background:#05000a;}
 }
 .cli-upload-area:hover,.cli-upload-area.dragover{border-color:#00ff00;color:#00aa00;}
 
-/* ── RESPONSIVE: make winamp bigger on narrow screens ── */
-@media(max-width:500px){
-  .wamp{width:min(96vw,420px);}
-  .wamp-title{height:22px;font-size:10px;padding:3px 8px;}
-  .wamp-tbtn{width:14px;height:14px;font-size:8px;}
-  .wamp-main{padding:10px;}
-  .wamp-vu{width:90px;height:56px;}
-  .wamp-ticker{font-size:11px;}
-  .wamp-timer{font-size:30px;}
-  .wamp-bitrate{font-size:9px;}
-  .wamp-btn{width:32px;height:26px;font-size:11px;}
-  .wamp-btn.wide{width:60px;font-size:10px;}
-  .wamp-vol{width:72px;}
-  .wamp-eq-bands{height:64px;}
-  .wamp-eq-slider{height:58px;}
-  .wamp-eq-lbl{font-size:7px;}
-  .wamp-eq-title{font-size:10px;}
-  .wamp-pl-list{height:130px;}
-  .wamp-pl-item{font-size:10px;padding:3px 10px;}
-  .wamp-pl-title{font-size:10px;padding:5px 10px;}
-  .wamp-pl-btn{font-size:9px;padding:3px 8px;}
-  .wamp-pl-time{font-size:9px;}
+/* ── RESPONSIVE: fill screen on mobile ── */
+@media(max-width:600px){
+  /* winamp */
+  #mode1{padding-top:46px;justify-content:flex-start;}
+  .wamp{width:100vw;border-radius:0;}
+  .wamp-title{height:26px;font-size:11px;padding:4px 10px;letter-spacing:.5px;}
+  .wamp-tbtn{width:15px;height:15px;font-size:9px;}
+  .wamp-main{padding:12px 14px;}
+  .wamp-vu{width:100px;height:64px;}
+  .wamp-ticker{font-size:12px;}
+  .wamp-timer{font-size:34px;}
+  .wamp-bitrate{font-size:10px;}
+  .wamp-btn{width:36px;height:28px;font-size:12px;}
+  .wamp-btn.wide{width:66px;font-size:10px;}
+  .wamp-vol{width:80px;}
+  .wamp-vol-lbl{font-size:9px;}
+  .wamp-eq{margin-top:4px;padding:8px 14px;}
+  .wamp-eq-bands{height:72px;}
+  .wamp-eq-slider{height:66px;}
+  .wamp-eq-lbl{font-size:8px;}
+  .wamp-eq-title{font-size:11px;}
+  .wamp-pl-list{height:160px;}
+  .wamp-pl-item{font-size:11px;padding:4px 12px;}
+  .wamp-pl-title{font-size:11px;padding:6px 12px;}
+  .wamp-pl-btn{font-size:10px;padding:4px 10px;}
+  .wamp-pl-time{font-size:10px;}
+  .wamp-pl-footer{padding:6px 10px;}
+
+  /* cli / demonamp */
+  #mode3{justify-content:flex-start;}
+  .cli-shell{width:100vw;border-left:none;border-right:none;border-radius:0;min-height:calc(100vh - 40px);}
+  .cli-titlebar{padding:8px 14px;}
+  .cli-titlename{font-size:13px;letter-spacing:1.5px;}
+  .cli-tbtn{width:13px;height:13px;}
+  .cli-main{padding:16px 16px;gap:10px;}
+  .cli-app-name{font-size:16px;letter-spacing:4px;}
+  .cli-now-playing{font-size:14px;}
+  .cli-now-sub{font-size:12px;}
+  .cli-timer{font-size:13px;}
+  .cli-playing-badge{font-size:13px;}
+  .cli-spectrum{height:72px;}
+  .cli-seekknob{width:14px;height:14px;top:-5px;margin-left:-7px;}
+  .cli-vol-row{gap:10px;}
+  .cli-vol-lbl{font-size:12px;}
+  .cli-vol-db{font-size:11px;}
+  .cli-out-info{font-size:10px;}
+  .cli-eq-row{font-size:11px;}
+  .cli-pl-header{font-size:11px;padding:6px 0;}
+  .cli-pl-list{max-height:200px;}
+  .cli-pl-item{font-size:11px;padding:5px 0;}
+  .cli-upload-area{font-size:11px;padding:14px;margin-top:8px;}
 }
 
 </style>
@@ -839,7 +869,7 @@ body.skin-5 #mode1{background:#05000a;}
     <div class="cli-titlebar">
       <div class="cli-title-left">
         <span class="cli-ham">≡</span>
-        <span class="cli-titlename">sde@linuxlinks:~</span>
+        <span class="cli-titlename">playa@demonMusix:~</span>
       </div>
       <div class="cli-titlebtns">
         <div class="cli-tbtn"></div>
@@ -851,7 +881,7 @@ body.skin-5 #mode1{background:#05000a;}
     <div class="cli-main">
       <!-- header -->
       <div class="cli-header">
-        <div class="cli-app-name">C L I A M P</div>
+        <div class="cli-app-name">D E M O N A M P</div>
         <div class="cli-now-playing" id="cliNowPlaying">♩ No track loaded</div>
         <div class="cli-now-sub" id="cliNowSub">Upload files to begin</div>
         <div class="cli-status-row">
