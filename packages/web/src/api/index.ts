@@ -145,5 +145,41 @@ app.post("/identify-song", async (c) => {
   }
 });
 
+// ── RADIO PROXY (fixes mixed-content + CORS for http:// streams) ───────────
+app.get("/radio-proxy", async (c) => {
+  const url = c.req.query("url");
+  if (!url) return c.json({ error: "No URL" }, 400);
+  
+  try {
+    const upstream = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; CyberpunkPlayer/1.0)",
+        "Icy-MetaData": "1",
+      },
+      redirect: "follow",
+    } as RequestInit);
+    
+    if (!upstream.ok && upstream.status !== 200) {
+      return c.json({ error: "Upstream " + upstream.status }, 502);
+    }
+    
+    const ct = upstream.headers.get("content-type") || "audio/mpeg";
+    const body = upstream.body;
+    if (!body) return c.json({ error: "No body" }, 502);
+    
+    return new Response(body, {
+      status: 200,
+      headers: {
+        "Content-Type": ct,
+        "Cache-Control": "no-store",
+        "Access-Control-Allow-Origin": "*",
+        "X-Radio-Proxied": "1",
+      },
+    });
+  } catch (e: any) {
+    return c.json({ error: e.message }, 502);
+  }
+});
+
 export type AppType = typeof app;
 export default app;

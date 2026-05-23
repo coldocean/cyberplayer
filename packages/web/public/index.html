@@ -3265,8 +3265,9 @@ function radStartBufferedStream(url){
   });
   radAudio.addEventListener('ended', () => radAttemptReconnect(url));
 
-  const sep = url.includes('?') ? '&' : '?';
-  radAudio.src = url + sep + '_t=' + Date.now();
+  // Proxy http:// streams through server to avoid mixed-content/CORS blocks on HTTPS
+  const proxyUrl = url.startsWith('http://') ? '/api/radio-proxy?url=' + encodeURIComponent(url) + '&_t=' + Date.now() : url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
+  radAudio.src = proxyUrl;
   radAudio.load();
 }
 
