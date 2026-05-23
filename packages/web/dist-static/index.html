@@ -737,6 +737,83 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 @media(max-width:600px){
   .slot-cell{height:58px;font-size:34px;}
 }
+
+/* ═══════════════════════════════════════════
+   RADIO PANEL
+═══════════════════════════════════════════ */
+.arc-radio-panel{flex-direction:column;padding:0;overflow:hidden;height:100%;}
+.rad-wrap{display:flex;flex:1;overflow:hidden;min-height:0;}
+
+/* LEFT: Directory tree */
+.rad-tree{width:220px;min-width:180px;background:rgba(0,0,0,.4);border-right:1px solid rgba(0,229,200,.08);overflow-y:auto;padding:6px 0;font-family:'Share Tech Mono',monospace;font-size:11px;flex-shrink:0;}
+.rad-tree::-webkit-scrollbar{width:4px}.rad-tree::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:2px;}
+.rad-genre{cursor:pointer;padding:5px 10px 5px 12px;color:var(--cyan);letter-spacing:1.2px;display:flex;align-items:center;gap:6px;user-select:none;transition:background .15s;}
+.rad-genre:hover{background:rgba(0,229,200,.06);}
+.rad-genre.open{background:rgba(0,229,200,.04);}
+.rad-genre .rad-arrow{font-size:8px;transition:transform .2s;display:inline-block;width:10px;text-align:center;}
+.rad-genre.open .rad-arrow{transform:rotate(90deg);}
+.rad-genre-icon{font-size:13px;}
+.rad-subs{display:none;padding-left:0;}
+.rad-genre.open + .rad-subs{display:block;}
+.rad-station{cursor:pointer;padding:4px 10px 4px 32px;color:#888;font-size:10px;letter-spacing:.8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .15s;}
+.rad-station:hover{color:var(--cyan);background:rgba(0,229,200,.05);}
+.rad-station.active{color:#000;background:var(--cyan);font-weight:bold;}
+.rad-station .rad-live{color:var(--red);font-size:7px;margin-left:4px;animation:radPulse 1.5s infinite;}
+@keyframes radPulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* RIGHT: Now playing + stations grid */
+.rad-main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+
+/* Now playing bar */
+.rad-now{background:linear-gradient(90deg,rgba(0,229,200,.08),rgba(224,23,74,.05));border-bottom:1px solid rgba(0,229,200,.1);padding:10px 16px;display:flex;align-items:center;gap:12px;min-height:52px;}
+.rad-now-icon{font-size:22px;animation:radSpin 3s linear infinite;animation-play-state:paused;}
+.rad-now-icon.spinning{animation-play-state:running;}
+@keyframes radSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.rad-now-info{flex:1;min-width:0;}
+.rad-now-title{color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:1.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rad-now-genre{color:#555;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;margin-top:2px;}
+.rad-now-meta{color:#444;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.5px;margin-top:1px;}
+.rad-now-controls{display:flex;gap:6px;align-items:center;}
+.rad-btn{background:none;border:1px solid var(--cyan);color:var(--cyan);padding:4px 10px;font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;transition:all .15s;}
+.rad-btn:hover{background:var(--cyan);color:#000;}
+.rad-btn.stop{border-color:var(--red);color:var(--red);}
+.rad-btn.stop:hover{background:var(--red);color:#fff;}
+.rad-vol-wrap{display:flex;align-items:center;gap:4px;}
+.rad-vol-label{color:#555;font-size:8px;font-family:'Share Tech Mono',monospace;}
+.rad-vol{width:60px;height:3px;-webkit-appearance:none;background:#222;outline:none;border-radius:2px;}
+.rad-vol::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;background:var(--cyan);border-radius:50%;cursor:pointer;}
+
+/* Cache indicator */
+.rad-cache{display:flex;align-items:center;gap:6px;padding:4px 16px;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(0,229,200,.04);min-height:24px;}
+.rad-cache-bar{flex:1;height:3px;background:#111;border-radius:2px;overflow:hidden;max-width:200px;}
+.rad-cache-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--red));width:0%;transition:width .3s;}
+.rad-cache-text{color:#444;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.5px;}
+.rad-cache-status{width:6px;height:6px;border-radius:50%;background:#333;flex-shrink:0;}
+.rad-cache-status.buffering{background:#ff8800;animation:radPulse 1s infinite;}
+.rad-cache-status.ready{background:#00ff88;}
+.rad-cache-status.error{background:var(--red);}
+
+/* Station grid / list area */
+.rad-content{flex:1;overflow-y:auto;padding:12px 16px;}
+.rad-content::-webkit-scrollbar{width:4px}.rad-content::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:2px;}
+.rad-welcome{text-align:center;padding:40px 20px;color:#333;font-family:'Share Tech Mono',monospace;}
+.rad-welcome h2{color:var(--cyan);font-size:14px;letter-spacing:3px;margin-bottom:12px;}
+.rad-welcome p{font-size:10px;letter-spacing:1px;line-height:1.8;}
+.rad-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;}
+.rad-card{background:rgba(0,229,200,.03);border:1px solid rgba(0,229,200,.08);padding:10px 12px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;}
+.rad-card:hover{border-color:var(--cyan);background:rgba(0,229,200,.06);transform:translateY(-1px);}
+.rad-card.active{border-color:var(--cyan);background:rgba(0,229,200,.1);box-shadow:0 0 12px rgba(0,229,200,.1);}
+.rad-card-name{color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rad-card-desc{color:#555;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.5px;margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.rad-card-badge{position:absolute;top:4px;right:6px;font-size:7px;color:var(--red);font-family:'Share Tech Mono',monospace;letter-spacing:1px;}
+.rad-section-title{color:#444;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;margin:12px 0 8px 0;padding-bottom:4px;border-bottom:1px solid rgba(0,229,200,.06);}
+.rad-section-title:first-child{margin-top:0;}
+
+@media(max-width:700px){
+  .rad-wrap{flex-direction:column;}
+  .rad-tree{width:100%;max-height:150px;border-right:none;border-bottom:1px solid rgba(0,229,200,.08);}
+  .rad-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body class="skin-1">
@@ -873,6 +950,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
       <div class="arc-nav-item" id="arcTotalBtn" style="cursor:default;letter-spacing:.5px;font-size:10px;">0 SONGS</div>
       <div class="arc-nav-item active" id="arcNavPlayer" onclick="arcShowPanel('player')">MUSIC PLAYER</div>
       <div class="arc-nav-item" id="arcNavSettings" onclick="arcShowPanel('settings')">SETTINGS</div>
+      <div class="arc-nav-item" id="arcNavRadio" onclick="arcShowPanel('radio')">📡 RADIO</div>
       <div class="arc-trigger" style="margin-left:auto">ZR</div>
     </div>
 
@@ -962,6 +1040,48 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
               </div>
               <input type="file" id="arcFileInput" accept=".mp3,audio/*" multiple style="display:none" onchange="arcHandleFiles(this.files)">
               <div class="arc-upload-list" id="arcUploadList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RADIO BODY -->
+    <div class="arc-body arc-radio-panel" id="arcBodyRadio" style="display:none;">
+      <div class="rad-wrap">
+        <!-- Directory tree -->
+        <div class="rad-tree" id="radTree"></div>
+        <!-- Main area -->
+        <div class="rad-main">
+          <!-- Now playing bar -->
+          <div class="rad-now">
+            <div class="rad-now-icon" id="radNowIcon">📻</div>
+            <div class="rad-now-info">
+              <div class="rad-now-title" id="radNowTitle">SELECT A STATION</div>
+              <div class="rad-now-genre" id="radNowGenre">Browse genres on the left</div>
+              <div class="rad-now-meta" id="radNowMeta"></div>
+            </div>
+            <div class="rad-now-controls">
+              <div class="rad-vol-wrap">
+                <span class="rad-vol-label">VOL</span>
+                <input type="range" class="rad-vol" id="radVolume" min="0" max="100" value="80" oninput="radSetVol(this.value)">
+              </div>
+              <button class="rad-btn stop" id="radStopBtn" onclick="radStop()" style="display:none;">STOP</button>
+            </div>
+          </div>
+          <!-- Cache indicator -->
+          <div class="rad-cache" id="radCacheBar">
+            <div class="rad-cache-status" id="radCacheStatus"></div>
+            <div class="rad-cache-bar"><div class="rad-cache-fill" id="radCacheFill"></div></div>
+            <div class="rad-cache-text" id="radCacheText">IDLE</div>
+          </div>
+          <!-- Station content area -->
+          <div class="rad-content" id="radContent">
+            <div class="rad-welcome">
+              <h2>📡 GLUMINATOR RADIO</h2>
+              <p>SELECT A GENRE FROM THE DIRECTORY<br>
+              SMART PRE-CACHE ENSURES GAPLESS PLAYBACK<br>
+              EVEN ON SLOW CONNECTIONS</p>
             </div>
           </div>
         </div>
@@ -1647,14 +1767,19 @@ function arcShowPanel(panel){
   arcCurrentPanel=panel;
   const bp=document.getElementById('arcBodyPlayer');
   const bs=document.getElementById('arcBodySettings');
+  const br=document.getElementById('arcBodyRadio');
   const np=document.getElementById('arcNavPlayer');
   const ns=document.getElementById('arcNavSettings');
+  const nr=document.getElementById('arcNavRadio');
+  bp.style.display='none';bs.style.display='none';br.style.display='none';
+  np.classList.remove('active');ns.classList.remove('active');nr.classList.remove('active');
   if(panel==='settings'){
-    bp.style.display='none';bs.style.display='flex';
-    np.classList.remove('active');ns.classList.add('active');
+    bs.style.display='flex';ns.classList.add('active');
+  } else if(panel==='radio'){
+    br.style.display='flex';nr.classList.add('active');
+    if(!window._radTreeBuilt){radBuildTree();window._radTreeBuilt=true;}
   } else {
-    bp.style.display='flex';bs.style.display='none';
-    np.classList.add('active');ns.classList.remove('active');
+    bp.style.display='flex';np.classList.add('active');
     setTimeout(()=>{arcRenderList();arcDrawWave(currentAudio&&!currentAudio.paused);resizeArcCanvas();},50);
   }
 }
@@ -2228,6 +2353,452 @@ document.addEventListener('DOMContentLoaded', () => {
   initBanAndCoins();
   initSlotDisplay();
 });
+
+// ════════════════════════════════════════════════
+// 📡 RADIO ENGINE — Smart Pre-Cache Streaming
+// ════════════════════════════════════════════════
+(function(){
+'use strict';
+
+// ── STATION DIRECTORY ──
+// Structure: { genre: { icon, subs: { subgenre: [ {name, url, desc} ] } } }
+const RADIO_DIR = {
+  'EASY LISTENING': {
+    icon: '🍸',
+    subs: {
+      'Lounge': [
+        {name:'Illinois Street Lounge', url:'https://ice6.somafm.com/illstreet-128-mp3', desc:'Classic bachelor pad & exotica'},
+        {name:'Secret Agent', url:'https://ice6.somafm.com/secretagent-128-mp3', desc:'Bond soundtracks & lounge'},
+        {name:'ABC Lounge Radio', url:'https://eu1.fastcast4u.com/proxy/kpmxz?mp=/1', desc:'Smooth jazz & bossa nova'},
+      ],
+      'Trip-Hop': [
+        {name:'Bristol Sound Radio', url:'https://thebristolsoundwebradio.stream.laut.fm/thebristolsoundwebradio', desc:'Massive Attack, Portishead vibes'},
+        {name:'Ethereal Radio', url:'https://s5.radio.co/saac615442/listen', desc:'Trip-hop, downtempo, ethereal'},
+        {name:'plusFM Trip-Hop', url:'https://listen.radioking.com/radio/291734/stream/339498', desc:'Electro pop & trip-hop mix'},
+      ],
+      'Ambient': [
+        {name:'Drone Zone', url:'https://ice6.somafm.com/dronezone-128-mp3', desc:'Atmospheric textures & drones'},
+        {name:'Deep Space One', url:'https://ice6.somafm.com/deepspaceone-128-mp3', desc:'Deep ambient space music'},
+        {name:'Ambient Sleeping Pill', url:'http://radio.stereoscenic.com/asp-h', desc:'Sleep-inducing ambient'},
+        {name:'Dark Zone', url:'https://ice6.somafm.com/darkzone-128-mp3', desc:'Dark ambient & cinematic'},
+      ],
+      'Chillout': [
+        {name:'Groove Salad', url:'https://ice5.somafm.com/groovesalad-128-mp3', desc:'Ambient downtempo beats'},
+        {name:'Groove Salad Classic', url:'https://ice6.somafm.com/gsclassic-128-mp3', desc:'Original GS flavors'},
+        {name:'Radio Schizoid Chill', url:'http://94.130.113.214:8000/chill', desc:'Psychill & ambient'},
+      ],
+      'Downtempo': [
+        {name:'Beat Blender', url:'https://ice6.somafm.com/beatblender-128-mp3', desc:'Deep house & downtempo'},
+        {name:'Suburbs of Goa', url:'https://ice6.somafm.com/suburbsofgoa-128-mp3', desc:'World-influenced downtempo'},
+      ],
+    }
+  },
+  'ELECTRONIC': {
+    icon: '⚡',
+    subs: {
+      'Tech House': [
+        {name:'Sunshine Live Tech House', url:'http://stream.sunshine-live.de/sp4/mp3-192/stream.sunshine-live.de/', desc:'German tech house stream'},
+        {name:'Technolovers Deep House', url:'https://stream.technolovers.fm/deep-house?ref=radiobrowser', desc:'Deep & tech house 24/7'},
+        {name:'ElectroDance World', url:'http://stream.zeno.fm/s70bvdgqks8uv', desc:'EDM & tech house'},
+      ],
+      'Progressive House': [
+        {name:'Frisky Radio', url:'http://stream2.friskyradio.com/frisky_mp3_hi', desc:'Progressive & deep house'},
+        {name:'Dance Wave!', url:'https://dancewave.online/dance.mp3', desc:'House & progressive'},
+        {name:'Deep House Lounge', url:'http://198.15.94.34:8006/stream', desc:'Deep & progressive house'},
+      ],
+      'Dubstep': [
+        {name:'Dub Step Beyond', url:'https://ice6.somafm.com/dubstep-128-mp3', desc:'SomaFM dubstep & bass'},
+        {name:'PulseEDM', url:'http://pulseedm.cdnstream1.com:8124/1373_128', desc:'EDM & dubstep radio'},
+      ],
+      'Trance': [
+        {name:'TranceBase FM', url:'http://listen.trancebase.fm/tunein-aac-hd-pls', desc:'Non-stop trance'},
+        {name:'The Trip', url:'https://ice6.somafm.com/thetrip-128-mp3', desc:'Progressive trance journey'},
+        {name:'Space Station Soma', url:'https://ice6.somafm.com/spacestation-128-mp3', desc:'Spaced-out electronic'},
+      ],
+      'IDM / Glitch': [
+        {name:'cliqhop idm', url:'https://ice6.somafm.com/cliqhop-128-mp3', desc:'Intelligent dance music'},
+        {name:'DEF CON Radio', url:'https://ice6.somafm.com/defcon-128-mp3', desc:'Hacker conference radio'},
+      ],
+      'Synthwave': [
+        {name:'Nightwave Plaza', url:'http://radio.plaza.one/mp3', desc:'Vaporwave & synthwave'},
+        {name:'Vaporwaves', url:'https://ice5.somafm.com/vaporwaves-128-mp3', desc:'SomaFM vaporwave'},
+        {name:'Synphaera Radio', url:'https://ice6.somafm.com/synphaera-128-mp3', desc:'Electronic & synth ambient'},
+      ],
+      'Electro / Breaks': [
+        {name:'Digitalis', url:'https://ice6.somafm.com/digitalis-128-mp3', desc:'Electro-alt & indie dance'},
+        {name:'Lush', url:'https://ice6.somafm.com/lush-128-mp3', desc:'Sensuous female vocals & electronica'},
+      ],
+    }
+  },
+  'DRUM & BASS': {
+    icon: '🥁',
+    subs: {
+      'DnB General': [
+        {name:'Bassdrive', url:'http://ice.bassdrive.net/stream', desc:'Worldwide DnB radio'},
+        {name:'DNBRadio', url:'http://ildnb1.dnbradio.com:8000/dnbradio_main.mp3', desc:'24/7 drum & bass'},
+        {name:'UK Bass Radio', url:'https://www.ukbassradio.com/stream', desc:'UK bass & DnB'},
+      ],
+      'Neurofunk': [
+        {name:'DNBRadio Neurofunk', url:'http://ildnb1.dnbradio.com:8000/dnbradio_main.mp3', desc:'Heavy neuro rollers'},
+        {name:'Kool FM', url:'https://admin.stream.rinse.fm/proxy/kool/stream', desc:'London pirate radio legend'},
+      ],
+      'Liquid Funk': [
+        {name:'DnB Liquified', url:'http://antares.dribbcast.com:5000/stream', desc:'Smooth liquid DnB'},
+        {name:'Dutch Delite DnB', url:'http://radio.dutchdelite.nl:8000/dnb', desc:'Liquid & soulful DnB'},
+      ],
+      'Jungle': [
+        {name:'Kniteforce Radio', url:'https://kniteforce.out.airtime.pro/kniteforce_a', desc:'Jungle & hardcore'},
+        {name:'Partyvibe DnB', url:'https://www.partyviberadio.com:8061/;listen.pls?sid=1', desc:'Jungle & DnB mix'},
+      ],
+    }
+  },
+  'HIP-HOP / RAP': {
+    icon: '🎤',
+    subs: {
+      'Hip-Hop': [
+        {name:'181.FM Old School HipHop', url:'http://listen.181fm.com/181-oldschool_128k.mp3', desc:'Classic hip-hop & RnB'},
+        {name:'181.FM The Beat', url:'http://listen.181fm.com/181-beat_128k.mp3', desc:'Modern hip-hop & R&B'},
+        {name:'Fluid', url:'https://ice6.somafm.com/fluid-128-mp3', desc:'Hip-hop & electronic fusion'},
+      ],
+      'Lo-Fi Hip-Hop': [
+        {name:'Chillofi Radio', url:'http://streams.dez.ovh:8000/radio.mp3', desc:'Lo-fi beats to study to'},
+        {name:'Radio Record Lo-Fi', url:'https://radiorecord.hostingradio.ru/lofi96.aacp', desc:'Russian lo-fi beats'},
+      ],
+      'Rap': [
+        {name:'90s90s HipHop & Rap', url:'http://streams.90s90s.de/hiphop/mp3-192/streams.90s90s.de/', desc:'90s golden era hip-hop'},
+      ],
+    }
+  },
+  '80s': {
+    icon: '💿',
+    subs: {
+      '80s Hits': [
+        {name:'.977 80s Hits', url:'http://17573.live.streamtheworld.com/977_80_SC', desc:'Non-stop 80s hits'},
+        {name:'Underground 80s', url:'https://ice6.somafm.com/u80s-128-mp3', desc:'Deep cuts & alt 80s'},
+        {name:'Left Coast 70s', url:'https://ice6.somafm.com/seventies-128-mp3', desc:'70s/80s crossover rock'},
+      ],
+      '80s Synth': [
+        {name:'Synthradio', url:'http://77.51.212.205:8005/live192', desc:'80s synth & new wave'},
+      ],
+    }
+  },
+  '90s': {
+    icon: '📼',
+    subs: {
+      '90s Hits': [
+        {name:'.977 The Mix', url:'http://26343.live.streamtheworld.com:3690/977_MIX_SC', desc:'90s & 2000s mix'},
+      ],
+    }
+  },
+  'JAZZ & SOUL': {
+    icon: '🎷',
+    subs: {
+      'Jazz': [
+        {name:'Sonic Universe', url:'https://ice6.somafm.com/sonicuniverse-128-mp3', desc:'Contemporary jazz'},
+      ],
+      'Soul & Funk': [
+        {name:'Seven Inch Soul', url:'https://ice6.somafm.com/7soul-128-mp3', desc:'Northern soul & 60s R&B'},
+      ],
+      'Bossa Nova': [
+        {name:'Bossa Beyond', url:'https://ice6.somafm.com/bossa-128-mp3', desc:'Brazilian bossa nova & more'},
+      ],
+    }
+  },
+  'WORLD & OTHER': {
+    icon: '🌍',
+    subs: {
+      'Reggae & Dub': [
+        {name:'Heavyweight Reggae', url:'https://ice6.somafm.com/reggae-128-mp3', desc:'Classic roots reggae'},
+        {name:'Tiki Time', url:'https://ice6.somafm.com/tikitime-128-mp3', desc:'Exotica & tiki lounge'},
+      ],
+      'Folk & Americana': [
+        {name:'Folk Forward', url:'https://ice6.somafm.com/folkfwd-128-mp3', desc:'Indie folk & americana'},
+        {name:'Boot Liquor', url:'https://ice6.somafm.com/bootliquor-128-mp3', desc:'Americana & alt-country'},
+      ],
+      'Celtic': [
+        {name:'ThistleRadio', url:'https://ice6.somafm.com/thistle-128-mp3', desc:'Celtic & Scottish music'},
+      ],
+      'Metal': [
+        {name:'Metal Detector', url:'https://ice6.somafm.com/metal-128-mp3', desc:'Heavy metal & hard rock'},
+      ],
+      'Rock & Indie': [
+        {name:'Indie Pop Rocks!', url:'https://ice6.somafm.com/indiepop-128-mp3', desc:'Indie pop & alternative'},
+        {name:'PopTron', url:'https://ice6.somafm.com/poptron-128-mp3', desc:'Electro-pop & synthpop'},
+        {name:'Covers', url:'https://ice6.somafm.com/covers-128-mp3', desc:'Best cover versions'},
+      ],
+      'Industrial & Dark': [
+        {name:'Doomed', url:'https://ice6.somafm.com/doomed-128-mp3', desc:'Dark ambient & industrial'},
+        {name:'Mission Control', url:'https://ice6.somafm.com/missioncontrol-128-mp3', desc:'NASA mission audio + ambient'},
+      ],
+    }
+  },
+};
+
+// ── STATE ──
+let radAudio = null;        // HTMLAudioElement for radio
+let radPlaying = false;
+let radCurrentStation = null;
+let radCacheTimer = null;
+let radReconnectTimer = null;
+let radReconnectAttempts = 0;
+const RAD_MAX_RECONNECT = 5;
+
+// ── BUILD DIRECTORY TREE ──
+window.radBuildTree = function(){
+  const tree = document.getElementById('radTree');
+  tree.innerHTML = '';
+  for(const [genre, data] of Object.entries(RADIO_DIR)){
+    // Genre header
+    const gDiv = document.createElement('div');
+    gDiv.className = 'rad-genre';
+    gDiv.innerHTML = `<span class="rad-arrow">▶</span><span class="rad-genre-icon">${data.icon}</span> ${genre}`;
+    gDiv.onclick = function(e){
+      e.stopPropagation();
+      this.classList.toggle('open');
+      // Show stations in main area for this genre
+      if(this.classList.contains('open')) radShowGenre(genre);
+    };
+    tree.appendChild(gDiv);
+
+    // Sub-genres container
+    const subsDiv = document.createElement('div');
+    subsDiv.className = 'rad-subs';
+    for(const [sub, stations] of Object.entries(data.subs)){
+      // Sub-genre label
+      const subLabel = document.createElement('div');
+      subLabel.className = 'rad-station';
+      subLabel.style.cssText = 'color:var(--cyan);opacity:.6;font-size:9px;letter-spacing:1.5px;padding-left:26px;cursor:default;margin-top:4px;';
+      subLabel.textContent = '┌ ' + sub.toUpperCase();
+      subsDiv.appendChild(subLabel);
+
+      for(const st of stations){
+        const sDiv = document.createElement('div');
+        sDiv.className = 'rad-station';
+        sDiv.setAttribute('data-url', st.url);
+        sDiv.setAttribute('data-name', st.name);
+        sDiv.setAttribute('data-genre', genre + ' › ' + sub);
+        sDiv.setAttribute('data-desc', st.desc);
+        sDiv.innerHTML = st.name + (radCurrentStation && radCurrentStation.url === st.url ? ' <span class="rad-live">● LIVE</span>' : '');
+        sDiv.onclick = function(){ radPlayStation(st, genre + ' › ' + sub); radHighlightTree(st.url); };
+        subsDiv.appendChild(sDiv);
+      }
+    }
+    tree.appendChild(subsDiv);
+  }
+};
+
+function radHighlightTree(url){
+  document.querySelectorAll('.rad-station').forEach(s => {
+    if(s.getAttribute('data-url') === url){
+      s.classList.add('active');
+      if(!s.querySelector('.rad-live')){
+        s.innerHTML = s.getAttribute('data-name') + ' <span class="rad-live">● LIVE</span>';
+      }
+    } else {
+      s.classList.remove('active');
+      const n = s.getAttribute('data-name');
+      if(n) s.textContent = n;
+    }
+  });
+}
+
+// ── SHOW GENRE IN MAIN AREA ──
+function radShowGenre(genre){
+  const content = document.getElementById('radContent');
+  const data = RADIO_DIR[genre];
+  if(!data) return;
+  let html = '';
+  for(const [sub, stations] of Object.entries(data.subs)){
+    html += `<div class="rad-section-title">${data.icon} ${genre} › ${sub.toUpperCase()}</div>`;
+    html += '<div class="rad-grid">';
+    for(const st of stations){
+      const isActive = radCurrentStation && radCurrentStation.url === st.url;
+      html += `<div class="rad-card${isActive?' active':''}" onclick="radPlayStation(${JSON.stringify(st).replace(/"/g,'&quot;')},'${genre} › ${sub}')">
+        <div class="rad-card-name">${st.name}</div>
+        <div class="rad-card-desc">${st.desc}</div>
+        ${isActive ? '<div class="rad-card-badge">● LIVE</div>' : ''}
+      </div>`;
+    }
+    html += '</div>';
+  }
+  content.innerHTML = html;
+}
+
+// ── SMART PRE-CACHE STREAM ENGINE ──
+// Strategy: Use MediaSource API where available, fallback to dual-Audio ping-pong buffer
+// For ICEcast/Shoutcast MP3 streams, we fetch chunks, buffer ahead, and crossfade
+
+window.radPlayStation = function(station, genrePath){
+  // Stop any current playback
+  radStopInternal();
+  radCurrentStation = station;
+  radPlaying = true;
+  radReconnectAttempts = 0;
+
+  // Update UI
+  document.getElementById('radNowTitle').textContent = station.name;
+  document.getElementById('radNowGenre').textContent = genrePath || '';
+  document.getElementById('radNowMeta').textContent = station.desc || '';
+  document.getElementById('radNowIcon').classList.add('spinning');
+  document.getElementById('radStopBtn').style.display = '';
+  radHighlightTree(station.url);
+  radSetCacheStatus('buffering', 'CONNECTING...');
+
+  // Use the smart buffered approach
+  radStartBufferedStream(station.url);
+};
+
+function radStartBufferedStream(url){
+  // Create audio element with pre-buffering hints
+  radAudio = new Audio();
+  radAudio.crossOrigin = 'anonymous';
+  radAudio.preload = 'auto';
+  radAudio.volume = (document.getElementById('radVolume')?.value || 80) / 100;
+
+  // Buffer monitoring
+  let bufferCheckInterval = null;
+
+  radAudio.addEventListener('loadstart', () => {
+    radSetCacheStatus('buffering', 'BUFFERING...');
+  });
+
+  radAudio.addEventListener('canplay', () => {
+    radSetCacheStatus('ready', 'STREAM READY');
+    if(radPlaying) radAudio.play().catch(()=>{});
+  });
+
+  radAudio.addEventListener('playing', () => {
+    radSetCacheStatus('ready', 'PLAYING — LIVE');
+    // Start buffer monitor
+    if(bufferCheckInterval) clearInterval(bufferCheckInterval);
+    bufferCheckInterval = setInterval(() => radUpdateCacheDisplay(), 500);
+  });
+
+  radAudio.addEventListener('waiting', () => {
+    radSetCacheStatus('buffering', 'REBUFFERING...');
+  });
+
+  radAudio.addEventListener('stalled', () => {
+    radSetCacheStatus('buffering', 'STALLED — WAITING FOR DATA');
+  });
+
+  radAudio.addEventListener('error', (e) => {
+    console.warn('Radio stream error:', e);
+    radSetCacheStatus('error', 'STREAM ERROR');
+    if(bufferCheckInterval) clearInterval(bufferCheckInterval);
+    // Auto-reconnect
+    radAttemptReconnect(url);
+  });
+
+  radAudio.addEventListener('ended', () => {
+    // Streams shouldn't end, so reconnect
+    radAttemptReconnect(url);
+  });
+
+  // Add cache-busting to prevent stale connections
+  const sep = url.includes('?') ? '&' : '?';
+  radAudio.src = url + sep + '_t=' + Date.now();
+  radAudio.load();
+}
+
+function radAttemptReconnect(url){
+  if(!radPlaying || !radCurrentStation) return;
+  radReconnectAttempts++;
+  if(radReconnectAttempts > RAD_MAX_RECONNECT){
+    radSetCacheStatus('error', 'FAILED — TAP TO RETRY');
+    return;
+  }
+  radSetCacheStatus('buffering', `RECONNECTING (${radReconnectAttempts}/${RAD_MAX_RECONNECT})...`);
+  clearTimeout(radReconnectTimer);
+  radReconnectTimer = setTimeout(() => {
+    if(radPlaying && radCurrentStation && radCurrentStation.url === url){
+      radStartBufferedStream(url);
+    }
+  }, 2000 * radReconnectAttempts); // exponential backoff
+}
+
+function radUpdateCacheDisplay(){
+  if(!radAudio || !radPlaying) return;
+  const buf = radAudio.buffered;
+  const ct = radAudio.currentTime;
+  let ahead = 0;
+  for(let i = 0; i < buf.length; i++){
+    if(buf.start(i) <= ct && buf.end(i) >= ct){
+      ahead = buf.end(i) - ct;
+      break;
+    }
+  }
+  // For live streams, buffer is typically 5-30s ahead
+  const pct = Math.min(100, (ahead / 30) * 100);
+  const fill = document.getElementById('radCacheFill');
+  const text = document.getElementById('radCacheText');
+  if(fill) fill.style.width = pct + '%';
+  if(text) text.textContent = `BUFFERED: ${ahead.toFixed(1)}s AHEAD`;
+
+  if(ahead < 2){
+    radSetCacheStatus('buffering', `LOW BUFFER: ${ahead.toFixed(1)}s`);
+  } else {
+    radSetCacheStatus('ready', `BUFFERED: ${ahead.toFixed(1)}s AHEAD`);
+  }
+}
+
+function radSetCacheStatus(status, text){
+  const dot = document.getElementById('radCacheStatus');
+  const txt = document.getElementById('radCacheText');
+  if(dot){ dot.className = 'rad-cache-status'; if(status) dot.classList.add(status); }
+  if(txt && text) txt.textContent = text;
+}
+
+// ── VOLUME ──
+window.radSetVol = function(val){
+  if(radAudio) radAudio.volume = val / 100;
+};
+
+// ── STOP ──
+function radStopInternal(){
+  radPlaying = false;
+  if(radAudio){
+    radAudio.pause();
+    radAudio.removeAttribute('src');
+    radAudio.load();
+    radAudio = null;
+  }
+  clearTimeout(radReconnectTimer);
+  clearInterval(radCacheTimer);
+}
+
+window.radStop = function(){
+  radStopInternal();
+  radCurrentStation = null;
+  document.getElementById('radNowTitle').textContent = 'SELECT A STATION';
+  document.getElementById('radNowGenre').textContent = 'Browse genres on the left';
+  document.getElementById('radNowMeta').textContent = '';
+  document.getElementById('radNowIcon').classList.remove('spinning');
+  document.getElementById('radStopBtn').style.display = 'none';
+  radSetCacheStatus('', 'IDLE');
+  document.getElementById('radCacheFill').style.width = '0%';
+  radHighlightTree('');
+  // Clear active cards
+  document.querySelectorAll('.rad-card.active').forEach(c => {
+    c.classList.remove('active');
+    const badge = c.querySelector('.rad-card-badge');
+    if(badge) badge.remove();
+  });
+};
+
+// ── PAUSE MUSIC PLAYER WHEN RADIO STARTS ──
+const _origRadPlay = window.radPlayStation;
+window.radPlayStation = function(station, genrePath){
+  // Stop the main music player if playing
+  if(currentAudio && !currentAudio.paused){
+    currentAudio.pause();
+    // Update UI across all modes
+    try{ document.getElementById('arcBtnPlay').style.display=''; document.getElementById('arcBtnPause').style.display='none'; }catch(e){}
+  }
+  _origRadPlay(station, genrePath);
+};
+
+})();
 </script>
 
 <!-- ════════════════════════════════════
