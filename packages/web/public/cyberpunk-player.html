@@ -438,6 +438,17 @@ body.skin-5 #mode1{background:#05000a;}
 .arc-up-status{color:#00ff88;font-size:9px;}
 @keyframes settingsFadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
+/* ── PLAYLIST SWITCHER BUTTONS ── */
+.arc-pl-switch-btn{
+  background:transparent;border:1px solid #333;color:#555;
+  font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;
+  padding:5px 12px;cursor:pointer;text-transform:uppercase;transition:all .15s;
+}
+.arc-pl-switch-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.arc-pl-switch-btn.active{background:var(--cyan);color:#000;border-color:var(--cyan);font-weight:bold;}
+.arc-pl-switch-btn.unlocked{border-color:var(--red);color:var(--red);}
+.arc-pl-switch-btn.unlocked.active{background:var(--red);color:#fff;}
+
 /* ════════════════════════════════════════
    MODE 3 — CLIAMP (terminal)
 ════════════════════════════════════════ */
@@ -729,6 +740,19 @@ body.skin-5 #mode1{background:#05000a;}
           </div>
           <div class="arc-set-sub" id="arcBassIndicator" style="color:var(--cyan);display:none;">◈ BASS BOOST ACTIVE — +12dB SUB</div>
         </div>
+        <!-- PLAYLIST SWITCHER -->
+        <div class="arc-set-block" id="arcPlSwitcherBlock">
+          <div class="arc-set-label">PLAYLISTS</div>
+          <div class="arc-set-row" style="gap:8px;flex-wrap:wrap;">
+            <button class="arc-pl-switch-btn active" id="arcPlBtn0" onclick="switchPlaylist(0)">ALL</button>
+            <button class="arc-pl-switch-btn" id="arcPlBtn1" onclick="switchPlaylist(1)">DEEMAH</button>
+            <button class="arc-pl-switch-btn" id="arcPlBtn2" onclick="switchPlaylist(2)">RASTIX</button>
+            <button class="arc-pl-switch-btn" id="arcPlBtn3" onclick="switchPlaylist(3)">ROBBMOBB</button>
+          </div>
+          <div class="arc-set-sub" id="arcPlSwitchInfo" style="color:var(--cyan);margin-top:6px;">Viewing: ALL TRACKS</div>
+        </div>
+
+        <!-- PIN -->
         <div class="arc-set-block">
           <div class="arc-set-label">PIN CODE</div>
           <div class="arc-set-row" style="gap:6px;">
@@ -736,24 +760,33 @@ body.skin-5 #mode1{background:#05000a;}
             <div class="arc-set-hint" id="arcPinStatus"></div>
           </div>
         </div>
+
+        <!-- LOGIN -->
         <div class="arc-set-block arc-login-section" id="arcLoginSection" style="display:none;">
-          <div class="arc-set-label" style="color:var(--cyan);">◈ ADMIN ACCESS</div>
+          <div class="arc-set-label" style="color:var(--cyan);">◈ USER LOGIN</div>
           <div id="arcLoginForm">
             <div class="arc-set-row" style="flex-direction:column;gap:6px;align-items:stretch;">
-              <input type="text" id="arcLoginUser" class="arc-text-input" placeholder="LOGIN" autocomplete="off">
+              <input type="text" id="arcLoginUser" class="arc-text-input" placeholder="USERNAME" autocomplete="off">
               <input type="password" id="arcLoginPass" class="arc-text-input" placeholder="PASSWORD" autocomplete="off">
               <button class="arc-login-btn" onclick="arcDoLogin()">ENTER ▶</button>
               <div id="arcLoginError" style="color:var(--red);font-size:10px;letter-spacing:1px;display:none;">ACCESS DENIED</div>
             </div>
           </div>
-          <div class="arc-upload-panel" id="arcUploadPanel" style="display:none;">
-            <div class="arc-set-label" style="color:#00ff88;margin-top:12px;">◈ UPLOAD TRACKS</div>
-            <div class="arc-dropzone" id="arcDropzone" onclick="document.getElementById('arcFileInput').click()" ondragover="arcDragOver(event)" ondragleave="arcDragLeave(event)" ondrop="arcDrop(event)">
-              <div class="arc-drop-icon">📂</div>
-              <div class="arc-drop-text">DRAG MP3 HERE<br><span style="font-size:10px;color:#666;">OR CLICK TO BROWSE</span></div>
+          <!-- LOGGED IN panel -->
+          <div id="arcLoggedInPanel" style="display:none;">
+            <div class="arc-set-label" style="color:#00ff88;margin-top:4px;">◈ LOGGED IN AS: <span id="arcLoggedInName"></span></div>
+            <div class="arc-set-row" style="gap:8px;margin-top:8px;">
+              <button class="arc-login-btn" style="flex:1;" onclick="arcShowUpload()">UPLOAD TRACKS ▶</button>
+              <button class="arc-login-btn" style="flex:1;border-color:#555;color:#555;" onclick="arcLogout()">LOGOUT</button>
             </div>
-            <input type="file" id="arcFileInput" accept=".mp3,audio/*" multiple style="display:none" onchange="arcHandleFiles(this.files)">
-            <div class="arc-upload-list" id="arcUploadList"></div>
+            <div class="arc-upload-panel" id="arcUploadPanel" style="display:none;">
+              <div class="arc-dropzone" id="arcDropzone" onclick="document.getElementById('arcFileInput').click()" ondragover="arcDragOver(event)" ondragleave="arcDragLeave(event)" ondrop="arcDrop(event)">
+                <div class="arc-drop-icon">📂</div>
+                <div class="arc-drop-text">DRAG MP3 HERE<br><span style="font-size:10px;color:#666;">OR CLICK TO BROWSE</span></div>
+              </div>
+              <input type="file" id="arcFileInput" accept=".mp3,audio/*" multiple style="display:none" onchange="arcHandleFiles(this.files)">
+              <div class="arc-upload-list" id="arcUploadList"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -868,9 +901,26 @@ body.skin-5 #mode1{background:#05000a;}
 
 <script>
 // ════════════════════════════════════════════════
-// SHARED TRACK STORE (empty — user uploads)
+// MULTI-USER TRACK STORE
 // ════════════════════════════════════════════════
-let tracks = [];
+const userPlaylists = { 1: [], 2: [], 3: [] };
+let activePlaylistView = 0; // 0=all, 1/2/3=per-user
+let loggedInUser = null;
+
+function getActiveTracks() {
+  if (activePlaylistView === 0) {
+    return [...userPlaylists[1], ...userPlaylists[2], ...userPlaylists[3]];
+  }
+  return userPlaylists[activePlaylistView] || [];
+}
+
+// Shim so existing code referencing `tracks` still works
+Object.defineProperty(window, 'tracks', {
+  get() { return getActiveTracks(); },
+  set() {}, // swallow old assignments like tracks=[]
+  configurable: true
+});
+
 let currentAudio = null; // HTML5 Audio element
 let currentTrackIdx = -1;
 let currentMode = 1;
@@ -934,26 +984,34 @@ function syncAllUIs() {
 }
 
 function updateAllCounts() {
-  const totalSec = tracks.reduce((s,t)=>s+(t.total||0),0);
+  const t = getActiveTracks();
+  const totalSec = t.reduce((s,x)=>s+(x.total||0),0);
   const hrs = (totalSec/3600).toFixed(1);
-  document.getElementById('arcTotalBtn').textContent = `${tracks.length} SONGS / ${hrs} HRS`;
-  document.getElementById('wampPlCount').textContent = `${tracks.length} tracks`;
+  document.getElementById('arcTotalBtn').textContent = `${t.length} SONGS / ${hrs} HRS`;
+  document.getElementById('wampPlCount').textContent = `${t.length} tracks`;
 }
 
 // ── ADD TRACKS from file input ──
 function addFilesToLibrary(files, cb) {
+  if (!loggedInUser) {
+    alert('LOGIN REQUIRED TO ADD TRACKS');
+    return;
+  }
+  const targetList = userPlaylists[loggedInUser];
   let pending = files.length;
+  if (!pending) { syncAllUIs(); if(cb) cb(); return; }
   Array.from(files).forEach(file => {
-    if (!file.type.startsWith('audio/') && !file.name.endsWith('.mp3')) { pending--; if(!pending && cb) cb(); return; }
+    if (!file.type.startsWith('audio/') && !file.name.endsWith('.mp3') && !file.name.endsWith('.ogg') && !file.name.endsWith('.flac') && !file.name.endsWith('.wav')) {
+      pending--; if(!pending && cb) cb(); return;
+    }
     const url = URL.createObjectURL(file);
     const trackName = file.name.replace(/\.[^.]+$/,'').toUpperCase().replace(/\s+/g,'_');
-    // Try to get real duration
     const tmpAudio = new Audio(url);
     tmpAudio.addEventListener('loadedmetadata', () => {
       const dur = tmpAudio.duration || 0;
       const m = Math.floor(dur/60).toString().padStart(2,'0');
       const s = Math.floor(dur%60).toString().padStart(2,'0');
-      tracks.push({ name: trackName, artist: 'LOCAL', dur: `${m}:${s}`, total: Math.floor(dur), url });
+      targetList.push({ name: trackName, artist: loggedInUser===1?'DEEMAH':loggedInUser===2?'RASTIX':'ROBBMOBB', dur: `${m}:${s}`, total: Math.floor(dur), url, userId: loggedInUser });
       pending--;
       if (!pending) { syncAllUIs(); if(cb) cb(); }
     });
@@ -961,12 +1019,86 @@ function addFilesToLibrary(files, cb) {
       const estSec = Math.round((file.size/128000)*8);
       const m = Math.floor(estSec/60).toString().padStart(2,'0');
       const s = (estSec%60).toString().padStart(2,'0');
-      tracks.push({ name: trackName, artist: 'LOCAL', dur: `${m}:${s}`, total: estSec, url });
+      targetList.push({ name: trackName, artist: loggedInUser===1?'DEEMAH':loggedInUser===2?'RASTIX':'ROBBMOBB', dur: `${m}:${s}`, total: estSec, url, userId: loggedInUser });
       pending--;
       if (!pending) { syncAllUIs(); if(cb) cb(); }
     });
   });
-  if (!pending) { syncAllUIs(); if(cb) cb(); }
+}
+
+// ── PLAYLIST VIEW SWITCHER ──
+function switchPlaylist(n) {
+  activePlaylistView = n;
+  currentTrackIdx = -1;
+  // highlight buttons
+  document.querySelectorAll('.arc-pl-switch-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === n);
+  });
+  syncAllUIs();
+}
+
+// ── ARC LOGIN / LOGOUT ──
+const USERS = {
+  'deemah':   { pass: 'noT1333Deemahseeq',                   id: 1, label: 'DEEMAH' },
+  'rastix':   { pass: 'yesyes1337Sanj0ch3k',                  id: 2, label: 'RASTIX' },
+  'robbmobb': { pass: 'yesm8myNameIsRobbThaSecretMobb1337',   id: 3, label: 'ROBBMOBB' },
+};
+
+function arcDoLogin() {
+  const user = document.getElementById('arcLoginUser').value.trim().toLowerCase();
+  const pass = document.getElementById('arcLoginPass').value;
+  const err  = document.getElementById('arcLoginError');
+  const u = USERS[user];
+  if (u && pass === u.pass) {
+    loggedInUser = u.id;
+    document.getElementById('arcLoginForm').style.display = 'none';
+    err.style.display = 'none';
+    const panel = document.getElementById('arcUploadPanel');
+    panel.style.display = 'block';
+    // show logged-in label
+    let lbl = document.getElementById('arcLoggedInLabel');
+    if (!lbl) {
+      lbl = document.createElement('div');
+      lbl.id = 'arcLoggedInLabel';
+      lbl.style.cssText = 'font-size:9px;letter-spacing:2px;color:#00ff88;margin-bottom:8px;';
+      panel.prepend(lbl);
+    }
+    lbl.textContent = `◈ LOGGED IN AS ${u.label}`;
+    // show logout btn
+    let logoutBtn = document.getElementById('arcLogoutBtn');
+    if (!logoutBtn) {
+      logoutBtn = document.createElement('button');
+      logoutBtn.id = 'arcLogoutBtn';
+      logoutBtn.className = 'arc-btn';
+      logoutBtn.style.cssText = 'margin-top:8px;font-size:8px;letter-spacing:2px;';
+      logoutBtn.textContent = 'LOGOUT';
+      logoutBtn.onclick = arcLogout;
+      panel.appendChild(logoutBtn);
+    }
+    logoutBtn.style.display = 'inline-block';
+  } else {
+    err.style.display = 'block';
+    document.getElementById('arcLoginPass').value = '';
+    setTimeout(() => err.style.display = 'none', 2000);
+  }
+}
+
+function arcLogout() {
+  loggedInUser = null;
+  document.getElementById('arcUploadPanel').style.display = 'none';
+  document.getElementById('arcLoginForm').style.display = 'block';
+  document.getElementById('arcLoginUser').value = '';
+  document.getElementById('arcLoginPass').value = '';
+  const lbl = document.getElementById('arcLoggedInLabel');
+  if (lbl) lbl.remove();
+  const logoutBtn = document.getElementById('arcLogoutBtn');
+  if (logoutBtn) logoutBtn.style.display = 'none';
+  // re-show login section (PIN was already passed)
+  document.getElementById('arcLoginSection').style.display = 'block';
+}
+
+function arcShowUpload() {
+  document.getElementById('arcDropzone').style.display = 'block';
 }
 
 // ════════════════════════════════════════════════
@@ -1044,7 +1176,7 @@ function wampUpdateTimer(elapsed, total, pct) {
   document.getElementById('wampSeekFill').style.width = pct+'%';
   document.getElementById('wampSeekThumb').style.left = pct+'%';
   // update pl time
-  const totalSec = tracks.reduce((s,t)=>s+(t.total||0),0);
+  const totalSec = getActiveTracks().reduce((s,t)=>s+(t.total||0),0);
   const tm = Math.floor(totalSec/60).toString().padStart(2,'0');
   const ts = (totalSec%60).toString().padStart(2,'0');
   document.getElementById('wampPlTime').textContent =
@@ -1115,7 +1247,12 @@ function wampSetVol(v) {
 }
 
 function wampClearPl() {
-  tracks = [];
+  if (loggedInUser) {
+    userPlaylists[loggedInUser] = [];
+  } else {
+    // not logged in — clear all (fallback)
+    userPlaylists[1] = []; userPlaylists[2] = []; userPlaylists[3] = [];
+  }
   currentTrackIdx = -1;
   if (currentAudio) { currentAudio.pause(); currentAudio.src=''; currentAudio=null; }
   syncAllUIs();
@@ -1350,22 +1487,6 @@ function arcCheckPin(val){
     const inp=document.getElementById('arcPinInput');
     inp.style.borderColor='var(--red)';
     setTimeout(()=>{inp.style.borderColor='';inp.value='';status.textContent='';},1200);
-  }
-}
-
-// Login
-function arcDoLogin(){
-  const user=document.getElementById('arcLoginUser').value.trim();
-  const pass=document.getElementById('arcLoginPass').value;
-  const err=document.getElementById('arcLoginError');
-  if(user==='admin'&&pass==='cyber31337'){
-    document.getElementById('arcLoginForm').style.display='none';
-    err.style.display='none';
-    document.getElementById('arcUploadPanel').style.display='block';
-  } else {
-    err.style.display='block';
-    document.getElementById('arcLoginPass').value='';
-    setTimeout(()=>err.style.display='none',2000);
   }
 }
 
