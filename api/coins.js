@@ -2,16 +2,7 @@ import { query, getIp, cors } from './_db.js';
 
 const NOW = () => Math.floor(Date.now() / 1000);
 const DAY = 86400;
-
-function isWeekend() {
-  const d = new Date();
-  const day = d.getUTCDay(); // 0=Sun,6=Sat
-  const hour = d.getUTCHours();
-  // Fri 18:00 UTC → Sun 23:59 UTC
-  if (day === 6 || day === 0) return true;
-  if (day === 5 && hour >= 18) return true;
-  return false;
-}
+const DAILY_COINS = 100;
 
 export default async function handler(req, res) {
   cors(res);
@@ -23,25 +14,23 @@ export default async function handler(req, res) {
 
   const { action } = req.query;
   const now = NOW();
-  const weekend = isWeekend();
 
   // GET /api/coins — get balance + trigger daily top-up
   if (req.method === 'GET') {
-    // Upsert row
     await query(`INSERT INTO coins (ip, count, last_daily) VALUES (?, 0, 0) ON CONFLICT(ip) DO NOTHING`, [ip]);
     let row = (await query('SELECT * FROM coins WHERE ip = ?', [ip]))[0];
     let count = Number(row?.count || 0);
     let last_daily = Number(row?.last_daily || 0);
     let added = 0;
 
-    // Daily top-up: give coins if last_daily was >24h ago
+    // Daily top-up: give 100 coins if last_daily was >24h ago
     if (now - last_daily >= DAY) {
-      added = weekend ? 20 : 10;
+      added = DAILY_COINS;
       count += added;
       await query('UPDATE coins SET count = ?, last_daily = ? WHERE ip = ?', [count, now, ip]);
     }
 
-    return res.json({ coins: count, added, is_weekend: weekend, next_daily: last_daily + DAY });
+    return res.json({ coins: count, added, daily: DAILY_COINS, next_daily: last_daily + DAY });
   }
 
   // POST /api/coins { action: 'spend', amount }
