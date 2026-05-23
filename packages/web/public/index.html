@@ -1081,6 +1081,20 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 .rad-coin-fly{position:fixed;z-index:100000;font-size:32px;pointer-events:none;filter:drop-shadow(0 0 8px gold) drop-shadow(0 0 16px rgba(255,200,0,.6));text-shadow:0 0 12px gold;}
 .rad-stardust{position:fixed;z-index:99999;width:6px;height:6px;border-radius:50%;background:radial-gradient(circle,#ffe066,#ffd700,transparent);pointer-events:none;opacity:0;transition:opacity .4s,transform .5s;filter:blur(0.5px);box-shadow:0 0 6px 2px rgba(255,215,0,.5);}
 
+/* ── HELL MESSAGES SCROLL ── */
+#hellMsgScroll::-webkit-scrollbar{width:6px;}
+#hellMsgScroll::-webkit-scrollbar-track{background:#0a0000;}
+#hellMsgScroll::-webkit-scrollbar-thumb{background:#660000;border-radius:3px;}
+#hellMsgScroll::-webkit-scrollbar-thumb:hover{background:#880000;}
+@keyframes hellPulse{0%,100%{opacity:.6;text-shadow:0 0 30px #ff0000,0 0 60px rgba(255,0,0,.3);}50%{opacity:1;text-shadow:0 0 40px #ff0000,0 0 80px rgba(255,0,0,.5),0 0 120px rgba(180,0,0,.3);}}
+@keyframes hellFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+.hell-msg-card{padding:12px 14px;border:1px solid #330000;background:rgba(30,0,0,.5);position:relative;transition:all .2s;}
+.hell-msg-card:hover{border-color:#660000;background:rgba(50,0,0,.5);}
+.hell-msg-card .hell-msg-text{font-size:clamp(11px,2.5vw,14px);line-height:1.7;letter-spacing:1px;word-break:break-word;}
+.hell-msg-card .hell-msg-meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:8px;letter-spacing:1.5px;color:#440000;}
+.hell-msg-card .hell-msg-author{color:#880000;font-weight:bold;}
+.hell-msg-card .hell-msg-del{color:#440000;cursor:pointer;font-size:10px;opacity:.5;transition:opacity .2s;}
+.hell-msg-card .hell-msg-del:hover{opacity:1;color:#ff0000;}
 /* ── DJ SUPERNOVAQ M5 POPUP ── */
 #djSupernovaqPopup{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0);pointer-events:none;opacity:0;transition:opacity 0.3s;}
 #djSupernovaqPopup.active{opacity:1;pointer-events:all;background:rgba(0,0,0,.92);}
@@ -1265,7 +1279,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
   <button class="modebtn" onclick="setMode(2)">M2</button>
   <button class="modebtn" onclick="setMode(3)">M3</button>
   <button class="modebtn" onclick="setMode(4)">M4</button>
-  <button class="modebtn" onclick="setMode(5)" style="position:relative;">M5<span style="position:absolute;top:-6px;right:-8px;background:#ff4444;color:#fff;font-size:6px;padding:1px 3px;border-radius:2px;letter-spacing:1px;">NEW</span></button>
+  <button class="modebtn" onclick="setMode(5)" style="position:relative;">M5<span style="position:absolute;top:-6px;right:-8px;background:#cc0000;color:#fff;font-size:6px;padding:1px 3px;border-radius:2px;letter-spacing:1px;">HELL</span></button>
 </div>
 
 <!-- AUTH OVERLAY (shown for non-registered users) -->
@@ -2048,7 +2062,7 @@ function setMode(m) {
   if (m===1) setTimeout(()=>{ wampRenderList(); wampDrawVu(currentAudio&&!currentAudio.paused); },50);
   if (m===3) setTimeout(()=>{ cliRenderList(); cliInitSpectrum(); },50);
   if (m===4) setTimeout(()=>{ const el=document.getElementById('slotCoinCount'); if(el) el.textContent=loggedInUser?'∞':guestCoins; },50);
-  if (m===5) { setTimeout(()=>{ if(typeof voteLoadTracks==='function') voteLoadTracks(); },50); showDjSuperNovaqPopup(); }
+  if (m===5) { setTimeout(()=>{ if(!hellLoaded) hellLoadMessages(); else hellRenderMessages(); },50); showDjSuperNovaqPopup(); }
 }
 
 // ════════════════════════════════════════════════
@@ -3504,6 +3518,13 @@ function radBarsFromAhead(ahead){
 
 // ── PLAY STATION ──
 window.radPlayStation = function(station, genrePath){
+  // Coin gate for guests — need coins to change station
+  if(!loggedInUser && guestCoins <= 0){ showNoCoinsMsg(); return; }
+  if(!loggedInUser){
+    guestCoins = Math.max(0, guestCoins - 1);
+    document.getElementById('coinCount').textContent = guestCoins;
+    fetch('/api/coins?action=spend', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({amount:1}) }).catch(()=>{});
+  }
   // Stop music player if playing
   if(currentAudio && !currentAudio.paused){
     currentAudio.pause();
@@ -3555,37 +3576,34 @@ window.radPlayStation = function(station, genrePath){
 
 function radStartBufferedStream(url){
   radAudio = new Audio();
+  radAudio.crossOrigin = 'anonymous';
   radAudio.preload = 'auto';
   const volEl = document.getElementById('arcRadioVol') || document.getElementById('radVolume');
   radAudio.volume = volEl ? volEl.value / 100 : 0.8;
 
   radAudio.addEventListener('loadstart', () => radSetCacheStatus('buffering', 'BUFFERING...'));
-  radAudio.addEventListener('canplay',  () => radSetCacheStatus('ready', 'STREAM READY'));
-  radAudio.addEventListener('playing',  () => {
+  radAudio.addEventListener('canplay', () => {
+    radSetCacheStatus('ready', 'STREAM READY');
+    if(radPlaying) radAudio.play().catch(()=>{});
+  });
+  radAudio.addEventListener('playing', () => {
     radSetCacheStatus('ready', 'PLAYING — LIVE');
     if(radBufferInterval) clearInterval(radBufferInterval);
     radBufferInterval = setInterval(radUpdateCacheDisplay, 500);
   });
   radAudio.addEventListener('waiting', () => radSetCacheStatus('buffering', 'REBUFFERING...'));
   radAudio.addEventListener('stalled', () => radSetCacheStatus('buffering', 'STALLED...'));
-  radAudio.addEventListener('error', (e) => {
-    const code = radAudio && radAudio.error ? radAudio.error.code : '?';
-    const msgs = {1:'ABORTED',2:'NETWORK ERR',3:'DECODE ERR',4:'SRC NOT SUPPORTED'};
-    radSetCacheStatus('error', 'ERR: ' + (msgs[code] || 'UNKNOWN ' + code));
+  radAudio.addEventListener('error', () => {
+    radSetCacheStatus('error', 'STREAM ERROR');
     if(radBufferInterval) clearInterval(radBufferInterval);
     radAttemptReconnect(url);
   });
   radAudio.addEventListener('ended', () => radAttemptReconnect(url));
 
-  // Always proxy ALL streams — CORS blocks direct cross-origin audio
-  const streamSrc = '/api/radio-proxy?url=' + encodeURIComponent(url) + '&_t=' + Date.now();
-  radAudio.src = streamSrc;
+  // Direct stream — HTTPS stations work without proxy
+  const sep = url.includes('?') ? '&' : '?';
+  radAudio.src = url + sep + '_t=' + Date.now();
   radAudio.load();
-  // Play immediately while still in user-gesture call stack (avoids autoplay block)
-  radAudio.play().catch(err => {
-    // Not fatal — canplay/playing events will still fire once buffer is ready
-    console.warn('Radio play() early call:', err.message);
-  });
 }
 
 function radAttemptReconnect(url){
@@ -4662,6 +4680,9 @@ window.submitPayment = function() {
           <span style="position:absolute;top:-8px;right:-12px;font-size:10px;color:#ff0055;letter-spacing:1px;transform:rotate(12deg);text-shadow:0 0 8px #ff0055;">TM</span>
         </div>
         <div class="gam-subtitle" style="font-size:9px;letter-spacing:3px;margin-top:2px;">CYBER SLOT MACHINE · WIN COINS · UNLOCK MUSIC</div>
+        <div style="margin-top:8px;padding:6px 10px;background:rgba(255,0,0,.06);border:1px solid rgba(255,0,0,.2);font-size:8px;letter-spacing:1.5px;color:#cc3333;line-height:1.6;text-align:center;">
+          WANT TO UPLOAD MUSIC? 1 TRACK = 100 🪙<br>REGISTERED USER = 50 🪙<br><span style="color:#ff4444;font-size:9px;letter-spacing:2px;text-shadow:0 0 6px rgba(255,0,0,.4);">IT'S GONNA BE THE SINGLE AND YOU CAN FOOKIN' BUY IT!</span>
+        </div>
         <div style="margin-top:6px;font-size:13px;letter-spacing:2px;">
           🪙 <span id="slotCoinCount" class="gam-coin-count" style="font-size:16px;">0</span> <span style="font-size:9px;color:#555;">COINS</span>
         </div>
@@ -4790,29 +4811,59 @@ window.submitPayment = function() {
 <!-- ════════════════════════════════════
      MODE 5 — VOTING
 ════════════════════════════════════ -->
-<div id="mode5" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:48px;font-family:'Share Tech Mono',monospace;">
-  <div style="width:90%;max-width:600px;margin:0 auto;padding:20px 0;">
-    <div style="text-align:center;margin-bottom:24px;">
-      <div style="font-size:18px;letter-spacing:6px;color:var(--green,#00ff88);text-shadow:0 0 20px var(--green,#00ff88);">◈ VOTING BOOTH</div>
-      <div style="font-size:9px;letter-spacing:3px;color:#555;margin-top:6px;">UPLOADED TRACKS · VOTE TO KEEP OR REMOVE</div>
+<div id="mode5" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:48px;font-family:'Share Tech Mono',monospace;background:linear-gradient(180deg,#0a0000,#1a0000,#0a0000);position:relative;overflow:hidden;">
+  <!-- Hell ambient effects -->
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(180,0,0,.08),transparent 60%);pointer-events:none;"></div>
+  <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(100,0,0,.03) 3px,rgba(100,0,0,.03) 4px);pointer-events:none;"></div>
+
+  <div style="width:92%;max-width:620px;margin:0 auto;padding:10px 0 80px 0;">
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:clamp(22px,5vw,36px);letter-spacing:6px;color:#cc0000;text-shadow:0 0 20px #ff0000,0 0 40px rgba(255,0,0,.4),0 0 80px rgba(180,0,0,.2);font-family:'Creepster',cursive,'VT323',monospace;-webkit-text-stroke:1px #660000;">☠ MESSAGES FROM HELL ☠</div>
+      <div style="font-size:8px;letter-spacing:3px;color:#440000;margin-top:6px;">THE DAMNED SPEAK · SCROLL IF YOU DARE</div>
     </div>
 
-    <!-- Track name + duration display -->
-    <div id="voteNowPlaying" style="display:none;border:1px solid #333;padding:12px;margin-bottom:16px;background:rgba(0,255,136,.03);">
-      <div style="font-size:9px;letter-spacing:2px;color:#555;">NOW PLAYING</div>
-      <div id="voteTrackName" style="font-size:13px;color:var(--green,#00ff88);letter-spacing:2px;margin-top:4px;">—</div>
-      <div id="voteTrackDur" style="font-size:10px;color:#666;letter-spacing:1px;margin-top:2px;">0:00 / 0:00</div>
+    <!-- Messages scroll area -->
+    <div id="hellMsgScroll" style="max-height:55vh;overflow-y:auto;border:1px solid #330000;background:rgba(20,0,0,.6);padding:8px;scrollbar-width:thin;scrollbar-color:#660000 #1a0000;">
+      <div id="hellMsgList" style="display:flex;flex-direction:column;gap:10px;">
+        <div id="hellMsgEmpty" style="text-align:center;padding:60px 20px;">
+          <div style="font-size:clamp(32px,8vw,60px);color:#880000;text-shadow:0 0 30px #ff0000,0 0 60px rgba(255,0,0,.3);font-family:'Creepster',cursive;letter-spacing:4px;animation:hellPulse 3s ease-in-out infinite;">PURE EVIL</div>
+          <div style="font-size:clamp(10px,2.5vw,14px);color:#660000;letter-spacing:3px;margin-top:16px;text-shadow:0 0 8px rgba(255,0,0,.3);">LET'S THE DEVIL MAY CRY TOO</div>
+          <div style="margin-top:24px;font-size:40px;opacity:.3;animation:hellFloat 4s ease-in-out infinite;">👹</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Voting list -->
-    <div id="voteTrackList" style="display:flex;flex-direction:column;gap:8px;">
-      <div style="color:#444;font-size:10px;letter-spacing:2px;text-align:center;padding:40px 0;">Loading tracks...</div>
-    </div>
+    <!-- Superadmin / Admin panel -->
+    <div id="hellAdminPanel" style="display:none;margin-top:20px;border:1px solid #550000;background:rgba(40,0,0,.4);padding:16px;">
+      <div style="font-size:10px;letter-spacing:3px;color:#ff4444;margin-bottom:14px;text-shadow:0 0 6px rgba(255,0,0,.4);">⛧ ADMIN CONTROLS — COMMAND THE DAMNED ⛧</div>
 
-    <!-- Admin controls (superadmin only) -->
-    <div id="voteAdminPanel" style="display:none;border:1px solid #ff4444;padding:16px;margin-top:24px;background:rgba(255,0,0,.03);">
-      <div style="font-size:9px;letter-spacing:3px;color:#ff4444;margin-bottom:10px;">◈ ADMIN CONTROLS</div>
-      <div id="voteAdminInfo" style="font-size:10px;color:#888;letter-spacing:1px;"></div>
+      <!-- Add message -->
+      <div style="margin-bottom:16px;">
+        <div style="font-size:8px;color:#880000;letter-spacing:2px;margin-bottom:6px;">POST MESSAGE TO HELL</div>
+        <textarea id="hellMsgInput" rows="3" placeholder="Write your message from the depths..." style="width:100%;background:#0f0000;border:1px solid #440000;color:#ff6666;font-family:'Share Tech Mono',monospace;font-size:11px;padding:8px;box-sizing:border-box;resize:vertical;outline:none;"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
+          <label style="font-size:8px;color:#660000;letter-spacing:1px;">COLOR:</label>
+          <input id="hellMsgColor" type="color" value="#ff4444" style="width:32px;height:24px;border:1px solid #440000;background:#0f0000;cursor:pointer;">
+          <label style="font-size:8px;color:#660000;letter-spacing:1px;margin-left:8px;">AUTHOR:</label>
+          <input id="hellMsgAuthor" type="text" value="SATAN" placeholder="SATAN" style="flex:1;background:#0f0000;border:1px solid #440000;color:#cc4444;font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 8px;outline:none;">
+          <button onclick="hellPostMessage()" style="background:linear-gradient(135deg,#2a0000,#440000);border:1px solid #880000;color:#ff4444;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:6px 14px;cursor:pointer;text-shadow:0 0 6px rgba(255,0,0,.4);">⛧ POST</button>
+        </div>
+      </div>
+
+      <!-- Superadmin: Add admin -->
+      <div id="hellSuperadminPanel" style="display:none;border-top:1px solid #330000;padding-top:14px;">
+        <div style="font-size:8px;color:#880000;letter-spacing:2px;margin-bottom:6px;">ADD ADMIN BY EMAIL</div>
+        <div style="display:flex;gap:8px;">
+          <input id="hellAdminEmail" type="email" placeholder="sinner@hell.com" style="flex:1;background:#0f0000;border:1px solid #440000;color:#cc4444;font-family:'Share Tech Mono',monospace;font-size:10px;padding:6px 8px;outline:none;">
+          <button onclick="hellAddAdmin()" style="background:linear-gradient(135deg,#2a0000,#440000);border:1px solid #880000;color:#ff4444;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:6px 14px;cursor:pointer;">ADD ADMIN</button>
+        </div>
+        <div id="hellAdminResult" style="font-size:9px;color:#aa4444;margin-top:6px;min-height:16px;"></div>
+
+        <!-- Admin list -->
+        <div style="margin-top:12px;font-size:8px;color:#880000;letter-spacing:2px;margin-bottom:6px;">CURRENT ADMINS</div>
+        <div id="hellAdminList" style="display:flex;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto;"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -4941,6 +4992,207 @@ No one escapes the MIX.</div>
 </div>
 
 <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+
+<script>
+// ════════════════════════════════════════════
+// MESSAGES FROM HELL — M5 Logic
+// ════════════════════════════════════════════
+var hellMessages = [];
+var hellLoaded = false;
+
+async function hellLoadMessages(){
+  try {
+    const r = await fetch('/api/hell-messages?action=list');
+    const d = await r.json();
+    if(d.ok) hellMessages = d.messages || [];
+  } catch(e){ console.warn('Hell messages load failed:', e); }
+  hellLoaded = true;
+  hellRenderMessages();
+}
+
+function hellRenderMessages(){
+  const list = document.getElementById('hellMsgList');
+  const empty = document.getElementById('hellMsgEmpty');
+  if(!list) return;
+
+  // Clear existing cards but keep empty placeholder
+  list.querySelectorAll('.hell-msg-card').forEach(c => c.remove());
+
+  if(!hellMessages.length){
+    if(empty) empty.style.display = '';
+    return;
+  }
+  if(empty) empty.style.display = 'none';
+
+  const isSuperAdmin = loggedInUser && (loggedInUser === 'deemah' || window._userRole === 'superadmin');
+
+  hellMessages.forEach(msg => {
+    const card = document.createElement('div');
+    card.className = 'hell-msg-card';
+
+    const textEl = document.createElement('div');
+    textEl.className = 'hell-msg-text';
+    textEl.style.color = msg.color || '#ff4444';
+    textEl.style.textShadow = `0 0 8px ${msg.color || '#ff4444'}44`;
+    textEl.textContent = msg.text;
+
+    const meta = document.createElement('div');
+    meta.className = 'hell-msg-meta';
+
+    const author = document.createElement('span');
+    author.className = 'hell-msg-author';
+    author.textContent = '⛧ ' + (msg.author || 'SATAN');
+
+    const time = document.createElement('span');
+    const d = new Date(msg.created_at);
+    time.textContent = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + ' ' + d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+
+    meta.appendChild(author);
+    meta.appendChild(time);
+
+    if(isSuperAdmin){
+      const del = document.createElement('span');
+      del.className = 'hell-msg-del';
+      del.textContent = '✖ DELETE';
+      del.onclick = () => hellDeleteMessage(msg.id);
+      meta.appendChild(del);
+    }
+
+    card.appendChild(textEl);
+    card.appendChild(meta);
+    list.appendChild(card);
+  });
+
+  // Show admin panel
+  const adminPanel = document.getElementById('hellAdminPanel');
+  const superPanel = document.getElementById('hellSuperadminPanel');
+  if(adminPanel){
+    const isAdmin = loggedInUser && (loggedInUser === 'deemah' || window._userRole === 'superadmin' || window._isHellAdmin);
+    adminPanel.style.display = isAdmin ? '' : 'none';
+  }
+  if(superPanel){
+    const isSA = loggedInUser && (loggedInUser === 'deemah' || window._userRole === 'superadmin');
+    superPanel.style.display = isSA ? '' : 'none';
+    if(isSA) hellLoadAdmins();
+  }
+}
+
+async function hellPostMessage(){
+  const text = document.getElementById('hellMsgInput').value.trim();
+  if(!text) return;
+  const color = document.getElementById('hellMsgColor').value;
+  const author = document.getElementById('hellMsgAuthor').value.trim() || 'SATAN';
+
+  try {
+    const r = await fetch('/api/hell-messages?action=add', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
+      body:JSON.stringify({text, color, author})
+    });
+    const d = await r.json();
+    if(d.ok){
+      document.getElementById('hellMsgInput').value = '';
+      hellLoadMessages();
+    } else {
+      alert(d.error || 'Failed');
+    }
+  } catch(e){ alert('Network error'); }
+}
+
+async function hellDeleteMessage(id){
+  if(!confirm('Delete this message from HELL?')) return;
+  try {
+    await fetch('/api/hell-messages?action=delete', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
+      body:JSON.stringify({id})
+    });
+    hellLoadMessages();
+  } catch(e){}
+}
+
+async function hellAddAdmin(){
+  const email = document.getElementById('hellAdminEmail').value.trim();
+  if(!email) return;
+  const result = document.getElementById('hellAdminResult');
+
+  try {
+    const r = await fetch('/api/hell-messages?action=add-admin', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
+      body:JSON.stringify({email})
+    });
+    const d = await r.json();
+    if(d.ok){
+      result.innerHTML = `✓ Invite sent to <b>${d.email}</b> — confirm link: <span style="color:#ff6644;cursor:pointer;" onclick="navigator.clipboard.writeText(location.origin+'/api/hell-messages?action=confirm&token=${d.token}');this.textContent='COPIED!';">[COPY LINK]</span> — expires in 30 min`;
+      document.getElementById('hellAdminEmail').value = '';
+      hellLoadAdmins();
+    } else {
+      result.textContent = '✖ ' + (d.error || 'Failed');
+    }
+  } catch(e){ result.textContent = '✖ Network error'; }
+}
+
+async function hellLoadAdmins(){
+  try {
+    const r = await fetch('/api/hell-messages?action=admins', {
+      headers:{'Authorization':'Bearer '+authToken}
+    });
+    const d = await r.json();
+    const list = document.getElementById('hellAdminList');
+    if(!list || !d.admins) return;
+    list.innerHTML = '';
+    if(!d.admins.length){
+      list.innerHTML = '<div style="color:#330000;font-size:8px;letter-spacing:1px;">NO ADMINS YET</div>';
+      return;
+    }
+    d.admins.forEach(a => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:4px 8px;background:rgba(40,0,0,.3);border:1px solid #220000;font-size:9px;';
+      row.innerHTML = `<span style="color:#aa4444;">${a.email}</span><span style="color:${a.confirmed?'#00aa44':'#886600'};">${a.confirmed?'✓ CONFIRMED':'⏳ PENDING'}</span><span style="color:#440000;cursor:pointer;font-size:8px;" onclick="hellRemoveAdmin('${a.email}')">✖</span>`;
+      list.appendChild(row);
+    });
+  } catch(e){}
+}
+
+async function hellRemoveAdmin(email){
+  if(!confirm('Remove admin: ' + email + '?')) return;
+  try {
+    await fetch('/api/hell-messages?action=remove-admin', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
+      body:JSON.stringify({email})
+    });
+    hellLoadAdmins();
+  } catch(e){}
+}
+
+// Load hell messages when switching to M5
+var _origSetModeForHell = window.setMode;
+if(typeof _origSetModeForHell !== 'function'){
+  // setMode may not be wrapped yet, patch it later
+} else {
+  window.setMode = function(m){
+    _origSetModeForHell(m);
+    if(m === 5 && !hellLoaded) hellLoadMessages();
+    if(m === 5) hellRenderMessages(); // re-render to check admin status
+  };
+}
+// Also load on first visit
+setTimeout(() => {
+  const origSM = window.setMode;
+  if(origSM && origSM !== _origSetModeForHell){
+    const wrapped = origSM;
+    window.setMode = function(m){
+      wrapped(m);
+      if(m === 5){
+        if(!hellLoaded) hellLoadMessages();
+        else hellRenderMessages();
+      }
+    };
+  }
+}, 500);
+</script>
 
 <script>
 let djPopupShown = false;
