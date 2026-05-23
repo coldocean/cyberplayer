@@ -947,7 +947,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 #trackInfoBar .ti-dur{color:#555;margin-left:auto;}
 /* ── User status bar ── */
 #userStatusBar{display:none;position:fixed;top:10px;right:10px;z-index:99998;font-family:'Share Tech Mono',monospace;font-size:9px;color:#00ff88;letter-spacing:2px;background:#0a0a14;border:1px solid #222;padding:4px 10px;border-radius:2px;cursor:pointer;}
-#dafoeJesusWrap{position:fixed;bottom:18px;right:18px;z-index:99999;width:90px;height:90px;pointer-events:none;opacity:.6;transition:opacity .4s,filter .4s,transform .3s;filter:drop-shadow(0 0 8px rgba(255,215,0,.4)) drop-shadow(0 0 20px rgba(255,180,0,.15));}
+#dafoeJesusWrap{display:none!important;}
 #dafoeJesusWrap:hover{opacity:.9;}
 #dafoeJesusWrap img{width:100%;height:100%;object-fit:contain;border-radius:50%;border:2px solid rgba(255,215,0,.45);}
 #dafoeJesusWrap.dafoe-glow{opacity:1!important;filter:drop-shadow(0 0 28px gold) drop-shadow(0 0 50px rgba(255,215,0,.8)) brightness(1.5)!important;transform:scale(1.22);}
@@ -1284,46 +1284,44 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
       </div>
     </div>
 
-    <!-- RADIO BODY -->
-    <div class="arc-body" id="arcBodyRadio" style="display:none;">
-      <div class="arc-tracklist" id="arcRadioTracklist"></div>
-      <div class="arc-radio-right" id="arcRadioRight">
-        <div class="arc-radio-hero">
-          <div class="arc-radio-icon" id="arcRadioIcon">📻</div>
-          <div style="flex:1;min-width:0;">
-            <div class="arc-radio-name" id="arcRadioName">SELECT A STATION</div>
-            <div class="arc-radio-genre" id="arcRadioGenre">Browse genres on the left →</div>
-          </div>
-          <!-- signal strength -->
-          <div class="rad-signal" id="arcRadioSignal" title="Signal strength">
-            <div class="rad-signal-bar" id="arcSigB1" style="height:4px;"></div>
-            <div class="rad-signal-bar" id="arcSigB2" style="height:6px;"></div>
-            <div class="rad-signal-bar" id="arcSigB3" style="height:8px;"></div>
-            <div class="rad-signal-bar" id="arcSigB4" style="height:10px;"></div>
-            <div class="rad-signal-bar" id="arcSigB5" style="height:13px;"></div>
-          </div>
+    <!-- RADIO BODY — full scrollable list view -->
+    <div class="arc-body" id="arcBodyRadio" style="display:none;flex-direction:column;min-height:280px;">
+      <!-- Now-playing bar -->
+      <div id="arcRadioNowBar" style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid #1a1a28;background:#0a0a14;flex-shrink:0;">
+        <div class="arc-radio-icon" id="arcRadioIcon" style="font-size:18px;">📻</div>
+        <div style="flex:1;min-width:0;">
+          <div class="arc-radio-name" id="arcRadioName" style="font-size:10px;">SELECT A STATION</div>
+          <div class="arc-radio-genre" id="arcRadioGenre" style="font-size:8px;">Click a station below to tune in</div>
         </div>
-        <div id="arcRadioDesc" style="font-size:9px;color:#444;letter-spacing:.5px;line-height:1.6;">Pick a genre, expand it, click a station.</div>
-        <div class="arc-radio-buf">
+        <!-- buffer status -->
+        <div style="display:flex;align-items:center;gap:6px;">
           <div class="rad-cache-status" id="arcRadioDot"></div>
-          <div class="arc-radio-bufbar"><div id="arcRadioBufFill" class="rad-cache-fill"></div></div>
-          <div class="arc-radio-buftext" id="arcRadioBufText">IDLE</div>
+          <div class="arc-radio-bufbar" style="width:48px;"><div id="arcRadioBufFill" class="rad-cache-fill"></div></div>
+          <div class="arc-radio-buftext" id="arcRadioBufText" style="font-size:7px;">IDLE</div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:8px;color:#555;letter-spacing:1px;">VOL</span>
+        <!-- signal -->
+        <div class="rad-signal" id="arcRadioSignal" title="Signal strength">
+          <div class="rad-signal-bar" id="arcSigB1" style="height:4px;"></div>
+          <div class="rad-signal-bar" id="arcSigB2" style="height:6px;"></div>
+          <div class="rad-signal-bar" id="arcSigB3" style="height:8px;"></div>
+          <div class="rad-signal-bar" id="arcSigB4" style="height:10px;"></div>
+          <div class="rad-signal-bar" id="arcSigB5" style="height:13px;"></div>
+        </div>
+        <!-- vol + stop + find -->
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:7px;color:#444;">VOL</span>
           <input type="range" id="arcRadioVol" min="0" max="100" value="80"
-            style="flex:1;height:3px;-webkit-appearance:none;background:#222;outline:none;cursor:pointer;"
+            style="width:52px;height:3px;-webkit-appearance:none;background:#222;outline:none;cursor:pointer;"
             oninput="radSetVol(this.value)">
-          <span id="arcRadioVolVal" style="font-size:8px;color:#555;width:28px;text-align:right;">80%</span>
         </div>
-        <div style="display:flex;gap:8px;margin-top:8px;">
-          <button id="arcRadioStopBtn" onclick="radStop()"
-            style="display:none;flex:1;background:none;border:1px solid var(--red);color:var(--red);padding:8px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;">■ STOP RADIO</button>
-          <button id="radFindSongBtn" onclick="radFindSong()"
-            style="flex:1;background:none;border:1px solid #00ffff;color:#00ffff;padding:8px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;" title="Identify what's playing (10s sample)">🎵 FIND SONG</button>
-        </div>
-        <div id="radFindSongResult" style="margin-top:6px;font-size:9px;color:#aaa;font-family:'Share Tech Mono',monospace;display:none;line-height:1.6;border:1px solid #1a1a2a;padding:6px;background:rgba(0,0,50,.4);"></div>
+        <button id="arcRadioStopBtn" onclick="radStop()"
+          style="display:none;background:none;border:1px solid var(--red);color:var(--red);padding:4px 10px;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;cursor:pointer;white-space:nowrap;">■ STOP</button>
+        <button id="radFindSongBtn" onclick="radFindSong()"
+          style="background:none;border:1px solid #00ffff;color:#00ffff;padding:4px 10px;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;cursor:pointer;white-space:nowrap;" title="Identify what's playing">🎵 ID</button>
       </div>
+      <div id="radFindSongResult" style="font-size:9px;color:#aaa;font-family:'Share Tech Mono',monospace;display:none;line-height:1.6;border-bottom:1px solid #1a1a28;padding:6px 14px;background:rgba(0,0,50,.4);flex-shrink:0;"></div>
+      <!-- Full scrollable station list -->
+      <div id="arcRadioTracklist" style="flex:1;overflow-y:auto;padding:4px 0;"></div>
     </div>
 
     <div class="arc-bottom">
@@ -2774,6 +2772,8 @@ function doDoubleUp(multiplier) {
 
 // Init on page load
 document.addEventListener('DOMContentLoaded', () => {
+  // Auto-wipe coins on every page load — guest testing always starts fresh
+  fetch('/api/reset-coins', { method: 'GET' }).catch(() => {});
   initBanAndCoins();
   initSlotDisplay();
 });
@@ -3087,44 +3087,43 @@ let radReconnectAttempts = 0;
 let radBufferInterval = null;
 const RAD_MAX_RECONNECT = 5;
 // ── RENDER RADIO DIRECTORY INTO #arcRadioTracklist (M2 radio panel) ──
+// Full scrollable list view — like playlist, genre headers as section dividers
 window.radRenderArcRadio = function(){
   const tl = document.getElementById('arcRadioTracklist');
   if(!tl) return;
   tl.innerHTML = '';
-  if(!window._radOpenGenres){ window._radOpenGenres = {}; for(const g of Object.keys(RADIO_DIR)) window._radOpenGenres[g] = true; }
 
   for(const [genre, data] of Object.entries(RADIO_DIR)){
-    const gRow = document.createElement('div');
-    gRow.className = 'arc-track';
-    gRow.style.cssText = 'color:var(--cyan);border-left-color:var(--cyan);font-weight:bold;padding:7px 10px;cursor:pointer;justify-content:flex-start;gap:6px;';
-    const isOpen = window._radOpenGenres[genre];
-    gRow.innerHTML = `<span style="font-size:7px;display:inline-block;width:10px;transition:transform .2s;transform:rotate(${isOpen?'90':'0'}deg);">▶</span>
-      <span>${data.icon}</span>
-      <span class="arc-track-name" style="max-width:none;color:var(--cyan);">${genre}</span>`;
-    gRow.onclick = function(){
-      window._radOpenGenres[genre] = !window._radOpenGenres[genre];
-      radRenderArcRadio();
-    };
-    tl.appendChild(gRow);
+    // Genre section header
+    const gHdr = document.createElement('div');
+    gHdr.style.cssText = 'padding:8px 14px 4px;font-size:8px;letter-spacing:2px;color:var(--cyan);opacity:.7;border-top:1px solid #111;margin-top:2px;display:flex;align-items:center;gap:6px;';
+    gHdr.innerHTML = `<span>${data.icon}</span><span>${genre.toUpperCase()}</span>`;
+    tl.appendChild(gHdr);
 
-    if(isOpen){
-      for(const [sub, stations] of Object.entries(data.subs)){
-        const subRow = document.createElement('div');
-        subRow.style.cssText = 'padding:3px 10px 3px 28px;font-size:8px;color:var(--cyan);opacity:.5;letter-spacing:1.5px;font-family:"Share Tech Mono",monospace;';
-        subRow.textContent = '┌ ' + sub.toUpperCase();
-        tl.appendChild(subRow);
-        for(const st of stations){
-          const sRow = document.createElement('div');
-          const isActive = radCurrentStation && radCurrentStation.url === st.url;
-          sRow.className = 'arc-track' + (isActive ? ' active' : '');
-          sRow.style.cssText = 'padding:5px 10px 5px 34px;font-size:9px;';
-          if(isActive){ sRow.style.borderLeftColor='var(--cyan)';sRow.style.background='rgba(0,229,200,.08)';sRow.style.color='var(--cyan)'; }
-          sRow.innerHTML = `<span class="arc-track-name" style="max-width:150px;${isActive?'color:var(--cyan);':''}">${st.name}</span>
-            ${isActive ? '<span style="color:var(--red);font-size:7px;animation:radPulse 1.5s infinite;">● LIVE</span>' : '<span class="arc-track-dur" style="font-size:7px;color:#444;">▶</span>'}`;
-          const _st=st,_g=genre,_s=sub;
-          sRow.onclick = function(){ radPlayStation(_st, _g+' › '+_s); };
-          tl.appendChild(sRow);
+    for(const [sub, stations] of Object.entries(data.subs)){
+      // Sub-genre label
+      const subHdr = document.createElement('div');
+      subHdr.style.cssText = 'padding:2px 14px 2px 24px;font-size:7px;letter-spacing:1.5px;color:#333;';
+      subHdr.textContent = sub.toUpperCase();
+      tl.appendChild(subHdr);
+
+      for(const st of stations){
+        const row = document.createElement('div');
+        const isActive = radCurrentStation && radCurrentStation.url === st.url;
+        row.className = 'arc-track' + (isActive ? ' active' : '');
+        row.style.cssText = 'padding:6px 14px 6px 32px;font-size:9px;display:flex;align-items:center;gap:8px;';
+        if(isActive){
+          row.style.borderLeftColor = 'var(--cyan)';
+          row.style.background = 'rgba(0,229,200,.07)';
+          row.style.color = 'var(--cyan)';
         }
+        row.innerHTML = `
+          <span class="arc-track-name" style="flex:1;max-width:none;${isActive?'color:var(--cyan);':''}">${st.name}</span>
+          <span style="font-size:7px;color:#333;flex-shrink:0;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${st.desc||''}</span>
+          ${isActive ? '<span style="color:var(--red);font-size:7px;flex-shrink:0;animation:radPulse 1.5s infinite;">● LIVE</span>' : '<span class="arc-track-dur" style="font-size:8px;color:#333;flex-shrink:0;">▶</span>'}`;
+        const _st=st,_g=genre,_s=sub;
+        row.onclick = function(){ radPlayStation(_st, _g+' › '+_s); };
+        tl.appendChild(row);
       }
     }
   }
@@ -3241,7 +3240,6 @@ window.radPlayStation = function(station, genrePath){
 
 function radStartBufferedStream(url){
   radAudio = new Audio();
-  radAudio.crossOrigin = 'anonymous';
   radAudio.preload = 'auto';
   const volEl = document.getElementById('radVolume');
   radAudio.volume = volEl ? volEl.value / 100 : 0.8;
@@ -3265,8 +3263,8 @@ function radStartBufferedStream(url){
   });
   radAudio.addEventListener('ended', () => radAttemptReconnect(url));
 
-  // Proxy http:// streams through server to avoid mixed-content/CORS blocks on HTTPS
-  const proxyUrl = url.startsWith('http://') ? '/api/radio-proxy?url=' + encodeURIComponent(url) + '&_t=' + Date.now() : url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
+  // Proxy ALL streams through server — fixes both mixed-content (http://) and CORS blocks
+  const proxyUrl = '/api/radio-proxy?url=' + encodeURIComponent(url) + '&_t=' + Date.now();
   radAudio.src = proxyUrl;
   radAudio.load();
 }
@@ -4553,7 +4551,7 @@ document.addEventListener('DOMContentLoaded', startHackedTimer);
 </div>
 
 <!-- MEL-ZEUS COIN TARGET (thumbs up) -->
-<div id="dafoeJesusWrap"><img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FzXmJg31R_oQnpa27AQ50y%2Fmel-zeus-thumbsup.png" alt="Zeus Gibson" /></div>
+<div id="dafoeJesusWrap" style="display:none!important;"></div>
 
 <!-- HACKED / POWER OFF OVERLAY (every 40 min) -->
 <div id="hackedOverlay">
