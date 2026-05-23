@@ -20,12 +20,10 @@ function spinReel() {
 }
 
 function spinReels() {
-  // 3 reels × 3 rows visible = we spin 3 reels, show 3 symbols each
   return Array.from({ length: 3 }, () => Array.from({ length: 3 }, spinReel));
 }
 
 function calcWin(reels, betRate) {
-  // Check middle row match (reels[0][1], reels[1][1], reels[2][1])
   const mid = [reels[0][1], reels[1][1], reels[2][1]];
   const top = [reels[0][0], reels[1][0], reels[2][0]];
   const bot = [reels[0][2], reels[1][2], reels[2][2]];
@@ -34,10 +32,8 @@ function calcWin(reels, betRate) {
 
   for (const line of [mid, top, bot]) {
     if (line[0].id === line[1].id && line[1].id === line[2].id) {
-      // 3-of-a-kind
       coinsWon += Math.round(line[0].pay * betRate);
     } else if (line[0].id === line[1].id || line[1].id === line[2].id) {
-      // 2-of-a-kind on middle line only
       if (line === mid) coinsWon += 1;
     }
   }
@@ -55,15 +51,26 @@ export default async function handler(req, res) {
   try { body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); } catch {}
 
   const isAdmin = body.is_admin === true;
-  const betRate = Math.min(Math.max(Number(body.bet_rate || 1), 1), 5); // 1-5x multiplier
+  const betRate = Math.min(Math.max(Number(body.bet_rate || 1), 1), 5);
 
-  // Guests: spinning is free (no coin cost) but wins give coins
-  // Admins: also free, unlimited
+  // Guests must pay betRate coins to spin
+  if (!isAdmin) {
+    await query(`INSERT INTO coins (ip, count, last_daily) VALUES (?, 0, 0) ON CONFLICT(ip) DO NOTHING`, [ip]);
+    const row = (await query('SELECT count FROM coins WHERE ip = ?', [ip]))[0];
+    const balance = Number(row?.count || 0);
+    if (balance < betRate) {
+      return res.json({ error: 'insufficient', coins: balance, bet_cost: betRate });
+    }
+    // Deduct bet cost
+    await query('UPDATE coins SET count = count - ? WHERE ip = ?', [betRate, ip]);
+  }
+
+  // Spin
   const reels = spinReels();
   const coinsWon = calcWin(reels, betRate);
 
+  // Credit winnings to guest
   if (!isAdmin && coinsWon > 0) {
-    await query(`INSERT INTO coins (ip, count, last_daily) VALUES (?, 0, 0) ON CONFLICT(ip) DO NOTHING`, [ip]);
     await query('UPDATE coins SET count = count + ? WHERE ip = ?', [coinsWon, ip]);
   }
 
@@ -73,6 +80,7 @@ export default async function handler(req, res) {
   return res.json({
     reels: reels.map(reel => reel.map(s => ({ id: s.id, label: s.label }))),
     coins_won: coinsWon,
+    bet_cost: betRate,
     new_total: newTotal,
     is_admin: isAdmin
   });

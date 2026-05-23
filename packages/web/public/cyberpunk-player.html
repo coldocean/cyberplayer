@@ -2122,6 +2122,13 @@ async function doSpin() {
   const spinBtn = document.getElementById('slotSpinBtn');
   const msgEl = document.getElementById('slotMsg');
 
+  // Guests must have enough coins to cover the bet
+  if (!loggedInUser && guestCoins < slotBetRate) {
+    msgEl.style.color = '#e0174a';
+    msgEl.textContent = '🪙 NOT ENOUGH COINS — LOWER BET OR EARN MORE';
+    return;
+  }
+
   slotSpinning = true;
   spinBtn.disabled = true;
   spinBtn.textContent = '▶▶ SPINNING...';
@@ -2144,6 +2151,21 @@ async function doSpin() {
       body: JSON.stringify({ is_admin: !!loggedInUser, bet_rate: slotBetRate })
     });
     const d = await r.json();
+
+    // Server rejected — not enough coins
+    if (d.error === 'insufficient') {
+      clearInterval(spinInterval);
+      guestCoins = d.coins;
+      updateCoinHud(null);
+      document.getElementById('slotCoinCount').textContent = guestCoins;
+      msgEl.style.color = '#e0174a';
+      msgEl.textContent = '🪙 NOT ENOUGH COINS';
+      slotSpinning = false;
+      spinBtn.disabled = false;
+      spinBtn.textContent = '▶ SPIN';
+      return;
+    }
+
     slotResult = d;
 
     // Stop animation after 800ms, show real result
@@ -2165,15 +2187,20 @@ async function doSpin() {
 
       renderSlot(winLines);
 
-      if (d.coins_won > 0) {
-        guestCoins = d.new_total !== null ? d.new_total : guestCoins;
+      // Always sync balance from server
+      if (d.new_total !== null && d.new_total !== undefined) {
+        guestCoins = d.new_total;
         updateCoinHud(null);
         document.getElementById('slotCoinCount').textContent = loggedInUser ? '∞' : guestCoins;
+      }
+
+      if (d.coins_won > 0) {
         msgEl.style.color = '#ffd700';
-        msgEl.textContent = `🪙 +${d.coins_won} COINS! ${winLines.length > 1 ? 'MULTI-LINE WIN!' : 'WIN!'}`;
+        const net = d.coins_won - (d.bet_cost || 0);
+        msgEl.textContent = `🪙 +${d.coins_won} WIN! ${net > 0 ? '(NET +' + net + ')' : ''} ${winLines.length > 1 ? 'MULTI-LINE!' : ''}`;
       } else {
         msgEl.style.color = '#444';
-        msgEl.textContent = 'NO WIN — SPIN AGAIN';
+        msgEl.textContent = `−${d.bet_cost || slotBetRate} 🪙 NO WIN — SPIN AGAIN`;
       }
 
       slotSpinning = false;
@@ -2281,8 +2308,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     <!-- Info footer -->
     <div style="margin-top:12px;font-size:9px;color:#333;letter-spacing:1px;text-align:center;line-height:2;">
-      SPINNING IS FREE · WINS ADD COINS TO YOUR WALLET<br>
-      EACH SONG COSTS 1 🪙 · ADMINS PLAY FREE
+      EACH SPIN COSTS YOUR BET IN 🪙 · WINS PAY BIG<br>
+      EACH SONG COSTS 1 🪙 · ADMINS SPIN FREE
     </div>
 
   </div>
