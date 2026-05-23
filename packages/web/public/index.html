@@ -39,7 +39,7 @@ body{
 /* ════════════════════════════════════════
    MODE 1 — WINAMP
 ════════════════════════════════════════ */
-#mode1{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:10px;}
+#mode1{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:48px;}
 
 /* SKIN SWITCHER */
 .skin-bar{
@@ -58,7 +58,7 @@ body{
   font-family:'Share Tech Mono',monospace;
   user-select:none;
 }
-#mode1{padding:10px 0;}
+#mode1{padding:48px 0 10px 0;}
 
 /* title bar */
 .wamp-title{
@@ -457,10 +457,11 @@ body.skin-5 #mode1{background:#05000a;}
   display:none;flex-direction:column;align-items:center;justify-content:flex-start;
   min-height:100vh;width:100%;
   background:#0a0a0a;
-  padding:0;
+  padding:48px 0 0 0;
 }
 .cli-shell{
   width:min(760px,100vw);
+  min-height:calc(100vh - 48px);
   background:#000;
   border:1px solid #333;
   box-shadow:0 0 40px rgba(0,255,0,.08);
@@ -1027,8 +1028,23 @@ let currentTrackIdx = -1;
 let currentMode = 1;
 
 // ── SHARED: load a track by index into HTML5 Audio ──
-function loadTrack(idx, autoPlay) {
+async function loadTrack(idx, autoPlay) {
   if (idx < 0 || idx >= tracks.length) return;
+  // ── Coin gate for guests ──
+  if (autoPlay && !loggedInUser) {
+    if (guestCoins <= 0) { showNoCoinsMsg(); return; }
+    try {
+      const r = await fetch('/api/coins?action=spend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: 1 })
+      });
+      const d = await r.json();
+      if (!d.ok) { showNoCoinsMsg(); return; }
+      guestCoins = d.coins;
+      if (typeof updateCoinHud === 'function') updateCoinHud(null);
+    } catch(e) { /* API down — allow play */ }
+  }
   if (currentAudio) { currentAudio.pause(); currentAudio.src = ''; }
   currentTrackIdx = idx;
   const t = tracks[idx];
@@ -1224,10 +1240,12 @@ function setMode(m) {
   document.getElementById('mode1').style.display = m===1?'flex':'none';
   document.getElementById('mode2').style.display = m===2?'flex':'none';
   document.getElementById('mode3').style.display = m===3?'flex':'none';
+  document.getElementById('mode4').style.display = m===4?'flex':'none';
   document.querySelectorAll('.modebtn').forEach((b,i)=>b.classList.toggle('active',i+1===m));
   if (m===2) setTimeout(()=>{ arcRenderList(); arcDrawWave(currentAudio&&!currentAudio.paused); resizeArcCanvas(); },50);
   if (m===1) setTimeout(()=>{ wampRenderList(); wampDrawVu(currentAudio&&!currentAudio.paused); },50);
   if (m===3) setTimeout(()=>{ cliRenderList(); cliInitSpectrum(); },50);
+  if (m===4) setTimeout(()=>{ const el=document.getElementById('slotCoinCount'); if(el) el.textContent=loggedInUser?'∞':guestCoins; },50);
 }
 
 // ════════════════════════════════════════════════
@@ -1961,31 +1979,7 @@ function updateCoinHud(d) {
   }
 }
 
-// ── Gate loadTrack for guests ──
-const _origLoadTrack = loadTrack;
-window.loadTrack = async function(idx, autoPlay) {
-  if (!loggedInUser) {
-    // Guest needs coins
-    if (guestCoins <= 0) {
-      showNoCoinsMsg();
-      return;
-    }
-    try {
-      const r = await fetch('/api/coins?action=spend', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: 1 })
-      });
-      const d = await r.json();
-      if (!d.ok) { showNoCoinsMsg(); return; }
-      guestCoins = d.coins;
-      updateCoinHud(null);
-    } catch(e) {
-      // API down — allow play
-    }
-  }
-  _origLoadTrack(idx, autoPlay);
-};
+// (loadTrack coin gate is now built into the original function above)
 
 function showNoCoinsMsg() {
   // Flash a message and redirect to gaminator
@@ -2220,18 +2214,5 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 
-<script>
-// Patch setMode for mode4
-const _origSetMode = setMode;
-window.setMode = function(m) {
-  _origSetMode(m);
-  const m4 = document.getElementById('mode4');
-  if (m4) m4.style.display = m === 4 ? 'flex' : 'none';
-  if (m === 4) {
-    document.getElementById('slotCoinCount').textContent = loggedInUser ? '∞' : guestCoins;
-    document.querySelectorAll('.modebtn').forEach((b,i) => b.classList.toggle('active', i+1 === m));
-  }
-};
-</script>
 </body>
 </html>
