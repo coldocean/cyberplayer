@@ -54,10 +54,11 @@ body{
 
 /* ── WINAMP SHELL ── */
 .wamp{
-  width:280px;
+  width:min(92vw,380px);
   font-family:'Share Tech Mono',monospace;
   user-select:none;
 }
+#mode1{padding:10px 0;}
 
 /* title bar */
 .wamp-title{
@@ -577,6 +578,30 @@ body.skin-5 #mode1{background:#05000a;}
 }
 .cli-upload-area:hover,.cli-upload-area.dragover{border-color:#00ff00;color:#00aa00;}
 
+/* ── RESPONSIVE: make winamp bigger on narrow screens ── */
+@media(max-width:500px){
+  .wamp{width:min(96vw,420px);}
+  .wamp-title{height:22px;font-size:10px;padding:3px 8px;}
+  .wamp-tbtn{width:14px;height:14px;font-size:8px;}
+  .wamp-main{padding:10px;}
+  .wamp-vu{width:90px;height:56px;}
+  .wamp-ticker{font-size:11px;}
+  .wamp-timer{font-size:30px;}
+  .wamp-bitrate{font-size:9px;}
+  .wamp-btn{width:32px;height:26px;font-size:11px;}
+  .wamp-btn.wide{width:60px;font-size:10px;}
+  .wamp-vol{width:72px;}
+  .wamp-eq-bands{height:64px;}
+  .wamp-eq-slider{height:58px;}
+  .wamp-eq-lbl{font-size:7px;}
+  .wamp-eq-title{font-size:10px;}
+  .wamp-pl-list{height:130px;}
+  .wamp-pl-item{font-size:10px;padding:3px 10px;}
+  .wamp-pl-title{font-size:10px;padding:5px 10px;}
+  .wamp-pl-btn{font-size:9px;padding:3px 8px;}
+  .wamp-pl-time{font-size:9px;}
+}
+
 </style>
 </head>
 <body class="skin-1">
@@ -606,7 +631,7 @@ body.skin-5 #mode1{background:#05000a;}
   <div class="wamp">
     <!-- TITLE BAR -->
     <div class="wamp-title">
-      <span>WINAMP</span>
+      <span>playa@demonslayerplus</span>
       <div class="wamp-title-btns">
         <div class="wamp-tbtn">_</div>
         <div class="wamp-tbtn">□</div>
