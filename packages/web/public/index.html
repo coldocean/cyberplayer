@@ -880,6 +880,20 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
   0%{opacity:0;transform:scaleX(0);}
   100%{opacity:0.85;transform:scaleX(1);}
 }
+@keyframes passiveBloodDrip{
+  0%{height:0;opacity:0;}
+  3%{opacity:0.85;}
+  100%{height:100vh;opacity:1;}
+}
+@keyframes passivePool{
+  0%{opacity:0;transform:scaleX(0) scaleY(0);}
+  100%{opacity:0.9;transform:scaleX(1) scaleY(1);}
+}
+@keyframes bloodSpotGrow{
+  0%{transform:scale(0);opacity:0;}
+  20%{opacity:0.8;}
+  100%{transform:scale(1);opacity:0.75;}
+}
 @keyframes darkSoulEntry{
   0%{opacity:0;transform:scale(1.5);filter:blur(20px) brightness(0);}
   30%{opacity:1;filter:blur(5px) brightness(0.3);}
@@ -989,11 +1003,11 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
     <div style="color:#ffd700;font-size:14px;letter-spacing:3px;text-align:center;margin-top:10px;text-shadow:0 0 10px rgba(255,215,0,.5);">⚡ ZEUS AWAITS</div>
   </div>
   <div style="color:#ff6666;font-size:12px;letter-spacing:2px;text-align:center;max-width:340px;line-height:1.8;margin-bottom:16px;position:relative;z-index:2;">
-    You are the sinner and I am ready to open your third eye — <span style="color:#ffd700;">REGISTER</span>
+    You are the hard sinner and I am here to open your future — <span style="color:#cc0000;text-shadow:0 0 12px rgba(200,0,0,.8);">REGISTER NOW</span>
   </div>
   <!-- JOIN AS DARK SOUL (guest mode) -->
   <button id="darkSoulBtn" onclick="joinAsDarkSoul()" style="margin-bottom:18px;background:transparent;border:2px solid #8b0000;color:#cc0000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;padding:10px 24px;cursor:pointer;text-transform:uppercase;transition:all .3s;position:relative;z-index:2;text-shadow:0 0 8px rgba(200,0,0,.4);">
-    🩸 JOIN AS DARK SOUL 🩸
+    🩸 JOIN AS A DARK SOUL 🩸
   </button>
 
   <!-- LOGIN FORM -->
@@ -1016,7 +1030,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
     <input id="authRegEmail" type="email" placeholder="EMAIL" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
     <input id="authRegPass" type="password" placeholder="PASSWORD (6+ chars)" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
     <input id="authRegPass2" type="password" placeholder="CONFIRM PASSWORD" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
-    <button onclick="authDoRegister()" style="width:100%;background:#ffd700;color:#000;border:none;padding:10px;font-family:inherit;font-size:11px;letter-spacing:3px;cursor:pointer;font-weight:bold;">REGISTER ▶</button>
+    <button id="registerSubmitBtn" onclick="authDoRegister()" style="width:100%;background:#8b0000;color:#ffcccc;border:2px solid #cc0000;padding:10px;font-family:inherit;font-size:11px;letter-spacing:3px;cursor:pointer;font-weight:bold;position:relative;overflow:hidden;transition:all .3s;">REGISTER ▶</button>
     <div id="authRegError" style="color:#ff4444;font-size:10px;letter-spacing:1px;margin-top:8px;display:none;"></div>
     <div id="authRegSuccess" style="color:#00ff88;font-size:10px;letter-spacing:1px;margin-top:8px;display:none;"></div>
     <button onclick="authShowLogin()" style="margin-top:12px;width:100%;background:transparent;border:1px solid #555;color:#555;padding:8px;font-family:inherit;font-size:9px;letter-spacing:2px;cursor:pointer;">← BACK TO LOGIN</button>
@@ -2527,13 +2541,13 @@ window.syncAllUIs = function() {
 // ════════════════════════════════════════════
 
 const SLOT_SYMBOLS = [
-  { id:'seven',   label:'7',  color:'#ffd700', glow:'#ffd700' },
-  { id:'diamond', label:'◆',  color:'#00e5c8', glow:'#00e5c8' },
-  { id:'skull',   label:'☠',  color:'#e0174a', glow:'#e0174a' },
-  { id:'bolt',    label:'⚡', color:'#ffe030', glow:'#ffe030' },
-  { id:'red',     label:'●',  color:'#ff2060', glow:'#ff2060' },
-  { id:'gold',    label:'◉',  color:'#ffaa00', glow:'#ffaa00' },
-  { id:'card',    label:'▣',  color:'#aaaaaa', glow:'#aaaaaa' },
+  { id:'skull',   label:'☠',  color:'#e0174a', glow:'#e0174a' },  // pirate skull – top prize
+  { id:'parrot',  label:'🦜', color:'#00e5c8', glow:'#00e5c8' },  // pirate parrot
+  { id:'poison',  label:'☣',  color:'#39ff14', glow:'#39ff14' },  // toxic
+  { id:'lemon',   label:'🍋', color:'#ffe030', glow:'#ffe030' },  // toxic fruit
+  { id:'bone',    label:'🦴', color:'#cccccc', glow:'#cccccc' },  // bone
+  { id:'hook',    label:'🪝', color:'#ff9900', glow:'#ff9900' },  // pirate hook
+  { id:'anchor',  label:'⚓', color:'#4488ff', glow:'#4488ff' },  // anchor – common
 ];
 
 let slotSpinning = false;
@@ -2646,9 +2660,28 @@ async function doSpin() {
         msgEl.style.color = '#ffd700';
         const net = d.coins_won - (d.bet_cost || 0);
         msgEl.textContent = `🪙 +${d.coins_won} WIN! ${net > 0 ? '(NET +' + net + ')' : ''} ${winLines.length > 1 ? 'MULTI-LINE!' : ''}`;
+        // Show win-line highlights with a glowing border on winning rows
+        winLines.forEach(row => {
+          for (let ri = 0; ri < 3; ri++) {
+            const cell = document.getElementById(`slot_${ri}_${row}`);
+            if (cell) {
+              cell.style.outline = '2px solid #ffd700';
+              cell.style.boxShadow = '0 0 12px #ffd700, 0 0 24px rgba(255,215,0,.5)';
+              cell.style.background = 'rgba(255,215,0,.1)';
+              setTimeout(() => {
+                cell.style.outline = '';
+                cell.style.boxShadow = '';
+                cell.style.background = '';
+              }, 2800);
+            }
+          }
+        });
+        // Offer gamble after 1s
+        setTimeout(() => showDoubleUp(d.coins_won), 1000);
       } else {
         msgEl.style.color = '#444';
         msgEl.textContent = `−${d.bet_cost || slotBetRate} 🪙 NO WIN — SPIN AGAIN`;
+        hideDoubleUp();
       }
 
       slotSpinning = false;
@@ -2669,6 +2702,74 @@ async function doSpin() {
 function setBetRate(val) {
   slotBetRate = val;
   document.querySelectorAll('.slot-bet-btn').forEach(b => b.classList.toggle('active-btn', Number(b.dataset.rate) === val));
+}
+
+// ── DOUBLE UP GAMBLE ──────────────────────────────
+let _pendingWin = 0; // coins currently at stake in gamble
+
+function showDoubleUp(coins) {
+  _pendingWin = coins;
+  document.getElementById('doubleUpPanel').style.display = 'block';
+  document.getElementById('doubleUpMsg').textContent = '';
+  document.getElementById('doubleUpWonAmt').textContent = `WIN: ${coins} 🪙`;
+  document.getElementById('slotSpinBtn').disabled = true;
+  document.querySelectorAll('.dub-btn').forEach(b => b.disabled = false);
+}
+
+function hideDoubleUp() {
+  document.getElementById('doubleUpPanel').style.display = 'none';
+  document.getElementById('slotSpinBtn').disabled = false;
+  _pendingWin = 0;
+}
+
+function collectWin() {
+  // just hide, coins already in balance from doSpin
+  hideDoubleUp();
+  document.getElementById('slotMsg').textContent = `🪙 +${_pendingWin || ''} COLLECTED — SAFE!`;
+  document.getElementById('slotMsg').style.color = '#aaa';
+}
+
+function doDoubleUp(multiplier) {
+  if (_pendingWin <= 0) return;
+  const chance = 1 / multiplier;
+  const won = Math.random() < chance;
+  document.querySelectorAll('.dub-btn').forEach(b => b.disabled = true);
+
+  const msg = document.getElementById('doubleUpMsg');
+  const panel = document.getElementById('doubleUpPanel');
+
+  // Flash animation
+  panel.style.transition = 'background .15s';
+  panel.style.background = won ? 'rgba(0,200,50,.25)' : 'rgba(200,0,0,.35)';
+  setTimeout(() => { panel.style.background = 'rgba(80,0,0,.18)'; }, 400);
+
+  if (won) {
+    const newWin = _pendingWin * multiplier;
+    // Add the profit (multiplier-1 * _pendingWin) to balance
+    const profit = newWin - _pendingWin;
+    guestCoins = (guestCoins || 0) + profit;
+    document.getElementById('coinCount').textContent = guestCoins;
+    if (typeof updateCoinHud === 'function') updateCoinHud(null);
+    if (document.getElementById('slotCoinCount')) document.getElementById('slotCoinCount').textContent = loggedInUser ? '∞' : guestCoins;
+    fetch('/api/coins?action=add', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({amount: profit}) }).catch(()=>{});
+    _pendingWin = newWin;
+    msg.style.color = '#00ff88';
+    msg.textContent = `✔ ×${multiplier} WIN! → ${newWin} 🪙 — GAMBLE AGAIN OR COLLECT`;
+    document.getElementById('doubleUpWonAmt').textContent = `WIN: ${newWin} 🪙`;
+    document.querySelectorAll('.dub-btn').forEach(b => b.disabled = false);
+  } else {
+    // Lose it all — deduct _pendingWin from balance
+    guestCoins = Math.max(0, (guestCoins || 0) - _pendingWin);
+    document.getElementById('coinCount').textContent = guestCoins;
+    if (typeof updateCoinHud === 'function') updateCoinHud(null);
+    if (document.getElementById('slotCoinCount')) document.getElementById('slotCoinCount').textContent = loggedInUser ? '∞' : guestCoins;
+    fetch('/api/coins?action=spend', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({amount: _pendingWin}) }).catch(()=>{});
+    msg.style.color = '#ff2020';
+    msg.textContent = `💀 LOST IT ALL — ${_pendingWin} 🪙 GONE`;
+    document.getElementById('slotMsg').textContent = '💀 GAMBLE FAILED';
+    document.getElementById('slotMsg').style.color = '#550000';
+    setTimeout(hideDoubleUp, 2000);
+  }
 }
 
 // Init on page load
@@ -3378,13 +3479,103 @@ async function authCheckSession() {
   } catch { authShowOverlay(); }
 }
 
+// ── BLOOD ENGINE — starts on overlay open, accelerates over 30 min ──
+window._bloodEngine = null;
+window._bloodOpenedAt = null;
+
+function _startBloodEngine() {
+  const container = document.getElementById('darkSoulBlood');
+  if (!container) return;
+  container.style.display = 'block';
+  window._bloodOpenedAt = window._bloodOpenedAt || Date.now();
+
+  function spawnBlood() {
+    const elapsed = (Date.now() - window._bloodOpenedAt) / 1000;
+    const progress = Math.min(elapsed / 1800, 1); // 0→1 over 30 min
+    const count = 1 + Math.floor(progress * 4);
+
+    for (let i = 0; i < count; i++) {
+      // Drip from top
+      const drip = document.createElement('div');
+      const leftPct = Math.random() * 100;
+      const width = 4 + Math.random() * 18 + progress * 20;
+      const dur = Math.max(5, 30 - progress * 25);
+      drip.style.cssText = `position:absolute;top:0;left:${leftPct}%;width:${width}px;height:0;background:linear-gradient(180deg,#5a0000,#880000,#bb0000,rgba(160,0,0,.8));border-radius:0 0 50% 50%;pointer-events:none;animation:passiveBloodDrip ${dur}s ease-in forwards;z-index:3;`;
+      container.appendChild(drip);
+
+      // Blob splat — lower half, overlaps the form
+      const spot = document.createElement('div');
+      const sw = 20 + Math.random() * 80 + progress * 120;
+      spot.style.cssText = `position:absolute;left:${10+Math.random()*80}%;top:${40+Math.random()*55}%;width:${sw}px;height:${sw*(0.4+Math.random()*.6)}px;background:radial-gradient(ellipse at 40% 40%,#cc0000,#880000,rgba(60,0,0,0));border-radius:${30+Math.random()*50}% ${50+Math.random()*40}% ${40+Math.random()*50}% ${30+Math.random()*50}%;pointer-events:none;transform:scale(0);opacity:0;animation:bloodSpotGrow ${1.5+Math.random()*2}s ease-out ${Math.random()*2}s forwards;z-index:4;`;
+      container.appendChild(spot);
+    }
+
+    // Pool at the bottom
+    if (Math.random() < 0.5 + progress * 0.4) {
+      const pool = document.createElement('div');
+      const pw = 30 + Math.random() * 120 + progress * 200;
+      pool.style.cssText = `position:absolute;bottom:${Math.random()*25}%;left:${Math.random()*85}%;width:${pw}px;height:${8+Math.random()*20}px;background:radial-gradient(ellipse at center,rgba(160,0,0,.9),rgba(80,0,0,0));border-radius:50%;pointer-events:none;transform:scaleX(0);opacity:0;animation:passivePool ${2+Math.random()*3}s ease-out ${Math.random()}s forwards;z-index:4;`;
+      container.appendChild(pool);
+    }
+
+    // Pulse the register button
+    _pulseRegisterBtn(progress);
+
+    // Lock register at 30 min
+    if (progress >= 1) {
+      const btn = document.getElementById('registerSubmitBtn');
+      if (btn && !btn.disabled) {
+        btn.disabled = true;
+        btn.textContent = '🩸 BLOOD HAS CLAIMED YOU 🩸';
+        btn.style.cssText += ';background:#1a0000;color:#550000;cursor:not-allowed;border-color:#330000;pointer-events:none;';
+      }
+    }
+
+    const nextDelay = Math.max(300, 3000 - progress * 2700);
+    window._bloodEngine = setTimeout(spawnBlood, nextDelay);
+  }
+
+  window._bloodEngine = setTimeout(spawnBlood, 800);
+  setTimeout(() => _pulseRegisterBtn(0), 600);
+}
+
+function _pulseRegisterBtn(progress) {
+  const btn = document.getElementById('registerSubmitBtn');
+  if (!btn || btn.disabled) return;
+  const container = document.getElementById('darkSoulBlood');
+  if (!container) return;
+  const btnRect = btn.getBoundingClientRect();
+  const dripCount = 1 + Math.floor(progress * 3);
+  for (let i = 0; i < dripCount; i++) {
+    const d = document.createElement('div');
+    const lx = btnRect.left + 10 + Math.random() * (btnRect.width - 20);
+    const lPct = (lx / window.innerWidth) * 100;
+    const w = 3 + Math.random() * 8;
+    const topPct = (btnRect.bottom / window.innerHeight) * 100;
+    const dur = 3 + Math.random() * 7;
+    d.style.cssText = `position:absolute;top:${topPct}%;left:${lPct}%;width:${w}px;height:0;background:linear-gradient(180deg,#cc0000,#880000,rgba(100,0,0,.6));border-radius:0 0 50% 50%;pointer-events:none;animation:passiveBloodDrip ${dur}s ease-in forwards;z-index:5;`;
+    container.appendChild(d);
+  }
+  const intensity = Math.min(1, progress * 2 + 0.1);
+  btn.style.boxShadow = `0 ${4+intensity*16}px ${20+intensity*40}px rgba(200,0,0,${0.3+intensity*.6}),inset 0 0 ${10+intensity*20}px rgba(80,0,0,${0.3+intensity*.5})`;
+  btn.style.borderColor = `rgb(${Math.floor(180+intensity*75)},0,0)`;
+  if (progress > 0.3) {
+    btn.style.background = `rgb(${Math.floor(80+intensity*60)},0,0)`;
+  }
+}
+
+function _stopBloodEngine() {
+  if (window._bloodEngine) { clearTimeout(window._bloodEngine); window._bloodEngine = null; }
+  const c = document.getElementById('darkSoulBlood');
+  if (c) { c.innerHTML = ''; c.style.display = 'none'; }
+}
+
 function authShowOverlay() {
   document.getElementById('authOverlay').style.display = 'flex';
   document.getElementById('authLoginBox').style.display = 'block';
   document.getElementById('authRegisterBox').style.display = 'none';
   document.getElementById('authForgotBox').style.display = 'none';
   document.getElementById('authResetBox').style.display = 'none';
-  // Check for verify/reset URL params
   const params = new URLSearchParams(window.location.search);
   if (params.get('verify')) authDoVerifyEmail(params.get('verify'));
   if (params.get('reset')) {
@@ -3392,9 +3583,21 @@ function authShowOverlay() {
     document.getElementById('authResetBox').style.display = 'block';
     window._resetToken = params.get('reset');
   }
+  if (!window._bloodOpenedAt) window._bloodOpenedAt = Date.now();
+  _startBloodEngine();
 }
-function authHideOverlay() { document.getElementById('authOverlay').style.display = 'none'; }
-function authShowRegister() { document.getElementById('authLoginBox').style.display='none'; document.getElementById('authRegisterBox').style.display='block'; document.getElementById('authForgotBox').style.display='none'; }
+function authHideOverlay() {
+  document.getElementById('authOverlay').style.display = 'none';
+  _stopBloodEngine();
+  window._bloodOpenedAt = null;
+}
+function authShowRegister() {
+  document.getElementById('authLoginBox').style.display='none';
+  document.getElementById('authRegisterBox').style.display='block';
+  document.getElementById('authForgotBox').style.display='none';
+  const progress = window._bloodOpenedAt ? Math.min((Date.now()-window._bloodOpenedAt)/1800000,1) : 0;
+  setTimeout(() => _pulseRegisterBtn(progress), 150);
+}
 function authShowLogin() { document.getElementById('authLoginBox').style.display='block'; document.getElementById('authRegisterBox').style.display='none'; document.getElementById('authForgotBox').style.display='none'; document.getElementById('authResetBox').style.display='none'; }
 function authShowForgot() { document.getElementById('authLoginBox').style.display='none'; document.getElementById('authForgotBox').style.display='block'; }
 
@@ -3421,6 +3624,14 @@ async function authDoLogin() {
 }
 
 async function authDoRegister() {
+  if (window._bloodOpenedAt && (Date.now() - window._bloodOpenedAt) >= 30 * 60 * 1000) {
+    const errEl = document.getElementById('authRegError');
+    errEl.textContent = '🩸 THE BLOOD HAS TAKEN YOU — YOUR SOUL IS ALREADY CLAIMED 🩸';
+    errEl.style.color = '#880000'; errEl.style.display = 'block';
+    const c = document.getElementById('darkSoulBlood');
+    if (c) for (let i=0;i<20;i++){const s=document.createElement('div');s.style.cssText=`position:absolute;left:${Math.random()*100}%;top:${Math.random()*100}%;width:${30+Math.random()*100}px;height:${20+Math.random()*60}px;background:radial-gradient(ellipse,#cc0000,rgba(80,0,0,0));border-radius:50%;pointer-events:none;animation:bloodSpotGrow .5s ease-out forwards;z-index:10;`;c.appendChild(s);}
+    return;
+  }
   const name = document.getElementById('authRegName').value.trim();
   const email = document.getElementById('authRegEmail').value.trim();
   const pass = document.getElementById('authRegPass').value;
@@ -3579,10 +3790,23 @@ window.jesusFromSky = function(coinText) {
   flashEl.offsetHeight; // reflow
   flashEl.style.animation = 'zeusLightning 1.2s ease-out forwards';
 
-  // Deduct coin (only for non-admin guests playing tracks)
-  if (!loggedInUser && authUser && !coinText) {
+  // Deduct coin for radio/track switch (guests and dark souls, not logged-in users)
+  if (!loggedInUser && !coinText) {
+    // Immediately update HUD so it feels real-time
+    if (guestCoins > 0) {
+      guestCoins = Math.max(0, guestCoins - 1);
+      document.getElementById('coinCount').textContent = guestCoins;
+      document.getElementById('coinHud').style.display = 'block';
+    }
+    // Sync with server in background
     fetch('/api/coins?action=spend', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: 1 }) })
-      .then(r => r.json()).then(d => { if (d.ok) { guestCoins = d.coins; if (typeof updateCoinHud === 'function') updateCoinHud(null); } });
+      .then(r => r.json()).then(d => {
+        if (d.ok || d.coins !== undefined) {
+          guestCoins = d.coins !== undefined ? d.coins : guestCoins;
+          document.getElementById('coinCount').textContent = guestCoins;
+          if (typeof updateCoinHud === 'function') updateCoinHud(null);
+        }
+      }).catch(() => {});
   }
   setTimeout(() => { el.remove(); }, 3600);
 };
@@ -4131,12 +4355,12 @@ document.addEventListener('DOMContentLoaded', startHackedTimer);
         <div class="gam-paytable" style="padding:8px 12px;margin-bottom:12px;font-size:9px;letter-spacing:1px;border-radius:4px;">
           <div style="color:#666;margin-bottom:6px;letter-spacing:2px;font-size:8px;">▸ PAYTABLE — 3 OF A KIND</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
-            <span style="color:#ffd700;">7 SEVEN</span><span style="color:#555;">×10 bet</span>
-            <span style="color:#00e5c8;">◆ DIAMOND</span><span style="color:#555;">×7 bet</span>
-            <span style="color:#e0174a;">☠ SKULL</span><span style="color:#555;">×5 bet</span>
-            <span style="color:#ffe030;">⚡ BOLT</span><span style="color:#555;">×4 bet</span>
-            <span style="color:#ff2060;">● RED</span><span style="color:#555;">×3 bet</span>
-            <span style="color:#ffaa00;">◉ GOLD</span><span style="color:#555;">×2 bet</span>
+            <span style="color:#e0174a;">☠ SKULL</span><span style="color:#555;">×10 bet</span>
+            <span style="color:#00e5c8;">🦜 PARROT</span><span style="color:#555;">×7 bet</span>
+            <span style="color:#39ff14;">☣ POISON</span><span style="color:#555;">×5 bet</span>
+            <span style="color:#ffe030;">🍋 LEMON</span><span style="color:#555;">×4 bet</span>
+            <span style="color:#ccc;">🦴 BONE</span><span style="color:#555;">×3 bet</span>
+            <span style="color:#ff9900;">🪝 HOOK</span><span style="color:#555;">×2 bet</span>
           </div>
         </div>
 
@@ -4150,19 +4374,19 @@ document.addEventListener('DOMContentLoaded', startHackedTimer);
 
             <!-- 3 reels × 3 rows -->
             <div id="reel0" class="gam-reel" style="border-radius:4px;">
-              <div id="slot_0_0" class="slot-cell" style="color:#aaa;">▣</div>
-              <div id="slot_0_1" class="slot-cell slot-mid">7</div>
-              <div id="slot_0_2" class="slot-cell" style="color:#aaa;">▣</div>
+              <div id="slot_0_0" class="slot-cell" style="color:#4488ff;">⚓</div>
+              <div id="slot_0_1" class="slot-cell slot-mid" style="color:#e0174a;">☠</div>
+              <div id="slot_0_2" class="slot-cell" style="color:#4488ff;">⚓</div>
             </div>
             <div id="reel1" class="gam-reel" style="border-radius:4px;">
-              <div id="slot_1_0" class="slot-cell" style="color:#aaa;">▣</div>
-              <div id="slot_1_1" class="slot-cell slot-mid">7</div>
-              <div id="slot_1_2" class="slot-cell" style="color:#aaa;">▣</div>
+              <div id="slot_1_0" class="slot-cell" style="color:#4488ff;">⚓</div>
+              <div id="slot_1_1" class="slot-cell slot-mid" style="color:#e0174a;">☠</div>
+              <div id="slot_1_2" class="slot-cell" style="color:#4488ff;">⚓</div>
             </div>
             <div id="reel2" class="gam-reel" style="border-radius:4px;">
-              <div id="slot_2_0" class="slot-cell" style="color:#aaa;">▣</div>
-              <div id="slot_2_1" class="slot-cell slot-mid">7</div>
-              <div id="slot_2_2" class="slot-cell" style="color:#aaa;">▣</div>
+              <div id="slot_2_0" class="slot-cell" style="color:#4488ff;">⚓</div>
+              <div id="slot_2_1" class="slot-cell slot-mid" style="color:#e0174a;">☠</div>
+              <div id="slot_2_2" class="slot-cell" style="color:#4488ff;">⚓</div>
             </div>
           </div>
 
@@ -4181,6 +4405,21 @@ document.addEventListener('DOMContentLoaded', startHackedTimer);
 
           <!-- Spin button -->
           <button id="slotSpinBtn" class="gam-spin" onclick="doSpin()" style="width:100%;height:48px;font-family:'Share Tech Mono',monospace;font-size:15px;letter-spacing:5px;cursor:pointer;transition:all .15s;position:relative;z-index:2;border-radius:4px;">▶ SPIN</button>
+
+          <!-- DOUBLE UP GAMBLE PANEL — shown after a win -->
+          <div id="doubleUpPanel" style="display:none;margin-top:12px;border:1px solid #550000;background:rgba(80,0,0,.18);padding:10px;border-radius:4px;position:relative;z-index:2;">
+            <div style="text-align:center;font-size:10px;color:#ff6644;letter-spacing:2px;margin-bottom:8px;">⚡ GAMBLE YOUR WIN ⚡</div>
+            <div id="doubleUpWonAmt" style="text-align:center;font-size:13px;color:#ffd700;letter-spacing:2px;margin-bottom:8px;">WIN: 0 🪙</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px;margin-bottom:8px;">
+              <button onclick="doDoubleUp(2)"  class="dub-btn" style="background:#0a1a0a;border:1px solid #00cc44;color:#00cc44;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×2<br><span style="font-size:7px;color:#555;">50%</span></button>
+              <button onclick="doDoubleUp(3)"  class="dub-btn" style="background:#0a1000;border:1px solid #88cc00;color:#88cc00;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×3<br><span style="font-size:7px;color:#555;">33%</span></button>
+              <button onclick="doDoubleUp(4)"  class="dub-btn" style="background:#1a1000;border:1px solid #ffaa00;color:#ffaa00;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×4<br><span style="font-size:7px;color:#555;">25%</span></button>
+              <button onclick="doDoubleUp(5)"  class="dub-btn" style="background:#1a0800;border:1px solid #ff6600;color:#ff6600;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×5<br><span style="font-size:7px;color:#555;">20%</span></button>
+              <button onclick="doDoubleUp(6)"  class="dub-btn" style="background:#1a0000;border:1px solid #ff2020;color:#ff2020;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×6<br><span style="font-size:7px;color:#555;">16%</span></button>
+            </div>
+            <div id="doubleUpMsg" style="text-align:center;font-size:10px;min-height:14px;color:#ff4444;letter-spacing:1px;margin-bottom:6px;"></div>
+            <button onclick="collectWin()" style="width:100%;background:transparent;border:1px solid #444;color:#888;font-family:'Share Tech Mono',monospace;font-size:9px;padding:5px;cursor:pointer;letter-spacing:2px;border-radius:3px;">COLLECT &amp; PLAY SAFE</button>
+          </div>
         </div>
       </div>
     </div>
