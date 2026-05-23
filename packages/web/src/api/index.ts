@@ -119,5 +119,64 @@ const app = new Hono()
     return c.json({ success: true }, 200);
   });
 
+// ── SONG IDENTIFICATION (ACRCloud) ──────────────────────────────────────────
+// Requires ACR_HOST, ACR_ACCESS_KEY, ACR_ACCESS_SECRET env vars
+// Falls back gracefully if not configured
+app.post("/identify-song", async (c) => {
+  const body = await c.req.json().catch(() => ({}));
+  const { audio_base64, mime } = body as { audio_base64?: string; mime?: string };
+
+  if (!audio_base64) return c.json({ message: "No audio provided" }, 400);
+
+  const acrHost = process.env.ACR_HOST;
+  const acrKey = process.env.ACR_ACCESS_KEY;
+  const acrSecret = process.env.ACR_ACCESS_SECRET;
+
+  if (!acrHost || !acrKey || !acrSecret) {
+    return c.json({ message: "Song ID service not configured" }, 503);
+  }
+
+  try {
+    // ACRCloud HTTP API v1
+    const crypto = await import("crypto");
+    const timestamp = Math.floor(Date.now() / 1000);
+    const stringToSign = `POST\n/v1/identify\n${acrKey}\naudio\n1\n${timestamp}`;
+    const signature = crypto
+      .createHmac("sha1", acrSecret)
+      .update(stringToSign)
+      .digest("base64");
+
+    const audioBuffer = Buffer.from(audio_base64, "base64");
+
+    const fd = new FormData();
+    fd.append("sample", new Blob([audioBuffer], { type: mime || "audio/webm" }), "sample.webm");
+    fd.append("access_key", acrKey);
+    fd.append("data_type", "audio");
+    fd.append("signature_version", "1");
+    fd.append("signature", signature);
+    fd.append("sample_bytes", String(audioBuffer.length));
+    fd.append("timestamp", String(timestamp));
+
+    const resp = await fetch(`https://${acrHost}/v1/identify`, {
+      method: "POST",
+      body: fd,
+    });
+    const data = await resp.json() as any;
+
+    if (data.status?.code === 0 && data.metadata?.music?.[0]) {
+      const m = data.metadata.music[0];
+      return c.json({
+        title: m.title,
+        artist: m.artists?.map((a: any) => a.name).join(", ") || "",
+        album: m.album?.name || "",
+        score: m.score,
+      });
+    }
+    return c.json({ message: data.status?.msg || "Not recognized" });
+  } catch (e: any) {
+    return c.json({ message: "Error: " + e.message }, 500);
+  }
+});
+
 export type AppType = typeof app;
 export default app;
