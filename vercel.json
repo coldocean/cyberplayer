@@ -2,5 +2,13 @@
   "buildCommand": "cp packages/web/public/index.html packages/web/dist-static/index.html && cp packages/web/public/cyberpunk-player.html packages/web/dist-static/cyberpunk-player.html",
   "outputDirectory": "packages/web/dist-static",
   "installCommand": "bun install",
-  "framework": null
+  "framework": null,
+  "functions": {
+    "api/*.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/:path*" }
+  ]
 }

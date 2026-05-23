@@ -632,16 +632,62 @@ body.skin-5 #mode1{background:#05000a;}
   .cli-upload-area{font-size:11px;padding:14px;margin-top:8px;}
 }
 
+/* ── SLOT MACHINE ── */
+.slot-cell{
+  height:52px;display:flex;align-items:center;justify-content:center;
+  font-size:30px;font-family:'VT323',monospace;cursor:default;
+  transition:color .1s,text-shadow .1s;
+  position:relative;
+}
+.slot-mid{
+  border-top:1px solid rgba(255,215,0,.15);
+  border-bottom:1px solid rgba(255,215,0,.15);
+  background:rgba(255,215,0,.03);
+}
+.slot-win{
+  animation:slotWin .4s ease-in-out infinite alternate;
+}
+@keyframes slotWin{
+  from{transform:scale(1);}
+  to{transform:scale(1.18);filter:brightness(1.5);}
+}
+.slot-bet-btn.active-btn{
+  background:#2a0020 !important;color:#e0174a !important;
+  border-color:#e0174a !important;
+}
+#slotSpinBtn:hover{background:#2a0010;box-shadow:0 0 16px rgba(224,23,74,.4);}
+#slotSpinBtn:active{transform:scale(.97);}
+#slotSpinBtn:disabled{opacity:.5;cursor:not-allowed;}
+
+@media(max-width:600px){
+  .slot-cell{height:58px;font-size:34px;}
+}
 </style>
 </head>
 <body class="skin-1">
 
+
+<!-- BAN OVERLAY -->
+<div id="banOverlay" style="display:none;position:fixed;inset:0;z-index:99999;background:#0a0a14;display:none;flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;">
+  <div style="border:2px solid #e0174a;padding:32px 40px;max-width:420px;text-align:center;">
+    <div style="font-size:28px;color:#e0174a;letter-spacing:4px;margin-bottom:16px;">⛔ BANNED</div>
+    <div id="banMsg" style="font-size:11px;color:#ff6060;letter-spacing:2px;line-height:2;"></div>
+    <div id="banTimer" style="font-size:22px;color:#e0174a;letter-spacing:3px;margin-top:20px;font-family:'VT323',monospace;"></div>
+    <div style="margin-top:24px;font-size:9px;color:#444;letter-spacing:2px;">YOUR IP HAS BEEN LOGGED</div>
+  </div>
+</div>
+
+<!-- COIN HUD (guests only) -->
+<div id="coinHud" style="display:none;position:fixed;top:10px;left:10px;z-index:9998;font-family:'Share Tech Mono',monospace;font-size:11px;color:#ffd700;letter-spacing:1px;background:#0a0a14;border:1px solid #443300;padding:4px 10px;border-radius:2px;">
+  🪙 <span id="coinCount">0</span> <span id="coinDailyMsg" style="font-size:9px;color:#888;"></span>
+</div>
 
 <!-- MODE SWITCHER -->
 <div id="modeBtns">
   <button class="modebtn active" onclick="setMode(1)">M1</button>
   <button class="modebtn" onclick="setMode(2)">M2</button>
   <button class="modebtn" onclick="setMode(3)">M3</button>
+  <button class="modebtn" onclick="setMode(4)">M4</button>
 </div>
 
 <!-- ════════════════════════════════════
@@ -1743,6 +1789,449 @@ function setMediaSession(t) {
   navigator.mediaSession.setActionHandler('nexttrack',()=>{const i=(currentTrackIdx+1)%tracks.length;loadTrack(i,true);syncAllUIs();});
   navigator.mediaSession.setActionHandler('previoustrack',()=>{const i=currentTrackIdx>0?currentTrackIdx-1:tracks.length-1;loadTrack(i,true);syncAllUIs();});
 }
+
+// ═══════════════════════════════════════════════════════
+// BAN + COIN + GAMINATOR SYSTEM
+// ═══════════════════════════════════════════════════════
+
+// State
+let guestCoins = 0;
+let banActive = false;
+let pinLocked = false;
+let pinRetryAfter = 0;
+let banUnbanAt = 0;
+let banTimerInterval = null;
+
+// ── Ban check on load ──
+async function initBanAndCoins() {
+  try {
+    const r = await fetch('/api/ban?action=check');
+    const d = await r.json();
+    if (d.banned) {
+      banActive = true;
+      banUnbanAt = d.unban_at;
+      showBanOverlay(d);
+      return;
+    }
+    if (d.pin_locked) {
+      pinLocked = true;
+      pinRetryAfter = d.pin_retry_after;
+      lockPinInput();
+    }
+    // Load coins for guests
+    if (!loggedInUser) loadGuestCoins();
+  } catch(e) {
+    // API unreachable — allow play (fail open)
+    console.warn('Ban API unreachable:', e);
+  }
+}
+
+function showBanOverlay(d) {
+  const ov = document.getElementById('banOverlay');
+  ov.style.display = 'flex';
+  // Disable all audio
+  if (currentAudio) { currentAudio.pause(); currentAudio.src = ''; }
+  document.getElementById('banMsg').innerHTML =
+    `ACCESS DENIED<br>WRONG ${(d.reason||'').replace('wrong_','').toUpperCase()} ENTERED<br><br>` +
+    `BAN LIFTS IN:`;
+  startBanCountdown(d.unban_at);
+  // Also show pin lockout info
+  if (d.pin_retry_after) {
+    const days = Math.ceil((d.pin_retry_after - Math.floor(Date.now()/1000)) / 86400);
+    document.getElementById('banMsg').innerHTML +=
+      `<br><br><span style="font-size:9px;color:#666;">PIN/PASS RETRY AVAILABLE IN ${days} DAY${days!==1?'S':''}</span>`;
+  }
+}
+
+function startBanCountdown(unban_at) {
+  if (banTimerInterval) clearInterval(banTimerInterval);
+  function tick() {
+    const left = unban_at - Math.floor(Date.now()/1000);
+    if (left <= 0) { document.getElementById('banTimer').textContent = 'EXPIRED — RELOAD PAGE'; clearInterval(banTimerInterval); return; }
+    const h = Math.floor(left/3600);
+    const m = Math.floor((left%3600)/60);
+    const s = left%60;
+    document.getElementById('banTimer').textContent =
+      `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+  tick();
+  banTimerInterval = setInterval(tick, 1000);
+}
+
+function lockPinInput() {
+  const inp = document.getElementById('arcPinInput');
+  if (!inp) return;
+  const days = Math.ceil((pinRetryAfter - Math.floor(Date.now()/1000)) / 86400);
+  inp.disabled = true;
+  inp.placeholder = `LOCKED ${days}d`;
+  inp.style.opacity = '0.4';
+  const status = document.getElementById('arcPinStatus');
+  if (status) { status.textContent = `⛔ RETRY IN ${days} DAY${days!==1?'S':''}`; status.style.color='#e0174a'; }
+}
+
+// ── Report wrong attempt to server ──
+async function reportWrongAttempt(type) {
+  try {
+    const r = await fetch('/api/ban', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type })
+    });
+    const d = await r.json();
+    if (d.banned) {
+      banActive = true;
+      banUnbanAt = d.unban_at;
+      showBanOverlay(d);
+    }
+    return d;
+  } catch(e) {
+    console.warn('Ban report failed:', e);
+    return { banned: false };
+  }
+}
+
+// ── Patch arcCheckPin to report wrong PIN ──
+const _origCheckPin = arcCheckPin;
+window.arcCheckPinGated = async function(val) {
+  if (pinLocked) { lockPinInput(); return; }
+  if (val.length < 5) {
+    document.getElementById('arcPinStatus').textContent = '';
+    return;
+  }
+  if (val === '31337') {
+    document.getElementById('arcPinStatus').textContent = '◈ GRANTED';
+    document.getElementById('arcPinStatus').style.color = '#00ff88';
+    document.getElementById('arcLoginSection').style.display = 'block';
+  } else {
+    document.getElementById('arcPinStatus').textContent = '✕ DENIED — BANNING IP';
+    document.getElementById('arcPinStatus').style.color = 'var(--red)';
+    document.getElementById('arcLoginSection').style.display = 'none';
+    const inp = document.getElementById('arcPinInput');
+    inp.style.borderColor = 'var(--red)';
+    await reportWrongAttempt('pin');
+    setTimeout(() => { inp.style.borderColor = ''; inp.value = ''; document.getElementById('arcPinStatus').textContent = ''; }, 1200);
+  }
+};
+
+// Patch the oninput handler
+document.getElementById('arcPinInput').setAttribute('oninput', 'arcCheckPinGated(this.value)');
+
+// ── Patch arcDoLogin to report wrong password ──
+const _origDoLogin = arcDoLogin;
+window.arcDoLogin = async function() {
+  const user = document.getElementById('arcLoginUser').value.trim().toLowerCase();
+  const pass = document.getElementById('arcLoginPass').value;
+  const err  = document.getElementById('arcLoginError');
+  const USERS_LOCAL = {
+    'deemah':   { pass: 'noT1333Deemahseeq',                   id: 1, label: 'DEEMAH' },
+    'rastix':   { pass: 'yesyes1337Sanj0ch3k',                  id: 2, label: 'RASTIX' },
+    'robbmobb': { pass: 'yesm8myNameIsRobbThaSecretMobb1337',   id: 3, label: 'ROBBMOBB' },
+  };
+  const u = USERS_LOCAL[user];
+  if (u && pass === u.pass) {
+    // Correct — call original login logic
+    _origDoLogin();
+  } else {
+    err.style.display = 'block';
+    document.getElementById('arcLoginPass').value = '';
+    await reportWrongAttempt('pass');
+    setTimeout(() => err.style.display = 'none', 2000);
+  }
+};
+
+// ── Guest coins ──
+async function loadGuestCoins() {
+  try {
+    const r = await fetch('/api/coins');
+    const d = await r.json();
+    guestCoins = d.coins;
+    updateCoinHud(d);
+  } catch(e) {
+    guestCoins = 999; // fail open
+  }
+}
+
+function updateCoinHud(d) {
+  if (loggedInUser) { document.getElementById('coinHud').style.display = 'none'; return; }
+  document.getElementById('coinHud').style.display = 'block';
+  document.getElementById('coinCount').textContent = guestCoins;
+  if (d && d.added > 0) {
+    document.getElementById('coinDailyMsg').textContent = `+${d.added} daily`;
+    setTimeout(() => document.getElementById('coinDailyMsg').textContent = '', 4000);
+  }
+}
+
+// ── Gate loadTrack for guests ──
+const _origLoadTrack = loadTrack;
+window.loadTrack = async function(idx, autoPlay) {
+  if (!loggedInUser) {
+    // Guest needs coins
+    if (guestCoins <= 0) {
+      showNoCoinsMsg();
+      return;
+    }
+    try {
+      const r = await fetch('/api/coins?action=spend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: 1 })
+      });
+      const d = await r.json();
+      if (!d.ok) { showNoCoinsMsg(); return; }
+      guestCoins = d.coins;
+      updateCoinHud(null);
+    } catch(e) {
+      // API down — allow play
+    }
+  }
+  _origLoadTrack(idx, autoPlay);
+};
+
+function showNoCoinsMsg() {
+  // Flash a message and redirect to gaminator
+  const msg = document.createElement('div');
+  msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#0a0a14;border:2px solid #e0174a;padding:24px 32px;z-index:9990;font-family:Share Tech Mono,monospace;text-align:center;color:#e0174a;font-size:12px;letter-spacing:2px;';
+  msg.innerHTML = '🪙 NO COINS LEFT<br><span style="font-size:10px;color:#888;margin-top:8px;display:block;">WIN COINS IN GAMINATOR → M4</span>';
+  document.body.appendChild(msg);
+  setTimeout(() => { msg.remove(); setMode(4); }, 2200);
+}
+
+// Hide coin HUD when logged in as admin
+const _origArcDoLoginWrapped = window.arcDoLogin;
+// Re-sync coin HUD after login state changes
+const _origSyncAllUIs = syncAllUIs;
+window.syncAllUIs = function() {
+  _origSyncAllUIs();
+  if (loggedInUser) document.getElementById('coinHud').style.display = 'none';
+  cliSyncUploadLabel();
+};
+
+// ════════════════════════════════════════════
+// MODE 4 — GAMINATOR (Cyberpunk Slot Machine)
+// ════════════════════════════════════════════
+
+const SLOT_SYMBOLS = [
+  { id:'seven',   label:'7',  color:'#ffd700', glow:'#ffd700' },
+  { id:'diamond', label:'◆',  color:'#00e5c8', glow:'#00e5c8' },
+  { id:'skull',   label:'☠',  color:'#e0174a', glow:'#e0174a' },
+  { id:'bolt',    label:'⚡', color:'#ffe030', glow:'#ffe030' },
+  { id:'red',     label:'●',  color:'#ff2060', glow:'#ff2060' },
+  { id:'gold',    label:'◉',  color:'#ffaa00', glow:'#ffaa00' },
+  { id:'card',    label:'▣',  color:'#aaaaaa', glow:'#aaaaaa' },
+];
+
+let slotSpinning = false;
+let slotBetRate = 1;
+let slotReels = [[],[],[]] ; // current display [reel][row]
+let slotResult = null;
+
+function initSlotDisplay() {
+  for (let r = 0; r < 3; r++) {
+    slotReels[r] = [SLOT_SYMBOLS[0], SLOT_SYMBOLS[4], SLOT_SYMBOLS[2]];
+  }
+  renderSlot();
+}
+
+function renderSlot(winLines) {
+  for (let r = 0; r < 3; r++) {
+    for (let row = 0; row < 3; row++) {
+      const el = document.getElementById(`slot_${r}_${row}`);
+      if (!el) continue;
+      const sym = slotReels[r][row];
+      el.textContent = sym.label;
+      el.style.color = sym.color;
+      el.style.textShadow = `0 0 12px ${sym.glow}`;
+      el.classList.remove('slot-win');
+      if (winLines && winLines.includes(row)) el.classList.add('slot-win');
+    }
+  }
+}
+
+async function doSpin() {
+  if (slotSpinning) return;
+  if (banActive) return;
+
+  const spinBtn = document.getElementById('slotSpinBtn');
+  const msgEl = document.getElementById('slotMsg');
+
+  slotSpinning = true;
+  spinBtn.disabled = true;
+  spinBtn.textContent = '▶▶ SPINNING...';
+  msgEl.textContent = '';
+
+  // Animate reels spinning
+  const spinInterval = setInterval(() => {
+    for (let r = 0; r < 3; r++) {
+      for (let row = 0; row < 3; row++) {
+        slotReels[r][row] = SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
+      }
+    }
+    renderSlot();
+  }, 80);
+
+  try {
+    const r = await fetch('/api/spin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ is_admin: !!loggedInUser, bet_rate: slotBetRate })
+    });
+    const d = await r.json();
+    slotResult = d;
+
+    // Stop animation after 800ms, show real result
+    setTimeout(() => {
+      clearInterval(spinInterval);
+      // Apply server result to display
+      for (let ri = 0; ri < 3; ri++) {
+        for (let row = 0; row < 3; row++) {
+          const sym = SLOT_SYMBOLS.find(s => s.id === d.reels[ri][row].id) || SLOT_SYMBOLS[6];
+          slotReels[ri][row] = sym;
+        }
+      }
+
+      // Find winning lines
+      const winLines = [];
+      for (let row = 0; row < 3; row++) {
+        if (d.reels[0][row].id === d.reels[1][row].id && d.reels[1][row].id === d.reels[2][row].id) winLines.push(row);
+      }
+
+      renderSlot(winLines);
+
+      if (d.coins_won > 0) {
+        guestCoins = d.new_total !== null ? d.new_total : guestCoins;
+        updateCoinHud(null);
+        document.getElementById('slotCoinCount').textContent = loggedInUser ? '∞' : guestCoins;
+        msgEl.style.color = '#ffd700';
+        msgEl.textContent = `🪙 +${d.coins_won} COINS! ${winLines.length > 1 ? 'MULTI-LINE WIN!' : 'WIN!'}`;
+      } else {
+        msgEl.style.color = '#444';
+        msgEl.textContent = 'NO WIN — SPIN AGAIN';
+      }
+
+      slotSpinning = false;
+      spinBtn.disabled = false;
+      spinBtn.textContent = '▶ SPIN';
+    }, 900);
+
+  } catch(e) {
+    clearInterval(spinInterval);
+    msgEl.style.color = '#e0174a';
+    msgEl.textContent = 'SERVER ERROR — TRY AGAIN';
+    slotSpinning = false;
+    spinBtn.disabled = false;
+    spinBtn.textContent = '▶ SPIN';
+  }
+}
+
+function setBetRate(val) {
+  slotBetRate = val;
+  document.querySelectorAll('.slot-bet-btn').forEach(b => b.classList.toggle('active-btn', Number(b.dataset.rate) === val));
+}
+
+// Init on page load
+document.addEventListener('DOMContentLoaded', () => {
+  initBanAndCoins();
+  initSlotDisplay();
+});
+</script>
+
+<!-- ════════════════════════════════════
+     MODE 4 — GAMINATOR
+════════════════════════════════════ -->
+<div id="mode4" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;background:#08050f;padding-top:48px;">
+
+  <div style="width:min(440px,100vw);font-family:'Share Tech Mono',monospace;padding:0 12px;">
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:28px;color:#ffd700;letter-spacing:6px;text-shadow:0 0 20px #ffd700,0 0 40px #ff8800;font-family:'VT323',monospace;">GAMINATOR</div>
+      <div style="font-size:9px;color:#444;letter-spacing:3px;margin-top:4px;">CYBER SLOT MACHINE · WIN COINS · UNLOCK MUSIC</div>
+      <div style="margin-top:8px;font-size:12px;color:#ffd700;letter-spacing:2px;">
+        🪙 <span id="slotCoinCount">0</span> <span style="font-size:9px;color:#555;">COINS</span>
+      </div>
+    </div>
+
+    <!-- Paytable -->
+    <div style="border:1px solid #1a1a00;background:#0a0800;padding:8px 12px;margin-bottom:14px;font-size:9px;letter-spacing:1px;">
+      <div style="color:#666;margin-bottom:6px;letter-spacing:2px;">PAYTABLE — 3 OF A KIND</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
+        <span style="color:#ffd700;">7 SEVEN</span><span style="color:#555;">×10 bet</span>
+        <span style="color:#00e5c8;">◆ DIAMOND</span><span style="color:#555;">×7 bet</span>
+        <span style="color:#e0174a;">☠ SKULL</span><span style="color:#555;">×5 bet</span>
+        <span style="color:#ffe030;">⚡ BOLT</span><span style="color:#555;">×4 bet</span>
+        <span style="color:#ff2060;">● RED</span><span style="color:#555;">×3 bet</span>
+        <span style="color:#ffaa00;">◉ GOLD</span><span style="color:#555;">×2 bet</span>
+      </div>
+    </div>
+
+    <!-- Slot machine -->
+    <div style="border:2px solid #e0174a;background:#050208;padding:16px;position:relative;box-shadow:0 0 30px rgba(224,23,74,.3);">
+
+      <!-- Scanline overlay -->
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.15) 3px,rgba(0,0,0,.15) 4px);pointer-events:none;z-index:1;"></div>
+
+      <!-- Reels grid -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:12px;position:relative;z-index:2;">
+        <!-- Win line indicators -->
+        <div style="position:absolute;left:-8px;top:50%;transform:translateY(-50%);width:4px;height:4px;background:#ffd700;border-radius:50%;box-shadow:0 0 6px #ffd700;"></div>
+        <div style="position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:4px;height:4px;background:#ffd700;border-radius:50%;box-shadow:0 0 6px #ffd700;"></div>
+
+        <!-- 3 reels × 3 rows -->
+        <div id="reel0" style="border:1px solid #1a0020;background:#080010;">
+          <div id="slot_0_0" class="slot-cell" style="color:#aaa;">▣</div>
+          <div id="slot_0_1" class="slot-cell slot-mid" style="color:#ffd700;">7</div>
+          <div id="slot_0_2" class="slot-cell" style="color:#aaa;">▣</div>
+        </div>
+        <div id="reel1" style="border:1px solid #1a0020;background:#080010;">
+          <div id="slot_1_0" class="slot-cell" style="color:#aaa;">▣</div>
+          <div id="slot_1_1" class="slot-cell slot-mid" style="color:#ffd700;">7</div>
+          <div id="slot_1_2" class="slot-cell" style="color:#aaa;">▣</div>
+        </div>
+        <div id="reel2" style="border:1px solid #1a0020;background:#080010;">
+          <div id="slot_2_0" class="slot-cell" style="color:#aaa;">▣</div>
+          <div id="slot_2_1" class="slot-cell slot-mid" style="color:#ffd700;">7</div>
+          <div id="slot_2_2" class="slot-cell" style="color:#aaa;">▣</div>
+        </div>
+      </div>
+
+      <!-- Win message -->
+      <div id="slotMsg" style="text-align:center;font-size:12px;letter-spacing:2px;min-height:18px;margin-bottom:10px;color:#444;position:relative;z-index:2;"></div>
+
+      <!-- Bet rate -->
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;position:relative;z-index:2;">
+        <span style="font-size:9px;color:#555;letter-spacing:1px;">BET×</span>
+        <button class="slot-bet-btn active-btn" data-rate="1" onclick="setBetRate(1)" style="border:1px solid #333;background:#0a0010;color:#aaa;font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;">1</button>
+        <button class="slot-bet-btn" data-rate="2" onclick="setBetRate(2)" style="border:1px solid #333;background:#0a0010;color:#aaa;font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;">2</button>
+        <button class="slot-bet-btn" data-rate="3" onclick="setBetRate(3)" style="border:1px solid #333;background:#0a0010;color:#aaa;font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;">3</button>
+        <button class="slot-bet-btn" data-rate="5" onclick="setBetRate(5)" style="border:1px solid #333;background:#0a0010;color:#ffd700;font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;">5×</button>
+        <span style="margin-left:auto;font-size:9px;color:#333;letter-spacing:1px;">WIN LINES: 3</span>
+      </div>
+
+      <!-- Spin button -->
+      <button id="slotSpinBtn" onclick="doSpin()" style="width:100%;height:44px;border:2px solid #e0174a;background:#1a0010;color:#e0174a;font-family:'Share Tech Mono',monospace;font-size:14px;letter-spacing:4px;cursor:pointer;transition:all .15s;position:relative;z-index:2;">▶ SPIN</button>
+    </div>
+
+    <!-- Info footer -->
+    <div style="margin-top:12px;font-size:9px;color:#333;letter-spacing:1px;text-align:center;line-height:2;">
+      SPINNING IS FREE · WINS ADD COINS TO YOUR WALLET<br>
+      EACH SONG COSTS 1 🪙 · ADMINS PLAY FREE
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Patch setMode for mode4
+const _origSetMode = setMode;
+window.setMode = function(m) {
+  _origSetMode(m);
+  const m4 = document.getElementById('mode4');
+  if (m4) m4.style.display = m === 4 ? 'flex' : 'none';
+  if (m === 4) {
+    document.getElementById('slotCoinCount').textContent = loggedInUser ? '∞' : guestCoins;
+    document.querySelectorAll('.modebtn').forEach((b,i) => b.classList.toggle('active', i+1 === m));
+  }
+};
 </script>
 </body>
 </html>
