@@ -701,7 +701,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
   .cli-upload-area{font-size:11px;padding:14px;margin-top:8px;}
 }
 
-/* ── GAMINATOR SLOT MACHINE ── */
+/* ── GLUMINATOR SLOT MACHINE ── */
 .gam-title{color:#ffd700;text-shadow:0 0 20px #ffd700,0 0 40px #ff8800;}
 .gam-subtitle{color:#444;}
 .gam-coin-count{color:#ffd700;}
@@ -1062,6 +1062,129 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 </head>
 <body class="skin-1">
 
+<!-- ════════════════════════════════════
+     HELL CAGE — LOADING SCREEN
+════════════════════════════════════ -->
+<div id="hellCageScreen" style="display:flex;position:fixed;inset:0;z-index:999999;background:#000;flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;overflow:hidden;">
+  <!-- Cage bars -->
+  <div style="position:absolute;inset:0;pointer-events:none;z-index:1;">
+    <div style="position:absolute;left:8%;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#330000,#8b0000,#330000);box-shadow:0 0 10px #8b0000;opacity:.7;"></div>
+    <div style="position:absolute;left:24%;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#330000,#8b0000,#330000);box-shadow:0 0 10px #8b0000;opacity:.7;"></div>
+    <div style="position:absolute;left:40%;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#330000,#8b0000,#330000);box-shadow:0 0 10px #8b0000;opacity:.7;"></div>
+    <div style="position:absolute;left:57%;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#330000,#8b0000,#330000);box-shadow:0 0 10px #8b0000;opacity:.7;"></div>
+    <div style="position:absolute;left:73%;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#330000,#8b0000,#330000);box-shadow:0 0 10px #8b0000;opacity:.7;"></div>
+    <div style="position:absolute;left:89%;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#330000,#8b0000,#330000);box-shadow:0 0 10px #8b0000;opacity:.7;"></div>
+    <!-- Horizontal bars -->
+    <div style="position:absolute;top:15%;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#8b0000,transparent);box-shadow:0 0 8px #8b0000;opacity:.5;"></div>
+    <div style="position:absolute;top:45%;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#8b0000,transparent);box-shadow:0 0 8px #8b0000;opacity:.5;"></div>
+    <div style="position:absolute;top:75%;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#8b0000,transparent);box-shadow:0 0 8px #8b0000;opacity:.5;"></div>
+    <!-- Fire glow bottom -->
+    <div style="position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(0deg,rgba(180,0,0,.4),rgba(255,60,0,.2),transparent);animation:hellFlicker 1.2s ease-in-out infinite alternate;"></div>
+  </div>
+  <!-- Content -->
+  <div style="position:relative;z-index:2;text-align:center;padding:0 20px;">
+    <div id="hellCageEmoji" style="font-size:64px;margin-bottom:16px;animation:hellFlicker 0.8s ease-in-out infinite alternate;">🔥</div>
+    <div style="font-size:clamp(28px,8vw,52px);color:#cc0000;letter-spacing:8px;text-shadow:0 0 30px #ff0000,0 0 60px rgba(255,0,0,.4);font-family:'VT323',monospace;animation:hellGlitch 4s infinite;">HELL CAGE</div>
+    <div style="font-size:11px;color:#660000;letter-spacing:4px;margin-top:8px;margin-bottom:32px;">WELCOME TO THE ABYSS</div>
+    <!-- Loading bar -->
+    <div style="width:min(320px,80vw);height:4px;background:#1a0000;border:1px solid #440000;margin:0 auto 16px;overflow:hidden;">
+      <div id="hellLoadBar" style="height:100%;width:0%;background:linear-gradient(90deg,#8b0000,#ff2200);box-shadow:0 0 8px #ff2200;transition:width .1s linear;"></div>
+    </div>
+    <div id="hellLoadTxt" style="font-size:9px;color:#440000;letter-spacing:3px;">LOADING SOUL DATA...</div>
+  </div>
+</div>
+
+<style>
+@keyframes hellFlicker{0%{opacity:.7;}100%{opacity:1;}}
+@keyframes hellGlitch{0%,95%{text-shadow:0 0 30px #ff0000,0 0 60px rgba(255,0,0,.4);}96%{text-shadow:-2px 0 #ff2200,2px 0 #ff0000;transform:translateX(-2px);}97%{text-shadow:2px 0 #ff0000,-2px 0 #ff2200;transform:translateX(2px);}98%,100%{text-shadow:0 0 30px #ff0000;transform:none;}}
+</style>
+
+<!-- ════════════════════════════════════
+     EVIL FACE PAYMENT SUCCESS OVERLAY
+════════════════════════════════════ -->
+<div id="evilFaceOverlay" style="display:none;position:fixed;inset:0;z-index:999998;background:rgba(0,0,0,.95);flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;text-align:center;">
+  <div id="evilFaceContent" style="position:relative;">
+    <img src="/evil-face.png" id="evilFaceImg" style="width:min(320px,80vw);height:auto;border:3px solid #8b0000;box-shadow:0 0 60px rgba(255,0,0,.6);border-radius:8px;animation:evilPulse 1s ease-in-out infinite alternate;" />
+    <div style="margin-top:20px;font-size:clamp(14px,4vw,22px);color:#cc0000;letter-spacing:4px;text-shadow:0 0 20px #ff0000;font-family:'VT323',monospace;">THE EVIL CAN SMILE TOO...</div>
+  </div>
+  <audio id="evilLaughAudio" src="/evil-laugh.mp3" preload="auto"></audio>
+</div>
+
+<!-- THX POPUP -->
+<div id="thxHellPopup" style="display:none;position:fixed;inset:0;z-index:999997;background:rgba(0,0,0,.88);flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;text-align:center;">
+  <div style="border:2px solid #8b0000;padding:40px 32px;max-width:460px;background:rgba(15,0,0,.9);box-shadow:0 0 60px rgba(180,0,0,.4);">
+    <div style="font-size:48px;margin-bottom:16px;">😈</div>
+    <div style="font-size:clamp(20px,6vw,32px);color:#cc0000;letter-spacing:6px;font-family:'VT323',monospace;text-shadow:0 0 20px #ff0000;margin-bottom:16px;">THX FOR YOUR ASSISTANCE</div>
+    <div style="font-size:13px;color:#ff4444;letter-spacing:3px;line-height:2.2;margin-bottom:24px;">IN HELL YOU WILL GET<br>YOUR <span style="color:#ffd700;text-shadow:0 0 10px #ffd700;">HOT SPOT</span></div>
+    <button onclick="document.getElementById('thxHellPopup').style.display='none';" style="background:transparent;border:2px solid #8b0000;color:#cc0000;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;padding:10px 28px;cursor:pointer;text-transform:uppercase;">CLOSE THE GATES</button>
+  </div>
+</div>
+
+<style>
+@keyframes evilPulse{0%{box-shadow:0 0 40px rgba(255,0,0,.4);}100%{box-shadow:0 0 80px rgba(255,0,0,.8),0 0 120px rgba(180,0,0,.4);}}
+</style>
+
+<!-- GLUMINATOR CONFIRM POPUP -->
+<div id="gluminatorConfirmPopup" style="display:none;position:fixed;inset:0;z-index:500001;background:rgba(0,0,0,.88);flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;text-align:center;">
+  <div style="border:2px solid #ffd700;padding:36px 28px;max-width:460px;background:rgba(10,6,0,.95);box-shadow:0 0 60px rgba(255,215,0,.3);">
+    <div style="font-size:42px;margin-bottom:14px;">💰</div>
+    <div style="font-size:clamp(16px,5vw,26px);color:#ffd700;letter-spacing:5px;font-family:'VT323',monospace;text-shadow:0 0 20px rgba(255,215,0,.6);margin-bottom:16px;line-height:1.4;">ARE YOU SURE TO LOSE<br>LAST HOPE OF HUMANITY<br>IN YOURSELF?</div>
+    <div style="font-size:11px;color:#cc6600;letter-spacing:3px;margin-bottom:6px;">PAY TO PLAY · PAY TO PAY</div>
+    <div style="font-size:28px;color:#ffd700;font-family:'VT323',monospace;letter-spacing:6px;margin-bottom:24px;text-shadow:0 0 15px rgba(255,215,0,.5);">💰 BAY TO THE BAY 💰</div>
+    <div style="display:flex;gap:12px;">
+      <button onclick="document.getElementById('gluminatorConfirmPopup').style.display='none';openTreasureOverlay();" style="flex:1;background:linear-gradient(135deg,#1a0f00,#2a1800);border:2px solid #ffd700;color:#ffd700;font-family:'VT323',monospace;font-size:18px;letter-spacing:3px;padding:12px;cursor:pointer;text-shadow:0 0 8px rgba(255,215,0,.4);">YES — TAKE MY SOUL</button>
+      <button onclick="document.getElementById('gluminatorConfirmPopup').style.display='none';" style="flex:1;background:transparent;border:1px solid #444;color:#666;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:12px;cursor:pointer;">NO — I STILL HAVE HOPE</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT CARD MODAL -->
+<div id="paymentCardModal" style="display:none;position:fixed;inset:0;z-index:500002;background:rgba(0,0,0,.92);flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;">
+  <div style="width:min(400px,92vw);border:2px solid #8b0000;background:#0a0000;padding:28px 24px;box-shadow:0 0 40px rgba(180,0,0,.4);">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:28px;font-family:'VT323',monospace;color:#cc0000;letter-spacing:6px;text-shadow:0 0 15px #ff0000;">💳 PAY TO PLAY</div>
+      <div style="font-size:9px;color:#660000;letter-spacing:3px;margin-top:4px;">CARD NOT STORED · SESSION ONLY</div>
+    </div>
+    <!-- Tier display -->
+    <div id="payCardTierInfo" style="background:#0f0000;border:1px solid #440000;padding:12px;margin-bottom:18px;text-align:center;">
+      <div id="payCardTierLabel" style="font-size:11px;color:#cc0000;letter-spacing:3px;"></div>
+      <div id="payCardTierPrice" style="font-size:24px;color:#ffd700;font-family:'VT323',monospace;margin-top:4px;"></div>
+    </div>
+    <!-- Card form -->
+    <div id="payCardForm">
+      <div style="margin-bottom:14px;">
+        <label style="font-size:9px;color:#660000;letter-spacing:2px;display:block;margin-bottom:5px;">CARD NUMBER</label>
+        <input id="payCardNum" type="text" maxlength="19" placeholder="0000 0000 0000 0000" oninput="formatCardNum(this)" style="width:100%;background:#0f0000;border:1px solid #440000;color:#cc6600;font-family:'Share Tech Mono',monospace;font-size:14px;padding:10px;letter-spacing:2px;box-sizing:border-box;outline:none;" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div>
+          <label style="font-size:9px;color:#660000;letter-spacing:2px;display:block;margin-bottom:5px;">EXPIRY</label>
+          <input id="payCardExp" type="text" maxlength="5" placeholder="MM/YY" oninput="formatCardExp(this)" style="width:100%;background:#0f0000;border:1px solid #440000;color:#cc6600;font-family:'Share Tech Mono',monospace;font-size:14px;padding:10px;box-sizing:border-box;outline:none;" />
+        </div>
+        <div>
+          <label style="font-size:9px;color:#660000;letter-spacing:2px;display:block;margin-bottom:5px;">CVV</label>
+          <input id="payCardCvv" type="password" maxlength="4" placeholder="•••" style="width:100%;background:#0f0000;border:1px solid #440000;color:#cc6600;font-family:'Share Tech Mono',monospace;font-size:14px;padding:10px;box-sizing:border-box;outline:none;" />
+        </div>
+      </div>
+      <div style="margin-bottom:20px;">
+        <label style="font-size:9px;color:#660000;letter-spacing:2px;display:block;margin-bottom:5px;">CARDHOLDER NAME</label>
+        <input id="payCardName" type="text" placeholder="YOUR NAME" style="width:100%;background:#0f0000;border:1px solid #440000;color:#cc6600;font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px;box-sizing:border-box;outline:none;" />
+      </div>
+      <div id="payCardErr" style="font-size:9px;color:#ff4444;letter-spacing:2px;min-height:14px;margin-bottom:12px;"></div>
+      <button onclick="submitPayment()" style="width:100%;background:linear-gradient(135deg,#1a0000,#2a0a00);border:2px solid #cc0000;color:#cc0000;font-family:'VT323',monospace;font-size:22px;letter-spacing:6px;padding:12px;cursor:pointer;text-shadow:0 0 10px rgba(200,0,0,.4);box-shadow:0 0 20px rgba(180,0,0,.2);transition:all .2s;" onmouseover="this.style.boxShadow='0 0 40px rgba(200,0,0,.4)'" onmouseout="this.style.boxShadow='0 0 20px rgba(180,0,0,.2)'">
+        🔥 SELL MY SOUL 🔥
+      </button>
+    </div>
+    <!-- Processing state -->
+    <div id="payCardProcessing" style="display:none;text-align:center;padding:20px 0;">
+      <div style="font-size:32px;margin-bottom:12px;animation:hellFlicker .5s infinite alternate;">💸</div>
+      <div style="font-size:11px;color:#cc0000;letter-spacing:3px;">PROCESSING SOUL TRANSFER...</div>
+      <div style="font-size:9px;color:#660000;letter-spacing:2px;margin-top:8px;">ROUTING TO HELL BANK...</div>
+    </div>
+    <!-- Cancel -->
+    <button onclick="closePaymentModal()" id="payCardCancelBtn" style="width:100%;background:transparent;border:1px solid #330000;color:#440000;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:8px;cursor:pointer;margin-top:12px;">CANCEL — KEEP MY SOUL</button>
+  </div>
+</div>
 
 <!-- BAN OVERLAY -->
 <div id="banOverlay" style="display:none;position:fixed;inset:0;z-index:99999;background:#0a0a14;display:none;flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;">
@@ -2469,7 +2592,7 @@ function setMediaSession(t) {
 }
 
 // ═══════════════════════════════════════════════════════
-// BAN + COIN + GAMINATOR SYSTEM
+// BAN + COIN + GLUMINATOR SYSTEM
 // ═══════════════════════════════════════════════════════
 
 // State
@@ -2625,7 +2748,7 @@ function showNoCoinsMsg() {
   // Flash a message and redirect to gluminator
   const msg = document.createElement('div');
   msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#0a0a14;border:2px solid #e0174a;padding:24px 32px;z-index:9990;font-family:Share Tech Mono,monospace;text-align:center;color:#e0174a;font-size:12px;letter-spacing:2px;';
-  msg.innerHTML = '🪙 NO COINS LEFT<br><span style="font-size:10px;color:#d4c87a;margin-top:8px;display:block;">WIN COINS IN GAMINATOR → M4</span>';
+  msg.innerHTML = '🪙 NO COINS LEFT<br><span style="font-size:10px;color:#d4c87a;margin-top:8px;display:block;">WIN COINS IN GLUMINATOR → M4</span>';
   document.body.appendChild(msg);
   setTimeout(() => { msg.remove(); setMode(4); }, 2200);
 }
@@ -2641,7 +2764,7 @@ window.syncAllUIs = function() {
 };
 
 // ════════════════════════════════════════════
-// MODE 4 — GAMINATOR (Cyberpunk Slot Machine)
+// MODE 4 — GLUMINATOR (Cyberpunk Slot Machine)
 // ════════════════════════════════════════════
 
 const SLOT_SYMBOLS = [
@@ -3411,9 +3534,9 @@ function radStartBufferedStream(url){
   });
   radAudio.addEventListener('ended', () => radAttemptReconnect(url));
 
-  // ALL streams go through the proxy — avoids mixed-content, CORS, and autoplay policy issues
-  // The proxy does 302 redirect for https:// so no timeout risk
-  const streamSrc = '/api/radio-proxy?url=' + encodeURIComponent(url) + '&_t=' + Date.now();
+  // HTTPS streams: use direct URL (no proxy needed, avoids Vercel redirect issues)
+  // HTTP streams: proxy to avoid mixed-content block
+  const streamSrc = url.startsWith('https://') ? url : '/api/radio-proxy?url=' + encodeURIComponent(url) + '&_t=' + Date.now();
   radAudio.src = streamSrc;
   radAudio.load();
   // Play immediately while still in user-gesture call stack (avoids autoplay block)
@@ -4492,10 +4615,155 @@ function triggerHacked() {
 // Start the 40-min timer on load
 document.addEventListener('DOMContentLoaded', startHackedTimer);
 
+// ── DEV MODE: clear all cached state on every load ──
+(function devClearState(){
+  try {
+    localStorage.clear();
+    sessionStorage.clear();
+    // Clear all cookies
+    document.cookie.split(';').forEach(c => {
+      document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date(0).toUTCString() + ';path=/');
+    });
+  } catch(e){}
+})();
+
+// ── HELL CAGE LOADING SCREEN ──
+(function hellCageInit(){
+  const screen = document.getElementById('hellCageScreen');
+  if(!screen) return;
+  const bar = document.getElementById('hellLoadBar');
+  const txt = document.getElementById('hellLoadTxt');
+  const msgs = ['LOADING SOUL DATA...','OPENING THE GATES...','PREPARING YOUR CELL...','WELCOME TO HELL CAGE...'];
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 18 + 8;
+    if(progress > 100) progress = 100;
+    if(bar) bar.style.width = progress + '%';
+    const msgIdx = Math.floor(progress / 26);
+    if(txt && msgs[msgIdx]) txt.textContent = msgs[Math.min(msgIdx, msgs.length-1)];
+    if(progress >= 100){
+      clearInterval(interval);
+      if(txt) txt.textContent = 'ENTER...';
+      setTimeout(() => {
+        screen.style.transition = 'opacity .8s ease';
+        screen.style.opacity = '0';
+        setTimeout(() => { screen.style.display = 'none'; }, 800);
+      }, 400);
+    }
+  }, 120);
+})();
+
+// ── GLUMINATOR CONFIRM ──
+window.showGluminatorConfirm = function() {
+  document.getElementById('gluminatorConfirmPopup').style.display = 'flex';
+};
+
+// ── PAYMENT CARD MODAL ──
+let _paymentTier = null;
+
+window.openPaymentModal = function(tierNum) {
+  _paymentTier = tierNum;
+  const tier = TREASURE_TIERS[tierNum];
+  if(!tier) return;
+  document.getElementById('payCardTierLabel').textContent = tier.label;
+  document.getElementById('payCardTierPrice').textContent = tier.price;
+  document.getElementById('payCardForm').style.display = '';
+  document.getElementById('payCardProcessing').style.display = 'none';
+  document.getElementById('payCardErr').textContent = '';
+  document.getElementById('payCardNum').value = '';
+  document.getElementById('payCardExp').value = '';
+  document.getElementById('payCardCvv').value = '';
+  document.getElementById('payCardName').value = '';
+  document.getElementById('payCardCancelBtn').style.display = '';
+  document.getElementById('paymentCardModal').style.display = 'flex';
+};
+
+window.closePaymentModal = function() {
+  document.getElementById('paymentCardModal').style.display = 'none';
+  // Clear all card data from DOM immediately
+  ['payCardNum','payCardExp','payCardCvv','payCardName'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  _paymentTier = null;
+};
+
+window.formatCardNum = function(el) {
+  let v = el.value.replace(/\D/g,'').substring(0,16);
+  el.value = v.replace(/(.{4})/g,'$1 ').trim();
+};
+window.formatCardExp = function(el) {
+  let v = el.value.replace(/\D/g,'').substring(0,4);
+  if(v.length >= 2) v = v.substring(0,2) + '/' + v.substring(2);
+  el.value = v;
+};
+
+window.submitPayment = function() {
+  const num = document.getElementById('payCardNum').value.replace(/\s/g,'');
+  const exp = document.getElementById('payCardExp').value;
+  const cvv = document.getElementById('payCardCvv').value;
+  const name = document.getElementById('payCardName').value.trim();
+  const err = document.getElementById('payCardErr');
+  
+  if(num.length < 16){ err.textContent = 'INVALID CARD NUMBER'; return; }
+  if(!/^\d{2}\/\d{2}$/.test(exp)){ err.textContent = 'INVALID EXPIRY (MM/YY)'; return; }
+  if(cvv.length < 3){ err.textContent = 'INVALID CVV'; return; }
+  if(!name){ err.textContent = 'ENTER CARDHOLDER NAME'; return; }
+  
+  // Show processing
+  document.getElementById('payCardForm').style.display = 'none';
+  document.getElementById('payCardProcessing').style.display = '';
+  document.getElementById('payCardCancelBtn').style.display = 'none';
+  
+  // Simulate bank transfer processing (N26 DE65100110012060279614)
+  setTimeout(() => {
+    // Wipe card data immediately after "processing"
+    ['payCardNum','payCardExp','payCardCvv','payCardName'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.value = '';
+    });
+    
+    // Save tier before clearing
+    const paidTier = _paymentTier;
+    _selectedTreasureTier = paidTier; // sync to treasure system
+    
+    // Close payment modal
+    document.getElementById('paymentCardModal').style.display = 'none';
+    _paymentTier = null;
+    
+    // Close treasure overlay step 1
+    document.getElementById('treasureOverlay').classList.remove('active');
+    
+    // Show evil face
+    const evilOverlay = document.getElementById('evilFaceOverlay');
+    evilOverlay.style.display = 'flex';
+    const laugh = document.getElementById('evilLaughAudio');
+    if(laugh){ laugh.currentTime = 0; laugh.play().catch(()=>{}); }
+    
+    // Evil face disappears after laugh, then THX popup
+    setTimeout(() => {
+      evilOverlay.style.transition = 'opacity .6s';
+      evilOverlay.style.opacity = '0';
+      setTimeout(() => {
+        evilOverlay.style.display = 'none';
+        evilOverlay.style.opacity = '1';
+        // Show THX popup
+        document.getElementById('thxHellPopup').style.display = 'flex';
+        // After THX dismissed, open chest selection
+        if(paidTier) {
+          document.getElementById('treasureOverlay').classList.add('active');
+          openTreasureChests();
+        }
+      }, 600);
+    }, 4500);
+    
+  }, 2800);
+};
+
 </script>
 
 <!-- ════════════════════════════════════
-     MODE 4 — GAMINATOR (Blade Runner Arcade)
+     MODE 4 — GLUMINATOR (Blade Runner Arcade)
 ════════════════════════════════════ -->
 <div id="mode4" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:28px;position:relative;overflow:hidden;">
 
@@ -4528,7 +4796,7 @@ document.addEventListener('DOMContentLoaded', startHackedTimer);
       <div style="position:absolute;top:0;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,#ff0055,#00e5ff,#a855f7,transparent);box-shadow:0 0 8px #ff0055,0 0 8px #00e5ff;"></div>
       <div style="text-align:center;">
         <div class="gam-title" style="font-size:32px;letter-spacing:8px;font-family:'VT323',monospace;position:relative;">
-          GAMINATOR
+          GLUMINATOR
           <span style="position:absolute;top:-8px;right:-12px;font-size:10px;color:#ff0055;letter-spacing:1px;transform:rotate(12deg);text-shadow:0 0 8px #ff0055;">TM</span>
         </div>
         <div class="gam-subtitle" style="font-size:9px;letter-spacing:3px;margin-top:2px;">CYBER SLOT MACHINE · WIN COINS · UNLOCK MUSIC</div>
@@ -4638,8 +4906,8 @@ document.addEventListener('DOMContentLoaded', startHackedTimer);
         <div style="width:3px;height:8px;background:#1a1a1a;border-radius:1px;"></div>
       </div>
       <!-- PAY TO PLAY button -->
-      <button onclick="openTreasureOverlay()" style="width:100%;background:linear-gradient(135deg,#0a0600,#1a1000);border:2px solid #ffd700;color:#ffd700;font-family:'VT323',monospace;font-size:20px;letter-spacing:5px;padding:12px;cursor:pointer;margin-bottom:10px;text-shadow:0 0 10px rgba(255,215,0,.4);box-shadow:0 0 16px rgba(255,215,0,.15);transition:all .2s;" onmouseover="this.style.boxShadow='0 0 30px rgba(255,215,0,.4)'" onmouseout="this.style.boxShadow='0 0 16px rgba(255,215,0,.15)'">
-        🏴‍☠️ PAY TO PLAY — BUY TREASURE BOX 🏴‍☠️
+      <button onclick="showGluminatorConfirm()" style="width:100%;background:linear-gradient(135deg,#0a0600,#1a1000);border:2px solid #ffd700;color:#ffd700;font-family:'VT323',monospace;font-size:20px;letter-spacing:5px;padding:12px;cursor:pointer;margin-bottom:10px;text-shadow:0 0 10px rgba(255,215,0,.4);box-shadow:0 0 16px rgba(255,215,0,.15);transition:all .2s;" onmouseover="this.style.boxShadow='0 0 30px rgba(255,215,0,.4)'" onmouseout="this.style.boxShadow='0 0 16px rgba(255,215,0,.15)'">
+        🔥 PAY TO PLAY — BUY LOOT BOX 💰
       </button>
       <!-- Info footer -->
       <div style="font-size:10px;color:#d4c87a;letter-spacing:1px;text-align:center;line-height:2.2;">
@@ -4719,7 +4987,7 @@ document.addEventListener('DOMContentLoaded', startHackedTimer);
         <div style="color:#555;font-size:14px;">◻</div>
       </div>
     </div>
-    <button class="pay-play-btn" id="treasurePayBtn" disabled onclick="openTreasureChests()">SELECT A CHEST TIER</button>
+    <button class="pay-play-btn" id="treasurePayBtn" disabled onclick="openPaymentModal(_selectedTreasureTier)">SELECT A CHEST TIER</button>
     <button onclick="closeTreasureOverlay()" style="margin-top:12px;width:100%;background:transparent;border:1px solid #333;color:#555;padding:8px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;cursor:pointer;">CANCEL</button>
   </div>
   <!-- Step 2: Pick a chest -->
