@@ -1253,9 +1253,6 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
   <div class="arc-shell">
     <div class="arc-nav">
       <div class="arc-trigger">ZL</div>
-      <div style="padding:0 12px;height:100%;display:flex;align-items:center;border-right:1px solid #1a001a;flex-shrink:0;">
-        <span style="font-family:'VT323',monospace;font-size:16px;color:#aaff00;letter-spacing:3px;text-shadow:0 0 8px #aaff00,0 0 16px rgba(170,255,0,.4);">deemah</span>
-      </div>
       <div class="arc-nav-item">INTRO</div>
       <div class="arc-nav-item" id="arcShuffleBtn" onclick="arcToggleShuffle(this)">SHUFFLE</div>
       <div class="arc-nav-item" id="arcRepeatBtn" onclick="arcToggleRepeat(this)">🔂</div>
@@ -1312,9 +1309,9 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
           <div class="arc-set-label">PLAYLISTS</div>
           <div class="arc-set-row" style="gap:8px;flex-wrap:wrap;">
             <button class="arc-pl-switch-btn active" id="arcPlBtn0" onclick="switchPlaylist(0)">ALL</button>
-            <button class="arc-pl-switch-btn" id="arcPlBtn1" onclick="switchPlaylist(1)">DEEMAH</button>
-            <button class="arc-pl-switch-btn" id="arcPlBtn2" onclick="switchPlaylist(2)">RASTIX</button>
-            <button class="arc-pl-switch-btn" id="arcPlBtn3" onclick="switchPlaylist(3)">ROBBMOBB</button>
+            <button class="arc-pl-switch-btn" id="arcPlBtn1" onclick="switchPlaylist(1)" style="display:none;">DEEMAH</button>
+            <button class="arc-pl-switch-btn" id="arcPlBtn2" onclick="switchPlaylist(2)" style="display:none;">RASTIX</button>
+            <button class="arc-pl-switch-btn" id="arcPlBtn3" onclick="switchPlaylist(3)" style="display:none;">ROBBMOBB</button>
             <button class="arc-pl-switch-btn" id="arcPlBtn4" onclick="switchPlaylist(4)" style="border-color:var(--cyan);color:var(--cyan);">📡 RADIO</button>
           </div>
           <div class="arc-set-sub" id="arcPlSwitchInfo" style="color:var(--cyan);margin-top:6px;">Viewing: ALL TRACKS</div>
@@ -3325,32 +3322,33 @@ function radStartBufferedStream(url){
   radAudio.volume = volEl ? volEl.value / 100 : 0.8;
 
   radAudio.addEventListener('loadstart', () => radSetCacheStatus('buffering', 'BUFFERING...'));
-  radAudio.addEventListener('canplay', () => {
-    radSetCacheStatus('ready', 'STREAM READY');
-    if(radPlaying) radAudio.play().catch(()=>{});
-  });
-  radAudio.addEventListener('playing', () => {
+  radAudio.addEventListener('canplay',  () => radSetCacheStatus('ready', 'STREAM READY'));
+  radAudio.addEventListener('playing',  () => {
     radSetCacheStatus('ready', 'PLAYING — LIVE');
     if(radBufferInterval) clearInterval(radBufferInterval);
     radBufferInterval = setInterval(radUpdateCacheDisplay, 500);
   });
   radAudio.addEventListener('waiting', () => radSetCacheStatus('buffering', 'REBUFFERING...'));
   radAudio.addEventListener('stalled', () => radSetCacheStatus('buffering', 'STALLED...'));
-  radAudio.addEventListener('error', () => {
-    radSetCacheStatus('error', 'STREAM ERROR');
+  radAudio.addEventListener('error', (e) => {
+    const code = radAudio && radAudio.error ? radAudio.error.code : '?';
+    const msgs = {1:'ABORTED',2:'NETWORK ERR',3:'DECODE ERR',4:'SRC NOT SUPPORTED'};
+    radSetCacheStatus('error', 'ERR: ' + (msgs[code] || 'UNKNOWN ' + code));
     if(radBufferInterval) clearInterval(radBufferInterval);
     radAttemptReconnect(url);
   });
   radAudio.addEventListener('ended', () => radAttemptReconnect(url));
 
-  // Proxy ALL streams through server — fixes both mixed-content (http://) and CORS blocks
-  // HTTPS streams: use directly — they have CORS headers and no mixed-content block
-  // HTTP streams: must proxy through server to avoid mixed-content block
-  const streamSrc = url.startsWith('https://')
-    ? url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now()
-    : '/api/radio-proxy?url=' + encodeURIComponent(url) + '&_t=' + Date.now();
+  // ALL streams go through the proxy — avoids mixed-content, CORS, and autoplay policy issues
+  // The proxy does 302 redirect for https:// so no timeout risk
+  const streamSrc = '/api/radio-proxy?url=' + encodeURIComponent(url) + '&_t=' + Date.now();
   radAudio.src = streamSrc;
   radAudio.load();
+  // Play immediately while still in user-gesture call stack (avoids autoplay block)
+  radAudio.play().catch(err => {
+    // Not fatal — canplay/playing events will still fire once buffer is ready
+    console.warn('Radio play() early call:', err.message);
+  });
 }
 
 function radAttemptReconnect(url){
@@ -3784,6 +3782,15 @@ function authUpdateUI() {
     }
     // Registered users get daily +100 coins via server
     loadRegisteredUserCoins();
+    // Show admin-only playlist tabs (DEEMAH/RASTIX/ROBBMOBB)
+    if (authUser.role === 'superadmin' || authUser.role === 'admin') {
+      const b1 = document.getElementById('arcPlBtn1');
+      const b2 = document.getElementById('arcPlBtn2');
+      const b3 = document.getElementById('arcPlBtn3');
+      if (b1) b1.style.display = '';
+      if (b2) b2.style.display = '';
+      if (b3) b3.style.display = '';
+    }
     // Show admin panel in voting mode
     if (authUser.role === 'superadmin') {
       document.getElementById('voteAdminPanel').style.display = 'block';
@@ -3792,6 +3799,10 @@ function authUpdateUI() {
     // Guest
     if (wampTag) wampTag.textContent = 'darksoul@darksidePlayers';
     bar.style.display = 'none';
+    // Hide admin playlist tabs on logout
+    ['arcPlBtn1','arcPlBtn2','arcPlBtn3'].forEach(id => {
+      const b = document.getElementById(id); if (b) b.style.display = 'none';
+    });
   }
   // Load server tracks whenever auth state updates
   loadServerTracks();
