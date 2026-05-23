@@ -792,6 +792,13 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 .cli-radio-station{font-size:10px;color:#555;cursor:pointer;padding:2px 0 2px 12px;display:flex;align-items:center;gap:6px;}
 .cli-radio-station:hover{color:#00aa00;}
 .cli-radio-station.active{color:#aaff00;}
+/* ── DAFOE-JESUS & COIN ANIMATION ── */
+#dafoeJesusWrap{position:fixed;bottom:18px;right:18px;z-index:99999;width:82px;height:82px;pointer-events:none;opacity:.55;transition:opacity .4s,filter .4s,transform .3s;filter:drop-shadow(0 0 6px rgba(255,215,0,.3));}
+#dafoeJesusWrap:hover{opacity:.85;}
+#dafoeJesusWrap img{width:100%;height:100%;object-fit:contain;border-radius:50%;border:2px solid rgba(255,215,0,.35);}
+#dafoeJesusWrap.dafoe-glow{opacity:1!important;filter:drop-shadow(0 0 22px gold) drop-shadow(0 0 44px rgba(255,215,0,.7)) brightness(1.4)!important;transform:scale(1.18);}
+.rad-coin-fly{position:fixed;z-index:100000;font-size:32px;pointer-events:none;filter:drop-shadow(0 0 8px gold) drop-shadow(0 0 16px rgba(255,200,0,.6));text-shadow:0 0 12px gold;}
+.rad-stardust{position:fixed;z-index:99999;width:6px;height:6px;border-radius:50%;background:radial-gradient(circle,#ffe066,#ffd700,transparent);pointer-events:none;opacity:0;transition:opacity .4s,transform .5s;filter:blur(0.5px);box-shadow:0 0 6px 2px rgba(255,215,0,.5);}
 </style>
 </head>
 <body class="skin-1">
@@ -928,7 +935,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
           <span id="wampRadioToggleArrow" style="font-size:7px;opacity:.5;">▼</span>
         </span>
       </div>
-      <div class="wamp-radio-body" id="wampRadioBody" style="display:none;">
+      <div class="wamp-radio-body" id="wampRadioBody" style="display:block;">
         <div class="wamp-radio-now" id="wampRadioNow" style="opacity:.4;">No station — click to tune in</div>
         <div class="wamp-radio-list" id="wampRadioList"></div>
       </div>
@@ -1192,7 +1199,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
           </span>
           <span id="cliRadioArrow" style="margin-left:auto;color:#444;font-size:9px;">▼</span>
         </div>
-        <div id="cliRadioBody" style="display:none;">
+        <div id="cliRadioBody" style="display:block;">
           <div class="cli-radio-now" id="cliRadioNow" style="color:#444;">No station tuned in</div>
           <div class="cli-radio-list" id="cliRadioList"></div>
         </div>
@@ -2576,7 +2583,7 @@ window.radRenderArcRadio = function(){
   const tl = document.getElementById('arcRadioTracklist');
   if(!tl) return;
   tl.innerHTML = '';
-  if(!window._radOpenGenres) window._radOpenGenres = {};
+  if(!window._radOpenGenres){ window._radOpenGenres = {}; for(const g of Object.keys(RADIO_DIR)) window._radOpenGenres[g] = true; }
 
   for(const [genre, data] of Object.entries(RADIO_DIR)){
     const gRow = document.createElement('div');
@@ -2685,6 +2692,7 @@ window.radPlayStation = function(station, genrePath){
   radCurrentStation._genre = genrePath;
   radPlaying = true;
   radReconnectAttempts = 0;
+  if(typeof radCoinAnimation==='function') radCoinAnimation();
 
   // Update M2 radio panel info
   const rName=document.getElementById('arcRadioName');
@@ -2808,6 +2816,7 @@ function radStopInternal(){
 }
 
 window.radStop = function(){
+  if(typeof radCoinAnimation==='function') radCoinAnimation();
   radStopInternal();
   radCurrentStation = null;
   radSetSignal(0);
@@ -2841,6 +2850,80 @@ window.radStop = function(){
   if(wampBody && wampBody.style.display!=='none') radRenderFlatList('wampRadioList');
   const cliBody=document.getElementById('cliRadioBody');
   if(cliBody && cliBody.style.display!=='none') radRenderFlatList('cliRadioList');
+};
+
+// ── INIT: render M1/M3 flat lists on load since bodies are open by default ──
+setTimeout(function(){
+  radRenderFlatList('wampRadioList');
+  radRenderFlatList('cliRadioList');
+},0);
+
+// ── DAFOE-JESUS COIN ANIMATION ──
+window.radCoinAnimation = function(){
+  const target = document.getElementById('dafoeJesusWrap');
+  if(!target) return;
+  // Create coin element
+  const coin = document.createElement('div');
+  coin.className = 'rad-coin-fly';
+  coin.textContent = '🪙';
+  document.body.appendChild(coin);
+  // Start position: center of viewport
+  const startX = window.innerWidth / 2;
+  const startY = window.innerHeight / 2;
+  // Target position: dafoe-jesus element
+  const rect = target.getBoundingClientRect();
+  const endX = rect.left + rect.width / 2;
+  const endY = rect.top + rect.height / 2;
+  coin.style.left = startX + 'px';
+  coin.style.top = startY + 'px';
+  // Spawn stardust particles along the path
+  const numParticles = 12;
+  const particles = [];
+  for(let i=0; i<numParticles; i++){
+    const p = document.createElement('div');
+    p.className = 'rad-stardust';
+    document.body.appendChild(p);
+    particles.push(p);
+  }
+  // Animate coin with requestAnimationFrame
+  const duration = 800;
+  const startTime = performance.now();
+  function animateCoin(now){
+    const elapsed = now - startTime;
+    const t = Math.min(elapsed / duration, 1);
+    // Ease out cubic
+    const ease = 1 - Math.pow(1 - t, 3);
+    const cx = startX + (endX - startX) * ease;
+    const cy = startY + (endY - startY) * ease - Math.sin(t * Math.PI) * 80;
+    coin.style.left = cx + 'px';
+    coin.style.top = cy + 'px';
+    coin.style.transform = 'translate(-50%,-50%) rotate(' + (t * 720) + 'deg) scale(' + (1 - t * 0.4) + ')';
+    coin.style.opacity = 1 - t * 0.3;
+    // Drop stardust at intervals
+    const pIdx = Math.floor(t * numParticles);
+    for(let i = 0; i <= pIdx && i < numParticles; i++){
+      if(!particles[i]._placed){
+        particles[i]._placed = true;
+        const pt = i / numParticles;
+        const pe = 1 - Math.pow(1 - pt, 3);
+        const px = startX + (endX - startX) * pe + (Math.random()-0.5)*30;
+        const py = startY + (endY - startY) * pe - Math.sin(pt * Math.PI) * 80 + (Math.random()-0.5)*20;
+        particles[i].style.left = px + 'px';
+        particles[i].style.top = py + 'px';
+        particles[i].style.opacity = '1';
+        setTimeout(function(){ particles[i].style.opacity = '0'; particles[i].style.transform = 'scale(0) translateY(15px)'; }, 100);
+      }
+    }
+    if(t < 1){ requestAnimationFrame(animateCoin); }
+    else {
+      // Coin arrives: flash Dafoe
+      coin.remove();
+      particles.forEach(function(p){ setTimeout(function(){ p.remove(); }, 500); });
+      target.classList.add('dafoe-glow');
+      setTimeout(function(){ target.classList.remove('dafoe-glow'); }, 900);
+    }
+  }
+  requestAnimationFrame(animateCoin);
 };
 
 })();
@@ -2933,5 +3016,7 @@ window.radStop = function(){
   </div>
 </div>
 
+<!-- DAFOE-JESUS COIN TARGET -->
+<div id="dafoeJesusWrap"><img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2Frrcm-9aWWtfF9Gt1nIaND%2Fdafoe_small.png" alt="Dafoe Jesus" /></div>
 </body>
 </html>
