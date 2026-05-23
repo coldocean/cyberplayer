@@ -28,7 +28,7 @@ async function sendEmail(to, subject, html) {
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: 'CyberPlayer <onboarding@resend.dev>', to: [to], subject, html })
+      body: JSON.stringify({ from: 'CyberPlayer <noreply@digitalslayer.com>', to: [to], subject, html })
     });
     return r.ok;
   } catch { return false; }
