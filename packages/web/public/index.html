@@ -1041,11 +1041,6 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 .vote-btn.voted-up{border-color:#00ff88;color:#00ff88;background:rgba(0,255,136,.1);}
 .vote-btn.voted-down{border-color:#ff4444;color:#ff4444;background:rgba(255,0,0,.1);}
 .vote-admin-btn{background:transparent;border:1px solid #ff4444;color:#ff4444;padding:4px 8px;font-family:'Share Tech Mono',monospace;font-size:8px;cursor:pointer;letter-spacing:1px;}
-/* ── Record indicator ── */
-.rec-indicator{display:none;position:fixed;top:10px;right:120px;z-index:99998;font-family:'Share Tech Mono',monospace;font-size:10px;color:#ff4444;letter-spacing:2px;background:#0a0a14;border:1px solid #ff4444;padding:4px 10px;border-radius:2px;}
-.rec-indicator.active{display:flex;align-items:center;gap:6px;}
-.rec-dot{width:8px;height:8px;border-radius:50%;background:#ff4444;animation:recBlink 1s infinite;}
-@keyframes recBlink{0%,100%{opacity:1;}50%{opacity:.2;}}
 /* ── Track info bar ── */
 #trackInfoBar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99997;background:rgba(10,10,20,.95);border-top:1px solid #222;padding:6px 16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#888;letter-spacing:1px;backdrop-filter:blur(4px);}
 #trackInfoBar .ti-name{color:var(--green,#00ff88);font-size:11px;}
@@ -1099,12 +1094,20 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
   </div>
   <!-- Content -->
   <div style="position:relative;z-index:2;text-align:center;padding:0 20px;">
-    <div id="hellCageEmoji" style="font-size:64px;margin-bottom:16px;animation:hellFlicker 0.8s ease-in-out infinite alternate;">🔥</div>
     <div style="font-size:clamp(28px,8vw,52px);color:#cc0000;letter-spacing:8px;text-shadow:0 0 30px #ff0000,0 0 60px rgba(255,0,0,.4);font-family:'VT323',monospace;animation:hellGlitch 4s infinite;">HELL CAGE</div>
     <div style="font-size:11px;color:#660000;letter-spacing:4px;margin-top:8px;margin-bottom:32px;">WELCOME TO THE ABYSS</div>
-    <!-- Loading bar -->
-    <div style="width:min(320px,80vw);height:4px;background:#1a0000;border:1px solid #440000;margin:0 auto 16px;overflow:hidden;">
-      <div id="hellLoadBar" style="height:100%;width:0%;background:linear-gradient(90deg,#8b0000,#ff2200);box-shadow:0 0 8px #ff2200;transition:width .1s linear;"></div>
+    <!-- Hand loading bar — hand slides into hell cage from left to right, dissolving as it enters -->
+    <div style="width:min(360px,85vw);position:relative;margin:0 auto 16px;">
+      <!-- The cage hole the hand enters -->
+      <div style="position:absolute;right:-10px;top:50%;transform:translateY(-50%);width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,#8b0000 0%,#440000 40%,#1a0000 70%,transparent 100%);box-shadow:0 0 30px #8b0000,0 0 60px rgba(139,0,0,.5);z-index:3;"></div>
+      <!-- Loading bar track -->
+      <div style="height:6px;background:#1a0000;border:1px solid #440000;overflow:hidden;position:relative;z-index:1;">
+        <div id="hellLoadBar" style="height:100%;width:0%;background:linear-gradient(90deg,#8b0000,#ff2200,#ff4400);box-shadow:0 0 12px #ff2200,0 0 24px rgba(255,34,0,.3);transition:width .1s linear;"></div>
+      </div>
+      <!-- The severed hand — moves right as progress increases, dissolves near the cage hole -->
+      <div id="hellHand" style="position:absolute;top:50%;transform:translateY(-50%);left:0%;font-size:42px;z-index:2;filter:drop-shadow(0 0 8px rgba(255,0,0,.6)) drop-shadow(0 0 20px rgba(139,0,0,.4));transition:left .1s linear,opacity .3s,filter .3s;">🖐️</div>
+      <!-- Blood trail behind hand -->
+      <div id="hellBloodTrail" style="position:absolute;top:50%;transform:translateY(-50%);left:0;height:8px;width:0%;background:linear-gradient(90deg,transparent,rgba(139,0,0,.3),rgba(180,0,0,.5));z-index:0;transition:width .1s linear;border-radius:2px;"></div>
     </div>
     <div id="hellLoadTxt" style="font-size:9px;color:#440000;letter-spacing:3px;">LOADING SOUL DATA...</div>
   </div>
@@ -1224,7 +1227,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 </div>
 
 <!-- REC INDICATOR -->
-<div class="rec-indicator" id="recIndicator"><span class="rec-dot"></span>REC <span id="recTimer">0:00</span></div>
+
 
 <!-- USER STATUS BAR -->
 <div id="userStatusBar" onclick="authShowProfile()"><span id="userStatusName"></span></div>
@@ -1354,7 +1357,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
         <button class="wamp-btn" title="Eject" onclick="document.getElementById('wampFileInput').click()">⏏</button>
         <button class="wamp-btn wide" id="wampShuffleBtn" onclick="wampToggleShuffle()">SHF</button>
         <button class="wamp-btn wide" id="wampRepeatBtn" onclick="wampToggleRepeat()">REP</button>
-        <button class="wamp-btn wide" id="wampRecBtn" onclick="toggleRecBtn('wamp')" title="Record" style="color:#ff4444;">🔴</button>
+
         <div class="wamp-vol-wrap">
           <span class="wamp-vol-lbl">VOL</span>
           <input type="range" class="wamp-vol" id="wampVol" min="0" max="100" value="80" oninput="wampSetVol(this.value)">
@@ -1448,7 +1451,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
           <button class="arc-btn" id="arcBtnPlay" title="PLAY"><svg viewBox="0 0 16 16"><polygon points="3,1 14,8 3,15"/></svg></button>
           <button class="arc-btn" id="arcBtnPause" title="PAUSE"><svg viewBox="0 0 16 16"><rect x="2" y="1" width="4" height="14"/><rect x="10" y="1" width="4" height="14"/></svg></button>
           <button class="arc-btn" id="arcBtnStop" title="STOP"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12"/></svg></button>
-          <button class="arc-btn" id="arcBtnRec" title="RECORD" onclick="toggleRecBtn('arc')" style="color:#ff4444;font-size:10px;font-family:'Share Tech Mono',monospace;">🔴</button>
+
           <div class="arc-hatch"></div>
         </div>
       </div>
@@ -1561,10 +1564,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
           <div class="arc-radio-buftext" id="arcRadioBufText" style="font-size:7px;color:#333;min-width:60px;">IDLE</div>
           <button id="arcRadioStopBtn" onclick="radStop()"
             style="display:none;background:none;border:1px solid var(--red);color:var(--red);padding:3px 8px;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:1px;cursor:pointer;white-space:nowrap;flex-shrink:0;">■ STOP</button>
-          <button id="radFindSongBtn" onclick="radFindSong()"
-            style="background:none;border:1px solid #aaff00;color:#aaff00;padding:3px 8px;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:1px;cursor:pointer;white-space:nowrap;flex-shrink:0;" title="Identify song">🎵 ID</button>
         </div>
-        <div id="radFindSongResult" style="font-size:9px;color:#aaa;font-family:'Share Tech Mono',monospace;display:none;line-height:1.6;border-bottom:1px solid #111;padding:6px 16px;background:#050500;flex-shrink:0;"></div>
         <!-- Full scrollable station list -->
         <div id="arcRadioTracklist" style="flex:1;overflow-y:auto;min-height:200px;"></div>
       </div>
@@ -1644,7 +1644,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
         <span>— Playlist —</span>
         <span class="cli-pl-toggle" onclick="cliToggleShuffle()" id="cliShuffleLabel">[Shuffle]</span>
         <span class="cli-pl-toggle" onclick="cliToggleRepeat()" id="cliRepeatLabel">[Repeat: Off]</span>
-        <span class="cli-pl-toggle" onclick="toggleRecBtn('cli')" id="cliRecLabel" style="color:#ff4444;">[🔴 REC]</span>
+
         <span style="margin-left:auto;">—</span>
       </div>
 
@@ -4056,34 +4056,7 @@ async function authDoLogout() {
   authShowOverlay();
 }
 
-// ════════════════════════════════════════════════
-// RECORD TOGGLE BUTTON
-// ════════════════════════════════════════════════
-window.toggleRecBtn = function(mode) {
-  if (recMediaRecorder && recMediaRecorder.state === 'recording') {
-    stopRecording();
-    // Reset button labels
-    const wBtn = document.getElementById('wampRecBtn');
-    const aBtn = document.getElementById('arcBtnRec');
-    const cBtn = document.getElementById('cliRecLabel');
-    if (wBtn) wBtn.innerHTML = '🔴';
-    if (aBtn) aBtn.innerHTML = '🔴';
-    if (cBtn) cBtn.textContent = '[🔴 REC]';
-  } else {
-    const sourceType = radPlaying ? 'radio' : (currentAudio ? 'track' : null);
-    const sourceName = radPlaying ? (radCurrentStation ? radCurrentStation.name : 'radio') : 
-                       (currentTrackIdx >= 0 && tracks[currentTrackIdx] ? tracks[currentTrackIdx].name : 'unknown');
-    if (!sourceType) { alert('No audio playing to record'); return; }
-    startRecording(sourceType, sourceName);
-    // Update button labels
-    const wBtn = document.getElementById('wampRecBtn');
-    const aBtn = document.getElementById('arcBtnRec');
-    const cBtn = document.getElementById('cliRecLabel');
-    if (wBtn) wBtn.innerHTML = '⏹';
-    if (aBtn) aBtn.innerHTML = '⏹';
-    if (cBtn) cBtn.textContent = '[⏹ STOP]';
-  }
-};
+
 
 // ════════════════════════════════════════════════
 // GEEP FROM SKY — descends from clouds, grows, laughs at you
@@ -4186,169 +4159,6 @@ function stopTrackInfoUpdater() {
   bar.style.display = 'none';
   if (tiInterval) { clearInterval(tiInterval); tiInterval = null; }
 }
-
-// ════════════════════════════════════════════════
-// RECORDING (client-side MediaRecorder → server upload)
-// ════════════════════════════════════════════════
-let recMediaRecorder = null;
-let recChunks = [];
-let recStartTime = 0;
-let recInterval = null;
-let recId = null;
-const MAX_REC_SECS = 7200; // 2 hours
-
-async function startRecording(sourceType, sourceName) {
-  if (!authUser) { alert('Must be logged in to record'); return; }
-  if (recMediaRecorder && recMediaRecorder.state === 'recording') { alert('Already recording!'); return; }
-  
-  // Use audio context to capture
-  if (!currentAudio) { alert('No audio playing'); return; }
-  
-  try {
-    // Create a MediaStream from the audio element
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const source = ctx.createMediaElementSource(currentAudio);
-    const dest = ctx.createMediaStreamDestination();
-    source.connect(dest);
-    source.connect(ctx.destination); // Also play through speakers
-    
-    recMediaRecorder = new MediaRecorder(dest.stream, { mimeType: 'audio/webm;codecs=opus' });
-    recChunks = [];
-    recMediaRecorder.ondataavailable = (e) => { if (e.data.size) recChunks.push(e.data); };
-    recMediaRecorder.onstop = async () => { await uploadRecording(sourceType, sourceName); };
-    recMediaRecorder.start(1000); // Collect data every second
-    recStartTime = Date.now();
-    
-    // Start API recording
-    try {
-      const r = await fetch('/api/record?action=start', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ source_type: sourceType, source_name: sourceName }) });
-      const d = await r.json();
-      if (d.recording_id) recId = d.recording_id;
-    } catch {}
-    
-    // Show indicator
-    document.getElementById('recIndicator').classList.add('active');
-    recInterval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - recStartTime) / 1000);
-      const m = Math.floor(elapsed / 60); const s = elapsed % 60;
-      document.getElementById('recTimer').textContent = m + ':' + (s < 10 ? '0' : '') + s;
-      if (elapsed >= MAX_REC_SECS) stopRecording();
-    }, 1000);
-  } catch (e) {
-    console.error('Recording error:', e);
-    alert('Could not start recording. Audio may need to be restarted.');
-  }
-}
-
-function stopRecording() {
-  if (recMediaRecorder && recMediaRecorder.state === 'recording') {
-    recMediaRecorder.stop();
-  }
-  document.getElementById('recIndicator').classList.remove('active');
-  if (recInterval) { clearInterval(recInterval); recInterval = null; }
-}
-
-async function uploadRecording(sourceType, sourceName) {
-  if (!recChunks.length) return;
-  const blob = new Blob(recChunks, { type: 'audio/webm' });
-  const duration = Math.floor((Date.now() - recStartTime) / 1000);
-  
-  // Convert to base64
-  const reader = new FileReader();
-  reader.onload = async () => {
-    const base64 = reader.result.split(',')[1];
-    try {
-      await fetch('/api/record?action=upload', {
-        method: 'POST', headers: authHeaders(),
-        body: JSON.stringify({ recording_id: recId, audio_base64: base64, duration })
-      });
-      alert('Recording saved! (' + Math.floor(duration / 60) + ' min ' + (duration % 60) + ' sec)');
-    } catch (e) { console.error('Upload error:', e); alert('Failed to save recording'); }
-  };
-  reader.readAsDataURL(blob);
-  recChunks = [];
-}
-
-// ════════════════════════════════════════════════
-// RADIO FIND SONG (ACRCloud / Shazam via RapidAPI)
-// ════════════════════════════════════════════════
-let _findSongRecorder = null;
-let _findSongChunks = [];
-
-async function radFindSong() {
-  const btn = document.getElementById('radFindSongBtn');
-  const resultEl = document.getElementById('radFindSongResult');
-  if (!radAudio || radAudio.paused) { resultEl.style.display='block'; resultEl.textContent='⚠ No radio playing.'; return; }
-
-  if (_findSongRecorder && _findSongRecorder.state === 'recording') return;
-
-  btn.textContent = '⏺ LISTENING...';
-  btn.style.borderColor = '#ff4444';
-  btn.style.color = '#ff4444';
-  resultEl.style.display = 'block';
-  resultEl.textContent = 'Capturing 10 seconds of audio...';
-
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const source = ctx.createMediaElementSource(radAudio);
-    const dest = ctx.createMediaStreamDestination();
-    source.connect(dest);
-    source.connect(ctx.destination);
-
-    _findSongChunks = [];
-    _findSongRecorder = new MediaRecorder(dest.stream, { mimeType: 'audio/webm;codecs=opus' });
-    _findSongRecorder.ondataavailable = (e) => { if (e.data.size) _findSongChunks.push(e.data); };
-    _findSongRecorder.onstop = async () => {
-      const blob = new Blob(_findSongChunks, { type: 'audio/webm' });
-      await _sendToShazam(blob);
-      btn.textContent = '🎵 FIND SONG';
-      btn.style.borderColor = '#00ffff';
-      btn.style.color = '#00ffff';
-      // Clean up audio context
-      try { ctx.close(); } catch {}
-    };
-    _findSongRecorder.start();
-    setTimeout(() => { if (_findSongRecorder.state === 'recording') _findSongRecorder.stop(); }, 10000);
-  } catch (e) {
-    resultEl.textContent = '⚠ Could not capture audio: ' + e.message;
-    btn.textContent = '🎵 FIND SONG';
-    btn.style.borderColor = '#00ffff';
-    btn.style.color = '#00ffff';
-  }
-}
-
-async function _sendToShazam(blob) {
-  const resultEl = document.getElementById('radFindSongResult');
-  if (!resultEl) return;
-  resultEl.innerHTML = '<span style="color:#ff0;animation:blink 0.5s infinite">⟳ IDENTIFYING...</span>';
-  try {
-    // Send raw audio blob directly to local shazamio Python microservice (free, no key)
-    // Powered by: github.com/shazamio/ShazamIO (6k+ stars, reverse-engineered Shazam)
-    const r = await fetch('/api/identify-song', {
-      method: 'POST',
-      headers: { 'Content-Type': blob.type || 'audio/webm' },
-      body: blob
-    });
-    if (r.ok) {
-      const d = await r.json();
-      if (d.found && d.title) {
-        resultEl.innerHTML =
-          (d.coverart ? `<img src="${d.coverart}" style="width:32px;height:32px;vertical-align:middle;border:1px solid #ff003c;margin-right:6px;border-radius:3px">` : '') +
-          `<span style="color:#00ff88;font-weight:bold">${d.title}</span> — <span style="color:#ccc">${d.artist || '?'}</span>` +
-          (d.genre ? `<br><span style="color:#555;font-size:9px">${d.genre}</span>` : '');
-      } else {
-        const stName = radCurrentStation ? radCurrentStation.name : '?';
-        resultEl.innerHTML = `<span style="color:#ff3">❌ Not recognized</span><br><span style="color:#555;font-size:9px">Station: ${stName}</span>`;
-      }
-    } else {
-      throw new Error('HTTP ' + r.status);
-    }
-  } catch (e) {
-    const stName = radCurrentStation ? radCurrentStation.name : '?';
-    resultEl.innerHTML = `<span style="color:#f55">⚡ ID error</span><br><span style="color:#444;font-size:9px">${e.message}</span>`;
-  }
-}
-
 // ════════════════════════════════════════════════
 // VOTING SYSTEM (Mode 5)
 // ════════════════════════════════════════════════
@@ -4641,24 +4451,41 @@ if(window.location.search.includes('dev')){
   if(!screen) return;
   const bar = document.getElementById('hellLoadBar');
   const txt = document.getElementById('hellLoadTxt');
-  const msgs = ['LOADING SOUL DATA...','OPENING THE GATES...','PREPARING YOUR CELL...','WELCOME TO HELL CAGE...'];
+  const hand = document.getElementById('hellHand');
+  const trail = document.getElementById('hellBloodTrail');
+  const msgs = ['LOADING SOUL DATA...','OPENING THE GATES...','SEVERING THE HAND...','DRAGGING INTO HELL...','WELCOME TO HELL CAGE...'];
   let progress = 0;
   const interval = setInterval(() => {
-    progress += Math.random() * 18 + 8;
+    progress += Math.random() * 12 + 5;
     if(progress > 100) progress = 100;
     if(bar) bar.style.width = progress + '%';
-    const msgIdx = Math.floor(progress / 26);
-    if(txt && msgs[msgIdx]) txt.textContent = msgs[Math.min(msgIdx, msgs.length-1)];
+    // Move hand across — it slides from left toward the red cage hole on the right
+    if(hand){
+      const handPos = Math.min(progress * 0.85, 85); // max 85% so it reaches the hole
+      hand.style.left = handPos + '%';
+      // As hand gets closer to cage hole (past 60%), start dissolving
+      if(progress > 60){
+        const dissolve = (progress - 60) / 40; // 0 to 1
+        hand.style.opacity = Math.max(0, 1 - dissolve * 1.2);
+        hand.style.filter = `drop-shadow(0 0 ${8 + dissolve * 30}px rgba(255,0,0,${0.6 + dissolve * 0.4})) blur(${dissolve * 3}px)`;
+        hand.style.transform = `translateY(-50%) scale(${1 - dissolve * 0.4}) rotate(${dissolve * 25}deg)`;
+      }
+    }
+    // Blood trail follows hand
+    if(trail) trail.style.width = Math.min(progress * 0.85, 85) + '%';
+    const msgIdx = Math.floor(progress / 21);
+    if(txt && msgs[Math.min(msgIdx, msgs.length-1)]) txt.textContent = msgs[Math.min(msgIdx, msgs.length-1)];
     if(progress >= 100){
       clearInterval(interval);
-      if(txt) txt.textContent = 'ENTER...';
+      if(txt) txt.textContent = 'ENTER THE CAGE...';
+      if(hand){ hand.style.opacity = '0'; hand.style.transform = 'translateY(-50%) scale(0) rotate(90deg)'; }
       setTimeout(() => {
         screen.style.transition = 'opacity .8s ease';
         screen.style.opacity = '0';
         setTimeout(() => { screen.style.display = 'none'; }, 800);
-      }, 400);
+      }, 600);
     }
-  }, 120);
+  }, 140);
 })();
 
 // ── GLUMINATOR CONFIRM ──
@@ -5040,7 +4867,7 @@ window.submitPayment = function() {
     <div style="margin-top:40px;font-size:10px;color:#333;letter-spacing:3px;">YOUR IP HAS BEEN LOGGED · DO SOMETHING USEFUL</div>
   </div>
 </div>
-<!-- DJ SUPERNOVAQ M5 POPUP -->
+<!-- DJ SUPERNOVAQ M5 POPUP — blood splatter transition -->
 <div id="djSupernovaqPopup">
   <span class="sn-close" onclick="closeDjPopup()">✖</span>
   <div class="sn-arms left">🦾</div>
@@ -5049,14 +4876,38 @@ window.submitPayment = function() {
   <div class="sn-text">
     <div class="sn-title">Dj SuperNovaq</div>
     <div class="sn-body">SEREDINA feat LATENTNIY GOMOSEKSUALIST
-mix 2026 top on beatport
+mix 2026 top on beatport in HELL
 
-in HELL shall you open your anus bigger?
+shall you open your anus bigger?
+You thought you were safe...
 
 You was living under Riga.
+Crawling through the basements of Tornakalns.
 Mixing shit up RIX to LIEPAJA
+on the train of the damned.
 
---> PAPA DELAET MNE DOM.</div>
+The bass was so deep it cracked
+the foundations of Jugla.
+Every track a confession.
+Every beat a sin.
+
+--> PAPA DELAET MNE DOM.
+--> A DOM DELAET PAPУ.
+--> V ETOM DOME NIKTO NE SPIT.
+
+The walls bleed frequencies.
+The speakers scream in Latvian.
+No one escapes the MIX.</div>
+  </div>
+  <!-- Blood splatter overlay — fills screen at the end -->
+  <div id="snBloodSplatter" style="position:absolute;inset:0;z-index:99;pointer-events:none;opacity:0;transition:opacity .5s;">
+    <div style="position:absolute;top:10%;left:15%;width:200px;height:200px;background:radial-gradient(circle,rgba(139,0,0,.9) 0%,rgba(180,0,0,.6) 30%,transparent 70%);border-radius:50%;transform:scale(0);transition:transform .6s cubic-bezier(.17,.67,.35,1.4);"></div>
+    <div style="position:absolute;top:40%;right:10%;width:300px;height:250px;background:radial-gradient(ellipse,rgba(160,0,0,.85) 0%,rgba(120,0,0,.5) 40%,transparent 70%);border-radius:50%;transform:scale(0);transition:transform .7s cubic-bezier(.17,.67,.35,1.4) .1s;"></div>
+    <div style="position:absolute;bottom:15%;left:30%;width:250px;height:180px;background:radial-gradient(circle,rgba(200,0,0,.8) 0%,rgba(140,0,0,.4) 40%,transparent 70%);border-radius:50%;transform:scale(0);transition:transform .5s cubic-bezier(.17,.67,.35,1.4) .2s;"></div>
+    <div style="position:absolute;top:5%;right:25%;width:150px;height:400px;background:linear-gradient(180deg,rgba(180,0,0,.9),rgba(120,0,0,.3),transparent);transform:scaleY(0);transform-origin:top;transition:transform .8s cubic-bezier(.17,.67,.35,1.4) .15s;"></div>
+    <div style="position:absolute;top:20%;left:5%;width:80px;height:350px;background:linear-gradient(180deg,rgba(160,0,0,.7),rgba(100,0,0,.2),transparent);transform:scaleY(0);transform-origin:top;transition:transform .7s cubic-bezier(.17,.67,.35,1.4) .25s;"></div>
+    <!-- Full coverage blood wash -->
+    <div id="snBloodWash" style="position:absolute;inset:0;background:rgba(100,0,0,0);transition:background 1s ease .3s;"></div>
   </div>
 </div>
 
@@ -5070,11 +4921,40 @@ function showDjSuperNovaqPopup(){
   const p = document.getElementById('djSupernovaqPopup');
   if(!p) return;
   setTimeout(()=>{ p.classList.add('active'); },200);
-  setTimeout(()=>{ closeDjPopup(); },15000);
+  // After 12 seconds, trigger blood splatter
+  setTimeout(()=>{
+    const splatter = document.getElementById('snBloodSplatter');
+    if(splatter){
+      splatter.style.opacity = '1';
+      // Scale up all the blood blobs
+      splatter.querySelectorAll('div').forEach(d => {
+        if(d.id === 'snBloodWash'){
+          d.style.background = 'rgba(100,0,0,.85)';
+        } else if(d.style.transform.includes('scale')){
+          d.style.transform = d.style.transform.replace(/scale[XY]?\([^)]*\)/g, m => {
+            return m.includes('scaleY') ? 'scaleY(1)' : 'scale(1.5)';
+          });
+        }
+      });
+    }
+  }, 12000);
+  // After blood fills screen, close popup and show mode 5
+  setTimeout(()=>{ closeDjPopup(); }, 14000);
 }
 function closeDjPopup(){
   const p = document.getElementById('djSupernovaqPopup');
   if(p) p.classList.remove('active');
+  // Reset blood splatter
+  setTimeout(()=>{
+    const splatter = document.getElementById('snBloodSplatter');
+    if(splatter){
+      splatter.style.opacity = '0';
+      splatter.querySelectorAll('div').forEach(d => {
+        if(d.id === 'snBloodWash') d.style.background = 'rgba(100,0,0,0)';
+        else if(d.style.transform) d.style.transform = d.style.transform.replace(/scale[XY]?\([^)]*\)/g, m => m.includes('scaleY') ? 'scaleY(0)' : 'scale(0)');
+      });
+    }
+  }, 500);
 }
 </script>
 </body>
