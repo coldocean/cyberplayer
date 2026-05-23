@@ -45,6 +45,23 @@ export default async function handler(req, res) {
     return res.json({ ok: true, coins: newCount });
   }
 
+  // POST /api/coins?action=dark-soul — guest joins as dark soul, gets 100 coins by IP (one-time)
+  if (req.method === 'POST' && action === 'dark-soul') {
+    await query(`INSERT INTO coins (ip, count, last_daily) VALUES (?, 0, 0) ON CONFLICT(ip) DO NOTHING`, [ip]);
+    const row = (await query('SELECT count, last_daily FROM coins WHERE ip = ?', [ip]))[0];
+    const count = Number(row?.count || 0);
+    const last_daily = Number(row?.last_daily || 0);
+    
+    // Only give 100 coins if they haven't received daily yet
+    if (now - last_daily >= DAY) {
+      const newCount = count + DAILY_COINS;
+      await query('UPDATE coins SET count = ?, last_daily = ? WHERE ip = ?', [newCount, now, ip]);
+      return res.json({ ok: true, coins: newCount, added: DAILY_COINS });
+    }
+    // Already got their daily coins
+    return res.json({ ok: true, coins: count, added: 0 });
+  }
+
   // POST /api/coins { action: 'add', amount }
   if (req.method === 'POST' && action === 'add') {
     const amount = Number(body.amount || 0);

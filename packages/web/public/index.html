@@ -792,13 +792,61 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 .cli-radio-station{font-size:10px;color:#555;cursor:pointer;padding:2px 0 2px 12px;display:flex;align-items:center;gap:6px;}
 .cli-radio-station:hover{color:#00aa00;}
 .cli-radio-station.active{color:#aaff00;}
-/* ── DAFOE-JESUS & COIN ANIMATION ── */
-/* ── Jesus sky animation ── */
-.jesus-sky{position:fixed;z-index:100001;pointer-events:none;width:100px;height:100px;bottom:-120px;right:50%;transform:translateX(50%);transition:none;}
-.jesus-sky img{width:100%;height:100%;object-fit:contain;border-radius:50%;border:2px solid gold;filter:drop-shadow(0 0 20px gold) drop-shadow(0 0 40px rgba(255,215,0,.6));}
-.jesus-sky .jesus-coin-txt{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:14px;color:#ffd700;font-family:'Share Tech Mono',monospace;letter-spacing:2px;text-shadow:0 0 8px gold;white-space:nowrap;}
-@keyframes jesusRise{0%{bottom:-120px;opacity:0;}15%{opacity:1;}50%{bottom:40vh;}85%{opacity:1;}100%{bottom:110vh;opacity:0;}}
-@keyframes jesusCoinPulse{0%,100%{transform:translateX(-50%) scale(1);}50%{transform:translateX(-50%) scale(1.3);}}
+/* ── MEL-ZEUS & COIN ANIMATION ── */
+/* ── Zeus sky animation ── */
+.jesus-sky{position:fixed;z-index:100001;pointer-events:none;width:120px;height:120px;bottom:-140px;right:50%;transform:translateX(50%);transition:none;}
+.jesus-sky img{width:100%;height:100%;object-fit:contain;border-radius:50%;border:3px solid gold;filter:drop-shadow(0 0 24px gold) drop-shadow(0 0 50px rgba(255,215,0,.7)) drop-shadow(0 0 80px rgba(255,180,0,.3));}
+.jesus-sky .jesus-coin-txt{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:16px;color:#ffd700;font-family:'Share Tech Mono',monospace;letter-spacing:3px;text-shadow:0 0 10px gold,0 0 20px rgba(255,215,0,.5);white-space:nowrap;}
+.jesus-sky .zeus-bolt{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:60px;opacity:0;pointer-events:none;filter:drop-shadow(0 0 30px #ffd700);animation:boltFlash .3s ease-out forwards;}
+@keyframes jesusRise{0%{bottom:-140px;opacity:0;}10%{opacity:1;}45%{bottom:38vh;}55%{bottom:42vh;}85%{opacity:1;}100%{bottom:110vh;opacity:0;}}
+@keyframes jesusCoinPulse{0%,100%{transform:translateX(-50%) scale(1);}50%{transform:translateX(-50%) scale(1.4);}}
+@keyframes boltFlash{0%{opacity:0;transform:translate(-50%,-50%) scale(.5);}30%{opacity:1;transform:translate(-50%,-50%) scale(1.4);}100%{opacity:0;transform:translate(-50%,-50%) scale(2);}}
+/* ── Dark Soul guest animation ── */
+@keyframes darkSoulGlitch{
+  0%{transform:translate(0);filter:hue-rotate(0deg);}
+  10%{transform:translate(-3px,2px);filter:hue-rotate(90deg) brightness(1.5);}
+  20%{transform:translate(3px,-1px);filter:hue-rotate(180deg);}
+  30%{transform:translate(-2px,3px);filter:hue-rotate(270deg) contrast(2);}
+  40%{transform:translate(2px,-3px);filter:hue-rotate(60deg);}
+  50%{transform:translate(-1px,1px) skewX(3deg);filter:hue-rotate(0deg) saturate(3);}
+  60%{transform:translate(3px,2px) skewX(-2deg);filter:hue-rotate(120deg);}
+  70%{transform:translate(-3px,-2px);filter:hue-rotate(240deg) brightness(2);}
+  80%{transform:translate(1px,3px);filter:hue-rotate(300deg);}
+  90%{transform:translate(-2px,-1px);filter:hue-rotate(30deg) contrast(1.5);}
+  100%{transform:translate(0);filter:hue-rotate(0deg);}
+}
+@keyframes bloodDrip{
+  0%{transform:translateY(-10px);opacity:0;}
+  20%{opacity:1;}
+  100%{transform:translateY(100vh);opacity:0;}
+}
+@keyframes darkSoulEntry{
+  0%{opacity:0;transform:scale(1.5);filter:blur(20px) brightness(0);}
+  30%{opacity:1;filter:blur(5px) brightness(0.3);}
+  60%{filter:blur(0) brightness(0.8) hue-rotate(10deg);}
+  80%{filter:brightness(1.2) hue-rotate(-5deg);}
+  100%{opacity:1;filter:none;}
+}
+.dark-soul-enter{animation:darkSoulEntry 1.8s ease-out forwards;}
+/* ── 40min Power Off / Hacked screen ── */
+#hackedOverlay{display:none;position:fixed;inset:0;z-index:200000;background:#000;flex-direction:column;align-items:center;justify-content:center;font-family:'VT323',monospace;}
+#hackedOverlay.active{display:flex;}
+@keyframes hackedGlitch{
+  0%,100%{transform:translate(0);opacity:1;}
+  5%{transform:translate(-5px,3px) skewX(5deg);opacity:.8;}
+  10%{transform:translate(5px,-3px) skewX(-3deg);opacity:1;}
+  15%{transform:translate(-3px,-5px);opacity:.6;}
+  20%{transform:translate(3px,5px) skewX(2deg);opacity:1;}
+  25%{transform:translate(0);opacity:.9;}
+}
+@keyframes staticNoise{
+  0%{background-position:0 0;}
+  100%{background-position:100% 100%;}
+}
+@keyframes scanDown{
+  0%{top:-4px;}
+  100%{top:100%;}
+}
 /* ── Vote track items ── */
 .vote-track{border:1px solid #222;padding:12px;background:#0a0a14;display:flex;align-items:center;gap:12px;transition:border-color .2s;}
 .vote-track:hover{border-color:#444;}
@@ -825,10 +873,10 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 #trackInfoBar .ti-dur{color:#555;margin-left:auto;}
 /* ── User status bar ── */
 #userStatusBar{display:none;position:fixed;top:10px;right:10px;z-index:99998;font-family:'Share Tech Mono',monospace;font-size:9px;color:#00ff88;letter-spacing:2px;background:#0a0a14;border:1px solid #222;padding:4px 10px;border-radius:2px;cursor:pointer;}
-#dafoeJesusWrap{position:fixed;bottom:18px;right:18px;z-index:99999;width:82px;height:82px;pointer-events:none;opacity:.55;transition:opacity .4s,filter .4s,transform .3s;filter:drop-shadow(0 0 6px rgba(255,215,0,.3));}
-#dafoeJesusWrap:hover{opacity:.85;}
-#dafoeJesusWrap img{width:100%;height:100%;object-fit:contain;border-radius:50%;border:2px solid rgba(255,215,0,.35);}
-#dafoeJesusWrap.dafoe-glow{opacity:1!important;filter:drop-shadow(0 0 22px gold) drop-shadow(0 0 44px rgba(255,215,0,.7)) brightness(1.4)!important;transform:scale(1.18);}
+#dafoeJesusWrap{position:fixed;bottom:18px;right:18px;z-index:99999;width:90px;height:90px;pointer-events:none;opacity:.6;transition:opacity .4s,filter .4s,transform .3s;filter:drop-shadow(0 0 8px rgba(255,215,0,.4)) drop-shadow(0 0 20px rgba(255,180,0,.15));}
+#dafoeJesusWrap:hover{opacity:.9;}
+#dafoeJesusWrap img{width:100%;height:100%;object-fit:contain;border-radius:50%;border:2px solid rgba(255,215,0,.45);}
+#dafoeJesusWrap.dafoe-glow{opacity:1!important;filter:drop-shadow(0 0 28px gold) drop-shadow(0 0 50px rgba(255,215,0,.8)) brightness(1.5)!important;transform:scale(1.22);}
 .rad-coin-fly{position:fixed;z-index:100000;font-size:32px;pointer-events:none;filter:drop-shadow(0 0 8px gold) drop-shadow(0 0 16px rgba(255,200,0,.6));text-shadow:0 0 12px gold;}
 .rad-stardust{position:fixed;z-index:99999;width:6px;height:6px;border-radius:50%;background:radial-gradient(circle,#ffe066,#ffd700,transparent);pointer-events:none;opacity:0;transition:opacity .4s,transform .5s;filter:blur(0.5px);box-shadow:0 0 6px 2px rgba(255,215,0,.5);}
 </style>
@@ -873,14 +921,20 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 </div>
 
 <!-- AUTH OVERLAY (shown for non-registered users) -->
-<div id="authOverlay" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.92);flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;">
-  <div id="authDafoeThumbsDown" style="margin-bottom:20px;">
-    <img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2Frrcm-9aWWtfF9Gt1nIaND%2Fdafoe_small.png" style="width:120px;height:120px;border-radius:50%;border:3px solid #ff4444;filter:grayscale(.4) hue-rotate(180deg) drop-shadow(0 0 20px rgba(255,0,0,.5));transform:scaleX(-1);" alt="Sad Jesus">
-    <div style="color:#ff4444;font-size:14px;letter-spacing:3px;text-align:center;margin-top:10px;text-shadow:0 0 10px rgba(255,0,0,.5);">👎 THUMBS DOWN</div>
+<div id="authOverlay" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.92);flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;overflow:hidden;">
+  <!-- Blood drip container for dark soul effect -->
+  <div id="darkSoulBlood" style="display:none;position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;"></div>
+  <div id="authDafoeThumbsDown" style="margin-bottom:20px;position:relative;z-index:2;">
+    <img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FzXmJg31R_oQnpa27AQ50y%2Fmel-zeus-thumbsup.png" style="width:130px;height:130px;border-radius:50%;border:3px solid #ffd700;filter:drop-shadow(0 0 20px rgba(255,215,0,.5)) drop-shadow(0 0 40px rgba(255,180,0,.2));transform:scaleX(-1);" alt="Zeus Gibson">
+    <div style="color:#ffd700;font-size:14px;letter-spacing:3px;text-align:center;margin-top:10px;text-shadow:0 0 10px rgba(255,215,0,.5);">⚡ ZEUS AWAITS</div>
   </div>
-  <div style="color:#ff6666;font-size:12px;letter-spacing:2px;text-align:center;max-width:340px;line-height:1.8;margin-bottom:24px;">
-    You are the sinner and I am ready to make your life better — <span style="color:#ffd700;">REGISTER</span>
+  <div style="color:#ff6666;font-size:12px;letter-spacing:2px;text-align:center;max-width:340px;line-height:1.8;margin-bottom:16px;position:relative;z-index:2;">
+    You are the sinner and I am ready to make your life — <span style="color:#ffd700;">REGISTER</span>
   </div>
+  <!-- JOIN AS DARK SOUL (guest mode) -->
+  <button id="darkSoulBtn" onclick="joinAsDarkSoul()" style="margin-bottom:18px;background:transparent;border:2px solid #8b0000;color:#cc0000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;padding:10px 24px;cursor:pointer;text-transform:uppercase;transition:all .3s;position:relative;z-index:2;text-shadow:0 0 8px rgba(200,0,0,.4);">
+    🩸 JOIN AS DARK SOUL 🩸
+  </button>
 
   <!-- LOGIN FORM -->
   <div id="authLoginBox" style="border:1px solid #333;padding:20px;width:320px;background:#0a0a14;">
@@ -3065,6 +3119,13 @@ function authHeaders() {
 }
 
 async function authCheckSession() {
+  // Dark soul guests can skip auth
+  if (!authToken && localStorage.getItem('cp_dark_soul') === '1') {
+    isDarkSoul = true;
+    document.getElementById('authOverlay').style.display = 'none';
+    loadGuestCoins();
+    return;
+  }
   if (!authToken) { authShowOverlay(); return; }
   try {
     const r = await fetch('/api/auth-user?action=me', { headers: authHeaders() });
@@ -3244,21 +3305,22 @@ window.toggleRecBtn = function(mode) {
 // ════════════════════════════════════════════════
 // JESUS SKY ANIMATION (rises from bottom on action)
 // ════════════════════════════════════════════════
-window.jesusFromSky = function() {
+window.jesusFromSky = function(coinText) {
   const el = document.createElement('div');
   el.className = 'jesus-sky';
-  el.innerHTML = '<img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2Frrcm-9aWWtfF9Gt1nIaND%2Fdafoe_small.png"><div class="jesus-coin-txt">-1 🪙</div>';
+  const txt = coinText || '-1 🪙';
+  el.innerHTML = '<img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FzXmJg31R_oQnpa27AQ50y%2Fmel-zeus-thumbsup.png"><div class="jesus-coin-txt">' + txt + '</div><div class="zeus-bolt">⚡</div>';
   document.body.appendChild(el);
-  el.style.animation = 'jesusRise 2.2s ease-out forwards';
+  el.style.animation = 'jesusRise 2.8s ease-out forwards';
   // Coin text pulse
-  const txt = el.querySelector('.jesus-coin-txt');
-  if (txt) txt.style.animation = 'jesusCoinPulse 0.6s ease infinite';
-  // Deduct coin
-  if (!loggedInUser && authUser) {
+  const coinEl = el.querySelector('.jesus-coin-txt');
+  if (coinEl) coinEl.style.animation = 'jesusCoinPulse 0.6s ease infinite';
+  // Deduct coin (only for non-admin guests playing tracks)
+  if (!loggedInUser && authUser && !coinText) {
     fetch('/api/coins?action=spend', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: 1 }) })
       .then(r => r.json()).then(d => { if (d.ok) { guestCoins = d.coins; if (typeof updateCoinHud === 'function') updateCoinHud(null); } });
   }
-  setTimeout(() => el.remove(), 2500);
+  setTimeout(() => el.remove(), 3000);
 };
 
 // ════════════════════════════════════════════════
@@ -3461,6 +3523,14 @@ async function voteAdminDelete(trackId) {
 // ════════════════════════════════════════════════
 // INIT: Check auth on load
 // ════════════════════════════════════════════════
+// DARK SOUL — Guest mode (no registration needed)
+// ════════════════════════════════════════════════
+let isDarkSoul = false;
+
+// Restore dark soul session on reload (before auth check)
+if (localStorage.getItem('cp_dark_soul') === '1') isDarkSoul = true;
+
+// ════════════════════════════════════════════════
 (function initAuth() {
   // Run after DOM is loaded
   if (document.readyState === 'loading') {
@@ -3469,91 +3539,308 @@ async function voteAdminDelete(trackId) {
     authCheckSession();
   }
 })();
+
+window.joinAsDarkSoul = async function() {
+  const btn = document.getElementById('darkSoulBtn');
+  btn.disabled = true;
+  btn.textContent = '🩸 ENTERING THE VOID... 🩸';
+  
+  // Blood drip animation
+  const bloodContainer = document.getElementById('darkSoulBlood');
+  bloodContainer.style.display = 'block';
+  for (let i = 0; i < 30; i++) {
+    const drop = document.createElement('div');
+    drop.style.cssText = `position:absolute;top:0;left:${Math.random()*100}%;width:${2+Math.random()*4}px;height:${20+Math.random()*60}px;background:linear-gradient(180deg,#8b0000,#cc0000,transparent);border-radius:0 0 50% 50%;opacity:${.5+Math.random()*.5};animation:bloodDrip ${1+Math.random()*2}s ease-in ${Math.random()*.8}s forwards;`;
+    bloodContainer.appendChild(drop);
+  }
+  
+  // Glitch the auth overlay
+  const overlay = document.getElementById('authOverlay');
+  overlay.style.animation = 'darkSoulGlitch .15s infinite';
+  
+  // Try to register as dark soul via IP (gives 100 coins)
+  try {
+    const r = await fetch('/api/coins?action=dark-soul', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+    const d = await r.json();
+    if (d.coins !== undefined) {
+      guestCoins = d.coins;
+      updateCoinHud(d);
+    }
+  } catch(e) {
+    guestCoins = 100; // fail open
+  }
+  
+  isDarkSoul = true;
+  localStorage.setItem('cp_dark_soul', '1');
+  
+  // After 1.5s, dismiss with dramatic effect
+  setTimeout(() => {
+    overlay.style.animation = '';
+    document.body.classList.add('dark-soul-enter');
+    authHideOverlay();
+    
+    // Zeus greets from the sky
+    setTimeout(() => {
+      jesusFromSky('⚡ +100 🪙 ZEUS GREETS YOU');
+    }, 600);
+    
+    // Show coin HUD
+    document.getElementById('coinHud').style.display = 'block';
+    document.getElementById('coinCount').textContent = guestCoins;
+    
+    // Clean up blood after animation
+    setTimeout(() => {
+      bloodContainer.innerHTML = '';
+      bloodContainer.style.display = 'none';
+      document.body.classList.remove('dark-soul-enter');
+    }, 2000);
+  }, 1800);
+};
+
+// (dark soul restoration moved before initAuth)
+
+// Patch authShowOverlay to allow dark souls to skip
+const _origAuthShowOverlay = authShowOverlay;
+window.authShowOverlay = function() {
+  if (isDarkSoul) {
+    // Dark soul can enter without auth
+    document.getElementById('authOverlay').style.display = 'none';
+    loadGuestCoins();
+    return;
+  }
+  _origAuthShowOverlay();
+};
+
+// ════════════════════════════════════════════════
+// 40-MINUTE POWER OFF / HACKED SCREEN
+// ════════════════════════════════════════════════
+const HACKED_INTERVAL_MS = 40 * 60 * 1000; // 40 minutes
+const HACKED_DURATION_S = 15; // 15 seconds disruption
+
+const hackedMessages = [
+  'YOU HAVE BEEN HACKED',
+  'SYSTEM COMPROMISED',
+  'ALL YOUR BASE ARE BELONG TO US',
+  'POWER GRID FAILURE',
+  'UNAUTHORIZED ACCESS DETECTED',
+  'FIRMWARE CORRUPTED',
+  'DO SOMETHING USEFUL',
+];
+
+let hackedTimeout = null;
+
+function startHackedTimer() {
+  if (hackedTimeout) clearTimeout(hackedTimeout);
+  hackedTimeout = setTimeout(triggerHacked, HACKED_INTERVAL_MS);
+}
+
+function triggerHacked() {
+  // Pause audio
+  if (currentAudio && !currentAudio.paused) currentAudio.pause();
+  if (typeof radAudio !== 'undefined' && radAudio && !radAudio.paused) radAudio.pause();
+  
+  const overlay = document.getElementById('hackedOverlay');
+  overlay.classList.add('active');
+  
+  // Random message sequence
+  const msgEl = document.getElementById('hackedMsg');
+  const titleEl = document.getElementById('hackedTitle');
+  const timerEl = document.getElementById('hackedTimer');
+  const iconEl = document.getElementById('hackedIcon');
+  const subEl = document.getElementById('hackedSub');
+  
+  // Phase 1: NO SIGNAL (first 5s)
+  titleEl.textContent = 'NO SIGNAL';
+  iconEl.textContent = '📺';
+  subEl.textContent = 'POWER INTERRUPTION DETECTED';
+  msgEl.textContent = '';
+  
+  let secondsLeft = HACKED_DURATION_S;
+  
+  const countdownInterval = setInterval(() => {
+    secondsLeft--;
+    timerEl.textContent = `00:${String(secondsLeft).padStart(2,'0')}`;
+    
+    // Phase 2: HACKED (after 5s)
+    if (secondsLeft === HACKED_DURATION_S - 5) {
+      const msg = hackedMessages[Math.floor(Math.random() * hackedMessages.length)];
+      titleEl.textContent = msg;
+      iconEl.textContent = '💀';
+      subEl.textContent = 'INITIATING COUNTERMEASURES...';
+      msgEl.innerHTML = '<span style="color:#ff0000;animation:hackedGlitch .1s infinite;">☠ ☠ ☠ ☠ ☠ ☠ ☠</span>';
+      // Intense glitch on everything
+      overlay.style.background = '#000';
+    }
+    
+    // Phase 3: Recovery (last 3s)
+    if (secondsLeft === 3) {
+      titleEl.textContent = 'RESTORING POWER...';
+      titleEl.style.color = '#00ff41';
+      iconEl.textContent = '🔌';
+      subEl.textContent = 'SYSTEM RECOVERY IN PROGRESS';
+      msgEl.textContent = '██████████░░░░ 72%';
+    }
+    if (secondsLeft === 2) msgEl.textContent = '████████████░░ 88%';
+    if (secondsLeft === 1) msgEl.textContent = '██████████████ 100%';
+    
+    if (secondsLeft <= 0) {
+      clearInterval(countdownInterval);
+      overlay.classList.remove('active');
+      titleEl.style.color = '#e0174a';
+      overlay.style.background = '#000';
+      // Resume audio if it was playing
+      if (currentAudio && currentAudio.src) currentAudio.play().catch(()=>{});
+      // Restart timer for next event
+      startHackedTimer();
+    }
+  }, 1000);
+}
+
+// Start the 40-min timer on load
+document.addEventListener('DOMContentLoaded', startHackedTimer);
+
 </script>
 
 <!-- ════════════════════════════════════
-     MODE 4 — GLUMINATOR
+     MODE 4 — GLUMINATOR (Blade Runner Arcade)
 ════════════════════════════════════ -->
-<div id="mode4" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:48px;">
+<div id="mode4" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:28px;position:relative;overflow:hidden;">
 
-  <div style="width:min(440px,100vw);font-family:'Share Tech Mono',monospace;padding:0 12px;">
+  <!-- NEON AMBIENT GLOW (Blade Runner atmosphere) -->
+  <div style="position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;">
+    <!-- Vertical neon tubes left -->
+    <div style="position:absolute;left:8px;top:0;bottom:0;width:3px;background:linear-gradient(180deg,transparent,#ff0055,#ff0055,transparent);box-shadow:0 0 15px #ff0055,0 0 30px rgba(255,0,85,.3);opacity:.6;"></div>
+    <div style="position:absolute;left:18px;top:10%;bottom:20%;width:2px;background:linear-gradient(180deg,transparent,#00e5ff,#00e5ff,transparent);box-shadow:0 0 12px #00e5ff,0 0 25px rgba(0,229,255,.3);opacity:.5;"></div>
+    <!-- Vertical neon tubes right -->
+    <div style="position:absolute;right:8px;top:0;bottom:0;width:3px;background:linear-gradient(180deg,transparent,#a855f7,#a855f7,transparent);box-shadow:0 0 15px #a855f7,0 0 30px rgba(168,85,247,.3);opacity:.6;"></div>
+    <div style="position:absolute;right:18px;top:15%;bottom:10%;width:2px;background:linear-gradient(180deg,transparent,#ff6600,#ff6600,transparent);box-shadow:0 0 12px #ff6600,0 0 25px rgba(255,102,0,.3);opacity:.4;"></div>
+    <!-- Horizontal neon accents -->
+    <div style="position:absolute;top:6px;left:5%;right:5%;height:2px;background:linear-gradient(90deg,transparent,#00ffaa,transparent);box-shadow:0 0 10px #00ffaa;opacity:.35;"></div>
+    <div style="position:absolute;bottom:6px;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,#ff2060,transparent);box-shadow:0 0 10px #ff2060;opacity:.35;"></div>
+    <!-- Corner neon blobs -->
+    <div style="position:absolute;top:30px;left:30px;width:60px;height:60px;background:radial-gradient(circle,rgba(255,0,85,.15),transparent);border-radius:50%;"></div>
+    <div style="position:absolute;top:30px;right:30px;width:60px;height:60px;background:radial-gradient(circle,rgba(0,229,255,.12),transparent);border-radius:50%;"></div>
+    <div style="position:absolute;bottom:60px;left:50%;transform:translateX(-50%);width:200px;height:80px;background:radial-gradient(ellipse,rgba(168,85,247,.1),transparent);"></div>
+    <!-- Dark tube overlays (very dark neon tubes around edges) -->
+    <div style="position:absolute;left:0;top:0;bottom:0;width:30px;background:linear-gradient(90deg,rgba(0,0,0,.8),transparent);"></div>
+    <div style="position:absolute;right:0;top:0;bottom:0;width:30px;background:linear-gradient(270deg,rgba(0,0,0,.8),transparent);"></div>
+  </div>
 
-    <!-- Header -->
-    <div style="text-align:center;margin-bottom:20px;">
-      <div class="gam-title" style="font-size:28px;letter-spacing:6px;font-family:'VT323',monospace;">GLUMINATOR</div>
-      <div class="gam-subtitle" style="font-size:9px;letter-spacing:3px;margin-top:4px;">CYBER SLOT MACHINE · WIN COINS · UNLOCK MUSIC</div>
-      <div style="margin-top:8px;font-size:12px;letter-spacing:2px;">
-        🪙 <span id="slotCoinCount" class="gam-coin-count">0</span> <span style="font-size:9px;color:#555;">COINS</span>
-      </div>
-    </div>
+  <!-- ARCADE CABINET FRAME -->
+  <div style="width:min(460px,96vw);font-family:'Share Tech Mono',monospace;padding:0 8px;position:relative;z-index:1;">
 
-    <!-- Paytable -->
-    <div class="gam-paytable" style="padding:8px 12px;margin-bottom:14px;font-size:9px;letter-spacing:1px;">
-      <div style="color:#666;margin-bottom:6px;letter-spacing:2px;">PAYTABLE — 3 OF A KIND</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
-        <span style="color:#ffd700;">7 SEVEN</span><span style="color:#555;">×10 bet</span>
-        <span style="color:#00e5c8;">◆ DIAMOND</span><span style="color:#555;">×7 bet</span>
-        <span style="color:#e0174a;">☠ SKULL</span><span style="color:#555;">×5 bet</span>
-        <span style="color:#ffe030;">⚡ BOLT</span><span style="color:#555;">×4 bet</span>
-        <span style="color:#ff2060;">● RED</span><span style="color:#555;">×3 bet</span>
-        <span style="color:#ffaa00;">◉ GOLD</span><span style="color:#555;">×2 bet</span>
-      </div>
-    </div>
-
-    <!-- Slot machine -->
-    <div class="gam-machine" style="padding:16px;position:relative;">
-
-      <!-- Scanline overlay -->
-      <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.15) 3px,rgba(0,0,0,.15) 4px);pointer-events:none;z-index:1;"></div>
-
-      <!-- Reels grid -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:12px;position:relative;z-index:2;">
-        <!-- Win line indicators -->
-        <div style="position:absolute;left:-8px;top:50%;transform:translateY(-50%);width:4px;height:4px;background:#ffd700;border-radius:50%;box-shadow:0 0 6px #ffd700;"></div>
-        <div style="position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:4px;height:4px;background:#ffd700;border-radius:50%;box-shadow:0 0 6px #ffd700;"></div>
-
-        <!-- 3 reels × 3 rows -->
-        <div id="reel0" class="gam-reel">
-          <div id="slot_0_0" class="slot-cell" style="color:#aaa;">▣</div>
-          <div id="slot_0_1" class="slot-cell slot-mid">7</div>
-          <div id="slot_0_2" class="slot-cell" style="color:#aaa;">▣</div>
+    <!-- Cabinet top bezel -->
+    <div style="background:linear-gradient(180deg,#1a1a2e,#0d0d1a);border:2px solid #333;border-bottom:none;border-radius:12px 12px 0 0;padding:8px 16px;position:relative;overflow:hidden;">
+      <!-- Neon strip on top -->
+      <div style="position:absolute;top:0;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,#ff0055,#00e5ff,#a855f7,transparent);box-shadow:0 0 8px #ff0055,0 0 8px #00e5ff;"></div>
+      <div style="text-align:center;">
+        <div class="gam-title" style="font-size:32px;letter-spacing:8px;font-family:'VT323',monospace;position:relative;">
+          GLUMINATOR
+          <span style="position:absolute;top:-8px;right:-12px;font-size:10px;color:#ff0055;letter-spacing:1px;transform:rotate(12deg);text-shadow:0 0 8px #ff0055;">TM</span>
         </div>
-        <div id="reel1" class="gam-reel">
-          <div id="slot_1_0" class="slot-cell" style="color:#aaa;">▣</div>
-          <div id="slot_1_1" class="slot-cell slot-mid">7</div>
-          <div id="slot_1_2" class="slot-cell" style="color:#aaa;">▣</div>
-        </div>
-        <div id="reel2" class="gam-reel">
-          <div id="slot_2_0" class="slot-cell" style="color:#aaa;">▣</div>
-          <div id="slot_2_1" class="slot-cell slot-mid">7</div>
-          <div id="slot_2_2" class="slot-cell" style="color:#aaa;">▣</div>
+        <div class="gam-subtitle" style="font-size:9px;letter-spacing:3px;margin-top:2px;">CYBER SLOT MACHINE · WIN COINS · UNLOCK MUSIC</div>
+        <div style="margin-top:6px;font-size:13px;letter-spacing:2px;">
+          🪙 <span id="slotCoinCount" class="gam-coin-count" style="font-size:16px;">0</span> <span style="font-size:9px;color:#555;">COINS</span>
         </div>
       </div>
+    </div>
 
-      <!-- Win message -->
-      <div id="slotMsg" style="text-align:center;font-size:12px;letter-spacing:2px;min-height:18px;margin-bottom:10px;color:#444;position:relative;z-index:2;"></div>
+    <!-- MAIN SCREEN (CRT-style display) -->
+    <div style="background:#050208;border-left:3px solid #222;border-right:3px solid #222;position:relative;overflow:hidden;">
+      <!-- CRT curvature/vignette -->
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.6) 100%);pointer-events:none;z-index:3;"></div>
+      <!-- Scan lines -->
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.12) 2px,rgba(0,0,0,.12) 3px);pointer-events:none;z-index:3;"></div>
+      <!-- Screen glow inner -->
+      <div style="position:absolute;inset:0;box-shadow:inset 0 0 60px rgba(224,23,74,.08),inset 0 0 120px rgba(0,229,200,.05);pointer-events:none;z-index:2;"></div>
 
-      <!-- Bet rate -->
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;position:relative;z-index:2;">
-        <span style="font-size:9px;color:#555;letter-spacing:1px;">BET×</span>
-        <button class="slot-bet-btn active-btn" data-rate="1" onclick="setBetRate(1)" style="border:1px solid #333;background:transparent;color:#aaa;font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;">1</button>
-        <button class="slot-bet-btn" data-rate="2" onclick="setBetRate(2)" style="border:1px solid #333;background:transparent;color:#aaa;font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;">2</button>
-        <button class="slot-bet-btn" data-rate="3" onclick="setBetRate(3)" style="border:1px solid #333;background:transparent;color:#aaa;font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;">3</button>
-        <button class="slot-bet-btn" data-rate="5" onclick="setBetRate(5)" style="border:1px solid #333;background:transparent;color:#ffd700;font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;">5×</button>
-        <span style="margin-left:auto;font-size:9px;color:#333;letter-spacing:1px;">WIN LINES: 3</span>
+      <div style="padding:16px 14px;position:relative;z-index:1;">
+        <!-- Paytable -->
+        <div class="gam-paytable" style="padding:8px 12px;margin-bottom:12px;font-size:9px;letter-spacing:1px;border-radius:4px;">
+          <div style="color:#666;margin-bottom:6px;letter-spacing:2px;font-size:8px;">▸ PAYTABLE — 3 OF A KIND</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
+            <span style="color:#ffd700;">7 SEVEN</span><span style="color:#555;">×10 bet</span>
+            <span style="color:#00e5c8;">◆ DIAMOND</span><span style="color:#555;">×7 bet</span>
+            <span style="color:#e0174a;">☠ SKULL</span><span style="color:#555;">×5 bet</span>
+            <span style="color:#ffe030;">⚡ BOLT</span><span style="color:#555;">×4 bet</span>
+            <span style="color:#ff2060;">● RED</span><span style="color:#555;">×3 bet</span>
+            <span style="color:#ffaa00;">◉ GOLD</span><span style="color:#555;">×2 bet</span>
+          </div>
+        </div>
+
+        <!-- Slot machine reels -->
+        <div class="gam-machine" style="padding:16px;position:relative;border-radius:6px;">
+          <!-- Reels grid -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:12px;position:relative;z-index:2;">
+            <!-- Win line indicators -->
+            <div style="position:absolute;left:-8px;top:50%;transform:translateY(-50%);width:5px;height:5px;background:#ffd700;border-radius:50%;box-shadow:0 0 8px #ffd700,0 0 16px rgba(255,215,0,.4);"></div>
+            <div style="position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:5px;height:5px;background:#ffd700;border-radius:50%;box-shadow:0 0 8px #ffd700,0 0 16px rgba(255,215,0,.4);"></div>
+
+            <!-- 3 reels × 3 rows -->
+            <div id="reel0" class="gam-reel" style="border-radius:4px;">
+              <div id="slot_0_0" class="slot-cell" style="color:#aaa;">▣</div>
+              <div id="slot_0_1" class="slot-cell slot-mid">7</div>
+              <div id="slot_0_2" class="slot-cell" style="color:#aaa;">▣</div>
+            </div>
+            <div id="reel1" class="gam-reel" style="border-radius:4px;">
+              <div id="slot_1_0" class="slot-cell" style="color:#aaa;">▣</div>
+              <div id="slot_1_1" class="slot-cell slot-mid">7</div>
+              <div id="slot_1_2" class="slot-cell" style="color:#aaa;">▣</div>
+            </div>
+            <div id="reel2" class="gam-reel" style="border-radius:4px;">
+              <div id="slot_2_0" class="slot-cell" style="color:#aaa;">▣</div>
+              <div id="slot_2_1" class="slot-cell slot-mid">7</div>
+              <div id="slot_2_2" class="slot-cell" style="color:#aaa;">▣</div>
+            </div>
+          </div>
+
+          <!-- Win message -->
+          <div id="slotMsg" style="text-align:center;font-size:12px;letter-spacing:2px;min-height:18px;margin-bottom:10px;color:#444;position:relative;z-index:2;"></div>
+
+          <!-- Bet rate -->
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;position:relative;z-index:2;">
+            <span style="font-size:9px;color:#555;letter-spacing:1px;">BET×</span>
+            <button class="slot-bet-btn active-btn" data-rate="1" onclick="setBetRate(1)" style="border:1px solid #333;background:transparent;color:#aaa;font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;border-radius:3px;">1</button>
+            <button class="slot-bet-btn" data-rate="2" onclick="setBetRate(2)" style="border:1px solid #333;background:transparent;color:#aaa;font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;border-radius:3px;">2</button>
+            <button class="slot-bet-btn" data-rate="3" onclick="setBetRate(3)" style="border:1px solid #333;background:transparent;color:#aaa;font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;border-radius:3px;">3</button>
+            <button class="slot-bet-btn" data-rate="5" onclick="setBetRate(5)" style="border:1px solid #333;background:transparent;color:#ffd700;font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;border-radius:3px;">5×</button>
+            <span style="margin-left:auto;font-size:9px;color:#333;letter-spacing:1px;">WIN LINES: 3</span>
+          </div>
+
+          <!-- Spin button -->
+          <button id="slotSpinBtn" class="gam-spin" onclick="doSpin()" style="width:100%;height:48px;font-family:'Share Tech Mono',monospace;font-size:15px;letter-spacing:5px;cursor:pointer;transition:all .15s;position:relative;z-index:2;border-radius:4px;">▶ SPIN</button>
+        </div>
       </div>
-
-      <!-- Spin button -->
-      <button id="slotSpinBtn" class="gam-spin" onclick="doSpin()" style="width:100%;height:44px;font-family:'Share Tech Mono',monospace;font-size:14px;letter-spacing:4px;cursor:pointer;transition:all .15s;position:relative;z-index:2;">▶ SPIN</button>
     </div>
 
-    <!-- Info footer -->
-    <div style="margin-top:20px;font-size:10px;color:#d4c87a;letter-spacing:1px;text-align:center;line-height:2.2;">
-      EACH SPIN COSTS YOUR BET IN 🪙 · WINS PAY BIG<br>
-      EACH SONG COSTS 1 🪙 · NO COINS = NO PLAY<br>
-      <span style="margin-top:12px;display:block;font-size:9px;color:#666;letter-spacing:2px;">CONTACT</span>
-      <a href="mailto:about@digitalslayer.com" style="color:#d4c87a;text-decoration:none;font-size:10px;letter-spacing:2px;">about@digitalslayer.com</a>
+    <!-- Cabinet bottom bezel (control panel) -->
+    <div style="background:linear-gradient(0deg,#1a1a2e,#0d0d1a);border:2px solid #333;border-top:1px solid #222;border-radius:0 0 12px 12px;padding:12px 16px;position:relative;">
+      <!-- Neon strip on bottom -->
+      <div style="position:absolute;bottom:0;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,#a855f7,#00e5ff,#ff6600,transparent);box-shadow:0 0 8px #a855f7;border-radius:0 0 10px 10px;"></div>
+      <!-- Speaker grille -->
+      <div style="display:flex;justify-content:center;gap:2px;margin-bottom:8px;">
+        <div style="width:3px;height:8px;background:#1a1a1a;border-radius:1px;"></div>
+        <div style="width:3px;height:8px;background:#1a1a1a;border-radius:1px;"></div>
+        <div style="width:3px;height:8px;background:#1a1a1a;border-radius:1px;"></div>
+        <div style="width:3px;height:8px;background:#1a1a1a;border-radius:1px;"></div>
+        <div style="width:3px;height:8px;background:#1a1a1a;border-radius:1px;"></div>
+        <div style="width:3px;height:8px;background:#1a1a1a;border-radius:1px;"></div>
+        <div style="width:3px;height:8px;background:#1a1a1a;border-radius:1px;"></div>
+        <div style="width:3px;height:8px;background:#1a1a1a;border-radius:1px;"></div>
+        <div style="width:3px;height:8px;background:#1a1a1a;border-radius:1px;"></div>
+      </div>
+      <!-- Info footer -->
+      <div style="font-size:10px;color:#d4c87a;letter-spacing:1px;text-align:center;line-height:2.2;">
+        EACH SPIN COSTS YOUR BET IN 🪙 · WINS PAY BIG<br>
+        EACH SONG COSTS 1 🪙 · NO COINS = NO PLAY<br>
+        <span style="color:#ff4060;font-size:9px;letter-spacing:2px;">⚠ CHEATERS WILL BE BANNED BY ADMINS ⚠</span><br>
+        <span style="margin-top:8px;display:block;font-size:9px;color:#666;letter-spacing:2px;">CONTACT</span>
+        <a href="mailto:about@digitalslayer.com" style="color:#d4c87a;text-decoration:none;font-size:10px;letter-spacing:2px;">about@digitalslayer.com</a>
+      </div>
     </div>
+
+    <!-- Coin slot decoration -->
+    <div style="margin:10px auto 0;width:40px;height:6px;background:#111;border:1px solid #333;border-radius:3px;box-shadow:inset 0 1px 3px rgba(0,0,0,.8);"></div>
 
   </div>
 </div>
@@ -3588,7 +3875,21 @@ async function voteAdminDelete(trackId) {
   </div>
 </div>
 
-<!-- DAFOE-JESUS COIN TARGET -->
-<div id="dafoeJesusWrap"><img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2Frrcm-9aWWtfF9Gt1nIaND%2Fdafoe_small.png" alt="Dafoe Jesus" /></div>
+<!-- MEL-ZEUS COIN TARGET (thumbs up) -->
+<div id="dafoeJesusWrap"><img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FzXmJg31R_oQnpa27AQ50y%2Fmel-zeus-thumbsup.png" alt="Zeus Gibson" /></div>
+
+<!-- HACKED / POWER OFF OVERLAY (every 40 min) -->
+<div id="hackedOverlay">
+  <div id="hackedStatic" style="position:absolute;inset:0;opacity:.15;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%224%22 height=%224%22><rect width=%224%22 height=%224%22 fill=%22%23111%22/><rect x=%220%22 y=%220%22 width=%222%22 height=%222%22 fill=%22%23222%22/></svg>');background-size:4px 4px;animation:staticNoise 0.1s steps(8) infinite;"></div>
+  <div id="hackedScanline" style="position:absolute;left:0;right:0;height:4px;background:rgba(0,255,0,.08);animation:scanDown 3s linear infinite;"></div>
+  <div id="hackedContent" style="text-align:center;position:relative;z-index:1;">
+    <div id="hackedIcon" style="font-size:80px;margin-bottom:20px;animation:hackedGlitch .3s infinite;">📺</div>
+    <div id="hackedTitle" style="font-size:48px;color:#e0174a;letter-spacing:8px;text-shadow:0 0 30px #e0174a,0 0 60px rgba(224,23,74,.4);animation:hackedGlitch .15s infinite;">NO SIGNAL</div>
+    <div id="hackedSub" style="font-size:14px;color:#ff4444;letter-spacing:4px;margin-top:16px;opacity:.7;">POWER INTERRUPTION DETECTED</div>
+    <div id="hackedMsg" style="font-size:18px;color:#00ff41;letter-spacing:3px;margin-top:30px;font-family:'Share Tech Mono',monospace;"></div>
+    <div id="hackedTimer" style="font-size:36px;color:#e0174a;letter-spacing:4px;margin-top:20px;font-family:'VT323',monospace;"></div>
+    <div style="margin-top:40px;font-size:10px;color:#333;letter-spacing:3px;">YOUR IP HAS BEEN LOGGED · DO SOMETHING USEFUL</div>
+  </div>
+</div>
 </body>
 </html>
