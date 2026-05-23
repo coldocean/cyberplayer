@@ -12,9 +12,34 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
-  --red:#e0174a;--red-bright:#ff2060;
+  --red:#cc0000;--red-bright:#ff1a1a;
   --cyan:#00e5c8;--cyan-dim:rgba(0,229,200,0.15);
   --bg:#0a0a14;--panel:#08080f;--panel2:#0d0d1a;
+  --blood-glow:0 0 6px rgba(200,0,0,.6), 0 0 12px rgba(140,0,0,.3);
+  --blood-border:2px solid #880000;
+  --blood-text:0 0 3px rgba(180,0,0,.5), 0 0 10px rgba(120,0,0,.25);
+}
+
+/* ── GLOBAL BLOOD THEME: white text + bloody borders ── */
+.modebtn{color:#fff !important;}
+.modebtn.active{color:#fff !important; border-color:#880000 !important; box-shadow:var(--blood-glow) !important;}
+.arc-header,.arc-body,.arc-bottom,.arc-sidebar,
+.cli-main,.cli-header,.cli-input-row,
+.wamp-title,.wamp-main,.wamp-eq,.wamp-pl,
+.gam-machine{
+  border-color:#880000 !important;
+  box-shadow:var(--blood-glow);
+}
+.arc-track,.cli-output-line,.wamp-ticker,.wamp-timer,
+.wamp-pl-item,.arc-label,.arc-now-info,
+.cli-prompt,.cli-user,.gam-label{
+  color:#fff !important;
+  text-shadow:var(--blood-text) !important;
+}
+.arc-track.active,.wamp-pl-item.active{
+  color:#ff3333 !important;
+  text-shadow:0 0 8px rgba(255,0,0,.5) !important;
+  border-left-color:#cc0000 !important;
 }
 
 body{
@@ -23,6 +48,8 @@ body{
   font-family:'Share Tech Mono',monospace;
   display:flex;align-items:center;justify-content:center;
   overflow-x:hidden;
+  color:#ffffff;
+  text-shadow:0 0 2px rgba(180,0,0,.4), 0 0 8px rgba(120,0,0,.2);
 }
 
 /* ── MODE BUTTONS ── */
@@ -933,7 +960,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 .cli-radio-station{font-size:10px;color:#555;cursor:pointer;padding:2px 0 2px 12px;display:flex;align-items:center;gap:6px;}
 .cli-radio-station:hover{color:#00aa00;}
 .cli-radio-station.active{color:#aaff00;}
-/* ── GEEP SON OF A BEACH & COIN ANIMATION — descends FROM SKY, grows in size ── */
+/* ── ZEUS THA GEEP SON & COIN ANIMATION — descends FROM SKY, grows in size ── */
 .jesus-sky{position:fixed;z-index:100001;pointer-events:none;top:-180px;left:50%;transform:translateX(-50%) scale(0.15);transform-origin:top center;transition:none;}
 .jesus-sky img{width:160px;height:160px;object-fit:contain;border-radius:50%;border:3px solid gold;filter:drop-shadow(0 0 24px gold) drop-shadow(0 0 50px rgba(255,215,0,.7)) drop-shadow(0 0 80px rgba(255,180,0,.3));}
 .jesus-sky .zeus-clouds{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:48px;opacity:0.7;filter:blur(2px);text-shadow:0 0 20px rgba(200,200,255,0.6);white-space:nowrap;pointer-events:none;}
@@ -1245,9 +1272,9 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 <div id="authOverlay" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.92);flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;overflow:hidden;">
   <!-- Blood drip container for dark soul effect -->
   <div id="darkSoulBlood" style="display:none;position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;"></div>
-  <div id="authDafoeThumbsDown" style="margin-bottom:20px;position:relative;z-index:2;">
-    <img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FzXmJg31R_oQnpa27AQ50y%2Fmel-zeus-thumbsup.png" style="width:130px;height:130px;border-radius:50%;border:3px solid #ffd700;filter:drop-shadow(0 0 20px rgba(255,215,0,.5)) drop-shadow(0 0 40px rgba(255,180,0,.2));transform:scaleX(-1);" alt="Geep Son of a Beach">
-    <div style="color:#ffd700;font-size:14px;letter-spacing:3px;text-align:center;margin-top:10px;text-shadow:0 0 10px rgba(255,215,0,.5);">⚡ GEEP SON OF A BEACH AWAITS</div>
+  <div id="authDafoeThumbsDown" style="margin-bottom:20px;position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;">
+    <img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FzXmJg31R_oQnpa27AQ50y%2Fmel-zeus-thumbsup.png" style="width:130px;height:130px;border-radius:50%;border:3px solid #ffd700;filter:drop-shadow(0 0 20px rgba(255,215,0,.5)) drop-shadow(0 0 40px rgba(255,180,0,.2));transform:scaleX(-1);display:block;margin:0 auto;" alt="Zeus Tha Geep Son">
+    <div style="color:#ffd700;font-size:14px;letter-spacing:3px;text-align:center;margin-top:10px;text-shadow:0 0 10px rgba(255,215,0,.5);">⚡ ZEUS THA GEEP SON AWAITS</div>
   </div>
   <div style="color:#ff6666;font-size:12px;letter-spacing:2px;text-align:center;max-width:340px;line-height:1.8;margin-bottom:16px;position:relative;z-index:2;">
     You are the hard sinner and I am here to open your future — <span style="color:#cc0000;text-shadow:0 0 12px rgba(200,0,0,.8);">REGISTER NOW</span>
@@ -4076,7 +4103,7 @@ window.jesusFromSky = function(coinText) {
     <div class="zeus-clouds">☁️ ☁️ ☁️</div>
     <img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FzXmJg31R_oQnpa27AQ50y%2Fmel-zeus-thumbsup.png">
     <div class="jesus-coin-txt">${txt}</div>
-    <div class="zeus-laugh">${isPositive ? '⚡ GEEP BLESSES' : laugh}</div>
+    <div class="zeus-laugh">${isPositive ? '⚡ ZEUS BLESSES' : laugh}</div>
   `;
   document.body.appendChild(el);
   el.style.animation = 'zeusDescend 3.4s cubic-bezier(.22,.61,.36,1) forwards';
@@ -4326,7 +4353,7 @@ window.joinAsDarkSoul = async function() {
     document.body.classList.add('dark-soul-enter');
     authHideOverlay();
     setTimeout(() => {
-      jesusFromSky('⚡ +100 🪙 GEEP SON OF A BEACH GREETS YOU');
+      jesusFromSky('⚡ +100 🪙 ZEUS THA GEEP SON GREETS YOU');
     }, 500);
     document.getElementById('coinHud').style.display = 'block';
     document.getElementById('coinCount').textContent = guestCoins;
@@ -4851,7 +4878,7 @@ window.submitPayment = function() {
   </div>
 </div>
 
-<!-- GEEP SON OF A BEACH COIN TARGET (thumbs up) -->
+<!-- ZEUS THA GEEP SON COIN TARGET (thumbs up) -->
 <div id="dafoeJesusWrap" style="display:none!important;"></div>
 
 <!-- HACKED / POWER OFF OVERLAY (every 40 min) -->
@@ -4876,6 +4903,8 @@ window.submitPayment = function() {
   <div class="sn-text">
     <div class="sn-title">Dj SuperNovaq</div>
     <div class="sn-body">SEREDINA feat LATENTNIY GOMOSEKSUALIST
+
+DJ NOVAQ - SEREDINA TRACKA feat RUNI, ZERKALO, JENYAVIY
 mix 2026 top on beatport in HELL
 
 shall you open your anus bigger?
