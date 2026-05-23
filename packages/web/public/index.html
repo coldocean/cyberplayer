@@ -880,6 +880,43 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
   0%{opacity:0;transform:scaleX(0);}
   100%{opacity:0.85;transform:scaleX(1);}
 }
+/* Register button bleeding */
+@keyframes btnBloodSpot{
+  0%{opacity:0;transform:scale(0);}
+  30%{opacity:0.9;}
+  100%{opacity:0.7;transform:scale(1);}
+}
+@keyframes btnBloodDrip{
+  0%{height:0;opacity:0;}
+  10%{opacity:1;}
+  100%{height:60px;opacity:0.85;}
+}
+/* Passive form blood — always starts when overlay is shown */
+@keyframes passiveBloodDrip{
+  0%{height:0;opacity:0;}
+  3%{opacity:0.85;}
+  100%{height:100vh;opacity:1;}
+}
+@keyframes passivePool{
+  0%{opacity:0;transform:scaleX(0) scaleY(0);}
+  100%{opacity:0.9;transform:scaleX(1) scaleY(1);}
+}
+@keyframes bloodSpotGrow{
+  0%{transform:scale(0);opacity:0;}
+  20%{opacity:0.8;}
+  100%{transform:scale(1);opacity:0.75;}
+}
+@keyframes registerBtnBleed{
+  0%{box-shadow:none;}
+  30%{box-shadow:0 4px 20px rgba(200,0,0,.6),inset 0 0 10px rgba(120,0,0,.4);}
+  60%{box-shadow:0 8px 40px rgba(200,0,0,.9),inset 0 0 20px rgba(80,0,0,.7);}
+  100%{box-shadow:0 0px 0px rgba(200,0,0,.1),inset 0 0 5px rgba(40,0,0,.3);}
+}
+@keyframes btnDrip{
+  0%{height:0;top:100%;opacity:0;}
+  5%{opacity:1;}
+  100%{height:80px;top:100%;opacity:0.9;}
+}
 @keyframes darkSoulEntry{
   0%{opacity:0;transform:scale(1.5);filter:blur(20px) brightness(0);}
   30%{opacity:1;filter:blur(5px) brightness(0.3);}
@@ -989,11 +1026,11 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
     <div style="color:#ffd700;font-size:14px;letter-spacing:3px;text-align:center;margin-top:10px;text-shadow:0 0 10px rgba(255,215,0,.5);">⚡ ZEUS AWAITS</div>
   </div>
   <div style="color:#ff6666;font-size:12px;letter-spacing:2px;text-align:center;max-width:340px;line-height:1.8;margin-bottom:16px;position:relative;z-index:2;">
-    You are the sinner and I am ready to open your third eye — <span style="color:#ffd700;">REGISTER</span>
+    You are the hard sinner and I am here to open your future — <span style="color:#cc0000;text-shadow:0 0 12px rgba(200,0,0,.8);">REGISTER NOW</span>
   </div>
   <!-- JOIN AS DARK SOUL (guest mode) -->
   <button id="darkSoulBtn" onclick="joinAsDarkSoul()" style="margin-bottom:18px;background:transparent;border:2px solid #8b0000;color:#cc0000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;padding:10px 24px;cursor:pointer;text-transform:uppercase;transition:all .3s;position:relative;z-index:2;text-shadow:0 0 8px rgba(200,0,0,.4);">
-    🩸 JOIN AS DARK SOUL 🩸
+    🩸 JOIN AS A DARK SOUL 🩸
   </button>
 
   <!-- LOGIN FORM -->
@@ -1016,7 +1053,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
     <input id="authRegEmail" type="email" placeholder="EMAIL" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
     <input id="authRegPass" type="password" placeholder="PASSWORD (6+ chars)" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
     <input id="authRegPass2" type="password" placeholder="CONFIRM PASSWORD" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
-    <button onclick="authDoRegister()" style="width:100%;background:#ffd700;color:#000;border:none;padding:10px;font-family:inherit;font-size:11px;letter-spacing:3px;cursor:pointer;font-weight:bold;">REGISTER ▶</button>
+    <button id="registerSubmitBtn" onclick="authDoRegister()" style="width:100%;background:#8b0000;color:#ffcccc;border:2px solid #cc0000;padding:10px;font-family:inherit;font-size:11px;letter-spacing:3px;cursor:pointer;font-weight:bold;position:relative;overflow:hidden;transition:all .3s;">REGISTER ▶</button>
     <div id="authRegError" style="color:#ff4444;font-size:10px;letter-spacing:1px;margin-top:8px;display:none;"></div>
     <div id="authRegSuccess" style="color:#00ff88;font-size:10px;letter-spacing:1px;margin-top:8px;display:none;"></div>
     <button onclick="authShowLogin()" style="margin-top:12px;width:100%;background:transparent;border:1px solid #555;color:#555;padding:8px;font-family:inherit;font-size:9px;letter-spacing:2px;cursor:pointer;">← BACK TO LOGIN</button>
@@ -3378,6 +3415,167 @@ async function authCheckSession() {
   } catch { authShowOverlay(); }
 }
 
+// ── BLOOD ENGINE — starts on overlay open, accelerates over time, 30min = form buried ──
+window._bloodEngine = null;
+window._bloodOpenedAt = null;
+window._bloodIntervalMs = 3000; // start spawning a drip every 3s, gets faster
+
+function _startBloodEngine() {
+  const overlay = document.getElementById('authOverlay');
+  const container = document.getElementById('darkSoulBlood');
+  if (!container) return;
+  container.style.display = 'block';
+  window._bloodOpenedAt = window._bloodOpenedAt || Date.now();
+
+  function spawnDrip() {
+    const elapsed = (Date.now() - window._bloodOpenedAt) / 1000; // seconds
+    // After 30 min (1800s) the form is completely buried
+    const progress = Math.min(elapsed / 1800, 1);
+
+    // Spawn 1-3 drips depending on progress
+    const count = 1 + Math.floor(progress * 4);
+    for (let i = 0; i < count; i++) {
+      // Drip
+      const drip = document.createElement('div');
+      const leftPct = Math.random() * 100;
+      const width = 4 + Math.random() * 18 + progress * 20;
+      const dur = Math.max(6, 30 - progress * 24); // fast drips as time goes on
+      drip.style.cssText = `
+        position:absolute;
+        top:0;
+        left:${leftPct}%;
+        width:${width}px;
+        height:0;
+        background:linear-gradient(180deg,#5a0000,#880000,#bb0000,rgba(160,0,0,0.8));
+        border-radius:0 0 50% 50%;
+        pointer-events:none;
+        animation:passiveBloodDrip ${dur}s ease-in forwards;
+        z-index:3;
+      `;
+      container.appendChild(drip);
+
+      // Blood spot blob — random blob on the lower half area
+      const spot = document.createElement('div');
+      const spotLeft = 10 + Math.random() * 80;
+      const spotTop = 40 + Math.random() * 55; // lower half / around form
+      const spotSize = 20 + Math.random() * 80 + progress * 120;
+      const spotDelay = Math.random() * 2;
+      spot.style.cssText = `
+        position:absolute;
+        left:${spotLeft}%;
+        top:${spotTop}%;
+        width:${spotSize}px;
+        height:${spotSize * (0.4 + Math.random() * 0.6)}px;
+        background:radial-gradient(ellipse at 40% 40%,#cc0000,#880000,rgba(60,0,0,0.0));
+        border-radius:${30 + Math.random()*50}% ${50+Math.random()*40}% ${40+Math.random()*50}% ${30+Math.random()*50}%;
+        pointer-events:none;
+        transform:scale(0);
+        opacity:0;
+        animation:bloodSpotGrow ${1.5 + Math.random()*2}s ease-out ${spotDelay}s forwards;
+        z-index:4;
+      `;
+      container.appendChild(spot);
+    }
+
+    // Pool at bottom
+    if (Math.random() < 0.4 + progress * 0.4) {
+      const pool = document.createElement('div');
+      const pLeft = Math.random() * 90;
+      const pWidth = 30 + Math.random() * 120 + progress * 200;
+      pool.style.cssText = `
+        position:absolute;
+        bottom:${Math.random() * 30}%;
+        left:${pLeft}%;
+        width:${pWidth}px;
+        height:${8 + Math.random()*20}px;
+        background:radial-gradient(ellipse at center,rgba(160,0,0,0.9),rgba(80,0,0,0));
+        border-radius:50%;
+        pointer-events:none;
+        transform:scaleX(0);
+        opacity:0;
+        animation:passivePool ${2+Math.random()*3}s ease-out ${Math.random()}s forwards;
+        z-index:4;
+      `;
+      container.appendChild(pool);
+    }
+
+    // Register button bleeding — always pulse it
+    _pulseRegisterButton(progress);
+
+    // Disable register button entirely after 30 min
+    if (progress >= 1) {
+      const btn = document.getElementById('registerSubmitBtn');
+      if (btn && !btn.disabled) {
+        btn.disabled = true;
+        btn.textContent = '🩸 BLOOD HAS CLAIMED YOU 🩸';
+        btn.style.background = '#1a0000';
+        btn.style.color = '#550000';
+        btn.style.cursor = 'not-allowed';
+        btn.style.border = '2px solid #330000';
+        btn.style.pointerEvents = 'none';
+      }
+    }
+
+    // Next spawn — faster as time goes on
+    const nextDelay = Math.max(400, 3000 - progress * 2600);
+    window._bloodEngine = setTimeout(spawnDrip, nextDelay);
+  }
+
+  // First drip after 1 second of opening
+  window._bloodEngine = setTimeout(spawnDrip, 1000);
+
+  // Seed button bleeding immediately
+  setTimeout(() => _pulseRegisterButton(0), 500);
+}
+
+function _pulseRegisterButton(progress) {
+  const btn = document.getElementById('registerSubmitBtn');
+  if (!btn || btn.disabled) return;
+  
+  // Spawn blood drip FROM the button
+  const btnRect = btn.getBoundingClientRect();
+  const container = document.getElementById('darkSoulBlood');
+  if (!container) return;
+
+  const dripCount = 1 + Math.floor(progress * 3);
+  for (let i = 0; i < dripCount; i++) {
+    const drip = document.createElement('div');
+    const leftPx = btnRect.left + 10 + Math.random() * (btnRect.width - 20);
+    const leftPct = (leftPx / window.innerWidth) * 100;
+    const w = 3 + Math.random() * 8;
+    const top = (btnRect.bottom / window.innerHeight) * 100;
+    const dur = 4 + Math.random() * 8;
+    drip.style.cssText = `
+      position:absolute;
+      top:${top}%;
+      left:${leftPct}%;
+      width:${w}px;
+      height:0;
+      background:linear-gradient(180deg,#cc0000,#880000,rgba(100,0,0,0.6));
+      border-radius:0 0 50% 50%;
+      pointer-events:none;
+      animation:passiveBloodDrip ${dur}s ease-in forwards;
+      z-index:5;
+    `;
+    container.appendChild(drip);
+  }
+
+  // The button itself gets bloodier
+  const intensity = Math.min(1, progress * 2 + 0.1);
+  btn.style.boxShadow = `0 ${4+intensity*16}px ${20+intensity*40}px rgba(200,0,0,${0.3+intensity*0.6}), inset 0 0 ${10+intensity*20}px rgba(80,0,0,${0.3+intensity*0.5})`;
+  btn.style.borderColor = `rgb(${Math.floor(180+intensity*75)},0,0)`;
+  if (progress > 0.3) {
+    btn.style.background = `rgb(${Math.floor(80+intensity*60)},0,0)`;
+    btn.style.color = `rgb(255,${Math.floor(200-intensity*160)},${Math.floor(200-intensity*200)})`;
+  }
+}
+
+function _stopBloodEngine() {
+  if (window._bloodEngine) { clearTimeout(window._bloodEngine); window._bloodEngine = null; }
+  const container = document.getElementById('darkSoulBlood');
+  if (container) { container.innerHTML = ''; container.style.display = 'none'; }
+}
+
 function authShowOverlay() {
   document.getElementById('authOverlay').style.display = 'flex';
   document.getElementById('authLoginBox').style.display = 'block';
@@ -3392,9 +3590,23 @@ function authShowOverlay() {
     document.getElementById('authResetBox').style.display = 'block';
     window._resetToken = params.get('reset');
   }
+  // START BLOOD ENGINE — passive blood starts immediately on overlay open
+  if (!window._bloodOpenedAt) window._bloodOpenedAt = Date.now();
+  _startBloodEngine();
 }
-function authHideOverlay() { document.getElementById('authOverlay').style.display = 'none'; }
-function authShowRegister() { document.getElementById('authLoginBox').style.display='none'; document.getElementById('authRegisterBox').style.display='block'; document.getElementById('authForgotBox').style.display='none'; }
+function authHideOverlay() {
+  document.getElementById('authOverlay').style.display = 'none';
+  _stopBloodEngine();
+  window._bloodOpenedAt = null; // reset timer on hide so next open starts fresh
+}
+function authShowRegister() {
+  document.getElementById('authLoginBox').style.display='none';
+  document.getElementById('authRegisterBox').style.display='block';
+  document.getElementById('authForgotBox').style.display='none';
+  // Trigger an extra blood pulse from the register button immediately
+  const progress = window._bloodOpenedAt ? Math.min((Date.now() - window._bloodOpenedAt) / 1800000, 1) : 0;
+  setTimeout(() => _pulseRegisterButton(progress), 100);
+}
 function authShowLogin() { document.getElementById('authLoginBox').style.display='block'; document.getElementById('authRegisterBox').style.display='none'; document.getElementById('authForgotBox').style.display='none'; document.getElementById('authResetBox').style.display='none'; }
 function authShowForgot() { document.getElementById('authLoginBox').style.display='none'; document.getElementById('authForgotBox').style.display='block'; }
 
@@ -3421,6 +3633,24 @@ async function authDoLogin() {
 }
 
 async function authDoRegister() {
+  // 30-minute blood lockout
+  if (window._bloodOpenedAt && (Date.now() - window._bloodOpenedAt) >= 30 * 60 * 1000) {
+    const errEl = document.getElementById('authRegError');
+    errEl.textContent = '🩸 THE BLOOD HAS TAKEN YOU — YOUR SOUL IS ALREADY CLAIMED 🩸';
+    errEl.style.display = 'block';
+    errEl.style.color = '#880000';
+    errEl.style.fontSize = '11px';
+    // Flood the screen with blood on attempted register
+    const container = document.getElementById('darkSoulBlood');
+    if (container) {
+      for (let i = 0; i < 30; i++) {
+        const s = document.createElement('div');
+        s.style.cssText = `position:absolute;left:${Math.random()*100}%;top:${Math.random()*100}%;width:${30+Math.random()*100}px;height:${20+Math.random()*60}px;background:radial-gradient(ellipse,#cc0000,rgba(80,0,0,0));border-radius:50%;pointer-events:none;animation:bloodSpotGrow .5s ease-out forwards;z-index:10;`;
+        container.appendChild(s);
+      }
+    }
+    return;
+  }
   const name = document.getElementById('authRegName').value.trim();
   const email = document.getElementById('authRegEmail').value.trim();
   const pass = document.getElementById('authRegPass').value;
@@ -3894,51 +4124,34 @@ window.joinAsDarkSoul = async function() {
   btn.textContent = '🩸 ENTERING THE VOID... 🩸';
   
   const overlay = document.getElementById('authOverlay');
-  const bloodContainer = document.getElementById('darkSoulBlood');
-  bloodContainer.style.display = 'block';
 
-  // SLOW blood — vertical drips that GROW downward, covering the form
-  // Each drip is a column that slowly grows from top covering form fields
-  const cols = 22;
-  for (let i = 0; i < cols; i++) {
-    const drip = document.createElement('div');
-    const leftPct = (i / cols * 100) + (Math.random() * 4 - 2);
-    const width = 3 + Math.random() * 14;
-    const delay = i * 0.18 + Math.random() * 1.2;
-    const dur = 7 + Math.random() * 12; // 7-19 seconds — VERY SLOW
-    drip.style.cssText = `
-      position:absolute;
-      top:0;
-      left:${leftPct}%;
-      width:${width}px;
-      height:0;
-      background:linear-gradient(180deg,#6b0000,#990000,#cc0000,rgba(140,0,0,0.7));
-      border-radius:0 0 40% 40%;
-      opacity:0;
-      animation:bloodDrip ${dur}s ease-in ${delay}s forwards;
-      pointer-events:none;
-      mix-blend-mode:multiply;
-    `;
-    bloodContainer.appendChild(drip);
-    
-    // Blood pool at bottom of drip
-    const pool = document.createElement('div');
-    pool.style.cssText = `
-      position:absolute;
-      bottom:0;
-      left:${leftPct - width/2}%;
-      width:${width * 2.5}px;
-      height:${6 + Math.random()*10}px;
-      background:radial-gradient(ellipse at center,#990000,rgba(100,0,0,0));
-      border-radius:50%;
-      opacity:0;
-      animation:bloodPool ${dur/2}s ease-out ${delay + dur * 0.7}s forwards;
-      pointer-events:none;
-    `;
-    bloodContainer.appendChild(pool);
+  // Blood engine is already running from authShowOverlay — flood it with extra drips on click
+  const bloodContainer = document.getElementById('darkSoulBlood');
+  if (bloodContainer) {
+    // Burst of fast drips for the "entering" moment
+    for (let i = 0; i < 16; i++) {
+      const drip = document.createElement('div');
+      const leftPct = (i / 16 * 100) + (Math.random() * 6 - 3);
+      const width = 5 + Math.random() * 20;
+      const delay = i * 0.08;
+      const dur = 1.5 + Math.random() * 2;
+      drip.style.cssText = `
+        position:absolute;
+        top:0;
+        left:${leftPct}%;
+        width:${width}px;
+        height:0;
+        background:linear-gradient(180deg,#aa0000,#cc0000,rgba(180,0,0,0.8));
+        border-radius:0 0 40% 40%;
+        pointer-events:none;
+        animation:passiveBloodDrip ${dur}s ease-in ${delay}s forwards;
+        z-index:5;
+      `;
+      bloodContainer.appendChild(drip);
+    }
   }
 
-  // Subtle glitch on the overlay (not aggressive)
+  // Glitch on click
   overlay.style.animation = 'darkSoulGlitch .4s ease 2';
   setTimeout(() => { overlay.style.animation = ''; }, 800);
   
@@ -3952,21 +4165,23 @@ window.joinAsDarkSoul = async function() {
   isDarkSoul = true;
   localStorage.setItem('cp_dark_soul', '1');
   
-  // After 2.5s (blood already flowing heavily), dismiss
+  // After 2s, dismiss and show player
   setTimeout(() => {
     document.body.classList.add('dark-soul-enter');
-    authHideOverlay();
+    // Stop engine & wipe blood BEFORE hiding so overlay clears cleanly
+    if (window._bloodEngine) { clearTimeout(window._bloodEngine); window._bloodEngine = null; }
+    window._bloodOpenedAt = null;
+    if (bloodContainer) { bloodContainer.innerHTML = ''; bloodContainer.style.display = 'none'; }
+    document.getElementById('authOverlay').style.display = 'none';
     setTimeout(() => {
       jesusFromSky('⚡ +100 🪙 ZEUS GREETS YOU');
     }, 500);
     document.getElementById('coinHud').style.display = 'block';
     document.getElementById('coinCount').textContent = guestCoins;
     setTimeout(() => {
-      bloodContainer.innerHTML = '';
-      bloodContainer.style.display = 'none';
       document.body.classList.remove('dark-soul-enter');
     }, 2200);
-  }, 2500);
+  }, 2000);
 };
 
 // (dark soul restoration moved before initAuth)
