@@ -459,6 +459,7 @@ body {
 
 .arc-nav-item:hover { color: var(--red-bright); }
 .arc-nav-item.active { background: var(--cyan); color: #000; font-weight: bold; }
+#arcShuffleBtn.active, #arcRepeatBtn.active { background: var(--red); color: #fff; }
 
 /* ── ARC BODY ── */
 .arc-body {
@@ -782,9 +783,9 @@ body {
     <div class="arc-nav">
       <div class="arc-trigger">ZL</div>
       <div class="arc-nav-item">INTRO</div>
-      <div class="arc-nav-item">STORY MODE</div>
-      <div class="arc-nav-item">ARCADE</div>
-      <div class="arc-nav-item">HIGHSCORES</div>
+      <div class="arc-nav-item" id="arcShuffleBtn" onclick="arcToggleShuffle(this)">SHUFFLE</div>
+      <div class="arc-nav-item" id="arcRepeatBtn" onclick="arcToggleRepeat(this)">🔂</div>
+      <div class="arc-nav-item" id="arcTotalBtn" style="cursor:default;letter-spacing:0.5px;font-size:10px;">11 SONGS / 0.7 HRS</div>
       <div class="arc-nav-item active">MUSIC PLAYER</div>
       <div class="arc-nav-item">SETTINGS</div>
       <div class="arc-trigger" style="margin-left:auto">ZR</div>
@@ -1122,15 +1123,7 @@ function arcPlay() {
   if (arcPlaying) return;
   arcPlaying = true;
   arcDrawWave(true);
-  arcInterval = setInterval(() => {
-    arcElapsed++;
-    if (arcElapsed >= tracks[arcIdx].total) {
-      arcIdx = (arcIdx+1)%tracks.length;
-      arcElapsed = 0;
-      arcRenderList();
-    }
-    arcUpdateUI();
-  }, 1000);
+  arcInterval = setInterval(_origInterval, 1000);
 }
 
 function arcPause() {
@@ -1202,6 +1195,39 @@ function arcDrawWave(animate) {
   }
   frame();
 }
+
+// ── SHUFFLE / REPEAT ──
+let arcShuffle = false;
+let arcRepeat  = false;
+
+function arcToggleShuffle(el) {
+  arcShuffle = !arcShuffle;
+  el.classList.toggle('active', arcShuffle);
+}
+
+function arcToggleRepeat(el) {
+  arcRepeat = !arcRepeat;
+  el.classList.toggle('active', arcRepeat);
+}
+
+// Override track advance logic to respect shuffle/repeat
+const _origInterval = () => {
+  arcElapsed++;
+  if (arcElapsed >= tracks[arcIdx].total) {
+    if (arcRepeat) {
+      arcElapsed = 0;
+    } else if (arcShuffle) {
+      arcIdx = Math.floor(Math.random() * tracks.length);
+      arcElapsed = 0;
+      arcRenderList();
+    } else {
+      arcIdx = (arcIdx + 1) % tracks.length;
+      arcElapsed = 0;
+      arcRenderList();
+    }
+  }
+  arcUpdateUI();
+};
 
 // ── INIT MODE 2 (runs when switched to) ──
 // pre-render on load for fast switch
