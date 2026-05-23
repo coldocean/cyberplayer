@@ -1883,7 +1883,7 @@ function setMediaSession(t) {
 }
 
 // ═══════════════════════════════════════════════════════
-// BAN + COIN + GAMINATOR SYSTEM
+// BAN + COIN + GLUMINATOR SYSTEM
 // ═══════════════════════════════════════════════════════
 
 // State
@@ -2056,10 +2056,10 @@ function updateCoinHud(d) {
 // (loadTrack coin gate is now built into the original function above)
 
 function showNoCoinsMsg() {
-  // Flash a message and redirect to gaminator
+  // Flash a message and redirect to gluminator
   const msg = document.createElement('div');
   msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#0a0a14;border:2px solid #e0174a;padding:24px 32px;z-index:9990;font-family:Share Tech Mono,monospace;text-align:center;color:#e0174a;font-size:12px;letter-spacing:2px;';
-  msg.innerHTML = '🪙 NO COINS LEFT<br><span style="font-size:10px;color:#888;margin-top:8px;display:block;">WIN COINS IN GAMINATOR → M4</span>';
+  msg.innerHTML = '🪙 NO COINS LEFT<br><span style="font-size:10px;color:#888;margin-top:8px;display:block;">WIN COINS IN GLUMINATOR → M4</span>';
   document.body.appendChild(msg);
   setTimeout(() => { msg.remove(); setMode(4); }, 2200);
 }
@@ -2075,7 +2075,7 @@ window.syncAllUIs = function() {
 };
 
 // ════════════════════════════════════════════
-// MODE 4 — GAMINATOR (Cyberpunk Slot Machine)
+// MODE 4 — GLUMINATOR (Cyberpunk Slot Machine)
 // ════════════════════════════════════════════
 
 const SLOT_SYMBOLS = [
@@ -2204,7 +2204,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <!-- ════════════════════════════════════
-     MODE 4 — GAMINATOR
+     MODE 4 — GLUMINATOR
 ════════════════════════════════════ -->
 <div id="mode4" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:48px;">
 
@@ -2212,7 +2212,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     <!-- Header -->
     <div style="text-align:center;margin-bottom:20px;">
-      <div class="gam-title" style="font-size:28px;letter-spacing:6px;font-family:'VT323',monospace;">GAMINATOR</div>
+      <div class="gam-title" style="font-size:28px;letter-spacing:6px;font-family:'VT323',monospace;">GLUMINATOR</div>
       <div class="gam-subtitle" style="font-size:9px;letter-spacing:3px;margin-top:4px;">CYBER SLOT MACHINE · WIN COINS · UNLOCK MUSIC</div>
       <div style="margin-top:8px;font-size:12px;letter-spacing:2px;">
         🪙 <span id="slotCoinCount" class="gam-coin-count">0</span> <span style="font-size:9px;color:#555;">COINS</span>
