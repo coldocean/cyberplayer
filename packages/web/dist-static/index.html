@@ -2059,7 +2059,7 @@ function showNoCoinsMsg() {
   // Flash a message and redirect to gluminator
   const msg = document.createElement('div');
   msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#0a0a14;border:2px solid #e0174a;padding:24px 32px;z-index:9990;font-family:Share Tech Mono,monospace;text-align:center;color:#e0174a;font-size:12px;letter-spacing:2px;';
-  msg.innerHTML = '🪙 NO COINS LEFT<br><span style="font-size:10px;color:#888;margin-top:8px;display:block;">WIN COINS IN GLUMINATOR → M4</span>';
+  msg.innerHTML = '🪙 NO COINS LEFT<br><span style="font-size:10px;color:#d4c87a;margin-top:8px;display:block;">WIN COINS IN GLUMINATOR → M4</span>';
   document.body.appendChild(msg);
   setTimeout(() => { msg.remove(); setMode(4); }, 2200);
 }
@@ -2124,8 +2124,8 @@ async function doSpin() {
 
   // Guests must have enough coins to cover the bet
   if (!loggedInUser && guestCoins < slotBetRate) {
-    msgEl.style.color = '#e0174a';
-    msgEl.textContent = '🪙 NOT ENOUGH COINS — LOWER BET OR EARN MORE';
+    msgEl.style.color = '#ff4060';
+    msgEl.textContent = '🪙 NOT ENOUGH COINS';
     return;
   }
 
@@ -2307,9 +2307,11 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 
     <!-- Info footer -->
-    <div style="margin-top:12px;font-size:9px;color:#333;letter-spacing:1px;text-align:center;line-height:2;">
+    <div style="margin-top:20px;font-size:10px;color:#d4c87a;letter-spacing:1px;text-align:center;line-height:2.2;">
       EACH SPIN COSTS YOUR BET IN 🪙 · WINS PAY BIG<br>
-      EACH SONG COSTS 1 🪙 · ADMINS SPIN FREE
+      EACH SONG COSTS 1 🪙 · NO COINS = NO PLAY<br>
+      <span style="margin-top:12px;display:block;font-size:9px;color:#666;letter-spacing:2px;">CONTACT</span>
+      <a href="mailto:about@digitalslayer.com" style="color:#d4c87a;text-decoration:none;font-size:10px;letter-spacing:2px;">about@digitalslayer.com</a>
     </div>
 
   </div>
