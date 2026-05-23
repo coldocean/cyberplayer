@@ -639,6 +639,189 @@ body {
 
 .arc-bottom-action:hover { color: var(--red-bright); }
 
+/* ═══════════════════════════════════════════
+   SETTINGS PANEL
+═══════════════════════════════════════════ */
+.arc-settings-panel {
+  flex-direction: column;
+  padding: 18px 24px;
+  overflow-y: auto;
+  gap: 0;
+}
+
+.arc-settings-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 560px;
+  width: 100%;
+}
+
+.arc-set-block {
+  border: 1px solid rgba(0,229,200,0.2);
+  padding: 14px 16px;
+  background: rgba(0,229,200,0.03);
+  position: relative;
+}
+
+.arc-set-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--red);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.arc-set-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.arc-set-hint {
+  font-size: 9px;
+  color: #444;
+  letter-spacing: 1px;
+  min-width: 28px;
+}
+
+.arc-set-sub {
+  font-size: 9px;
+  letter-spacing: 2px;
+  margin-top: 8px;
+}
+
+/* Slider */
+.arc-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 3px;
+  background: rgba(0,229,200,0.25);
+  outline: none;
+  border: none;
+}
+.arc-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px; height: 12px;
+  background: var(--cyan);
+  border-radius: 0;
+  cursor: pointer;
+  box-shadow: 0 0 8px var(--cyan);
+}
+
+/* Toggle */
+.arc-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.arc-toggle-track {
+  width: 38px; height: 18px;
+  border: 1px solid rgba(0,229,200,0.4);
+  background: #111;
+  position: relative;
+  transition: background 0.2s;
+}
+.arc-toggle-track.on { background: rgba(0,229,200,0.15); border-color: var(--cyan); }
+.arc-toggle-thumb {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 12px; height: 12px;
+  background: #444;
+  transition: left 0.2s, background 0.2s;
+}
+.arc-toggle-track.on .arc-toggle-thumb { left: 22px; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+.arc-toggle-state { font-size: 10px; letter-spacing: 2px; color: #555; }
+.arc-toggle-track.on + .arc-toggle-state { color: var(--cyan); }
+
+/* PIN Input */
+.arc-pin-input {
+  background: #0a0a14;
+  border: 1px solid rgba(0,229,200,0.35);
+  color: var(--cyan);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 18px;
+  letter-spacing: 8px;
+  padding: 6px 12px;
+  width: 140px;
+  outline: none;
+  text-align: center;
+}
+.arc-pin-input:focus { border-color: var(--cyan); box-shadow: 0 0 8px rgba(0,229,200,0.3); }
+
+/* Text Input */
+.arc-text-input {
+  background: #0a0a14;
+  border: 1px solid rgba(0,229,200,0.25);
+  color: var(--cyan);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 7px 10px;
+  width: 100%;
+  outline: none;
+}
+.arc-text-input:focus { border-color: var(--cyan); box-shadow: 0 0 6px rgba(0,229,200,0.2); }
+.arc-text-input::placeholder { color: #333; letter-spacing: 2px; }
+
+/* Login button */
+.arc-login-btn {
+  background: transparent;
+  border: 1px solid var(--red);
+  color: var(--red);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  padding: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+.arc-login-btn:hover { background: var(--red); color: #fff; }
+
+/* Login section */
+.arc-login-section {
+  border-color: rgba(0,229,200,0.4);
+  background: rgba(0,229,200,0.05);
+  animation: settingsFadeIn 0.3s ease;
+}
+
+@keyframes settingsFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dropzone */
+.arc-dropzone {
+  border: 2px dashed rgba(0,229,200,0.35);
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 10px;
+}
+.arc-dropzone:hover, .arc-dropzone.dragover {
+  border-color: var(--cyan);
+  background: rgba(0,229,200,0.06);
+}
+.arc-drop-icon { font-size: 28px; margin-bottom: 8px; }
+.arc-drop-text { font-size: 10px; letter-spacing: 2px; color: #666; line-height: 1.8; }
+
+/* Upload list */
+.arc-upload-list { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+.arc-upload-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 5px 8px;
+  background: rgba(0,229,200,0.05);
+  border: 1px solid rgba(0,229,200,0.15);
+  font-size: 9px; letter-spacing: 1px;
+}
+.arc-upload-item .arc-up-name { color: var(--cyan); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px; }
+.arc-upload-item .arc-up-size { color: #444; }
+.arc-up-status { color: #00ff88; font-size: 9px; }
+
 </style>
 </head>
 <body>
@@ -786,13 +969,13 @@ body {
       <div class="arc-nav-item" id="arcShuffleBtn" onclick="arcToggleShuffle(this)">SHUFFLE</div>
       <div class="arc-nav-item" id="arcRepeatBtn" onclick="arcToggleRepeat(this)">🔂</div>
       <div class="arc-nav-item" id="arcTotalBtn" style="cursor:default;letter-spacing:0.5px;font-size:10px;">11 SONGS / 0.7 HRS</div>
-      <div class="arc-nav-item active">MUSIC PLAYER</div>
-      <div class="arc-nav-item">SETTINGS</div>
+      <div class="arc-nav-item" id="arcNavPlayer" onclick="arcShowPanel('player')">MUSIC PLAYER</div>
+      <div class="arc-nav-item" id="arcNavSettings" onclick="arcShowPanel('settings')">SETTINGS</div>
       <div class="arc-trigger" style="margin-left:auto">ZR</div>
     </div>
 
     <!-- BODY -->
-    <div class="arc-body">
+    <div class="arc-body" id="arcBodyPlayer">
 
       <!-- TRACK LIST -->
       <div class="arc-tracklist" id="arcTracklist"></div>
@@ -843,6 +1026,67 @@ body {
           <div class="arc-bottom-dots"><span></span><span></span></div>
           <span class="arc-bottom-action">STOP</span>
         </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS PANEL -->
+    <div class="arc-body arc-settings-panel" id="arcBodySettings" style="display:none;">
+      <div class="arc-settings-col">
+
+        <!-- BRIGHTNESS -->
+        <div class="arc-set-block">
+          <div class="arc-set-label">BRIGHTNESS MODE</div>
+          <div class="arc-set-row">
+            <span class="arc-set-hint">DIM</span>
+            <input type="range" id="arcBrightness" min="30" max="100" value="100" class="arc-slider" oninput="arcSetBrightness(this.value)">
+            <span class="arc-set-hint">MAX</span>
+          </div>
+        </div>
+
+        <!-- BASS BOOST -->
+        <div class="arc-set-block">
+          <div class="arc-set-label">BASS BOOST</div>
+          <div class="arc-set-row">
+            <div class="arc-toggle" id="arcBassToggle" onclick="arcToggleBass()">
+              <div class="arc-toggle-track"><div class="arc-toggle-thumb"></div></div>
+              <span class="arc-toggle-state" id="arcBassState">OFF</span>
+            </div>
+          </div>
+          <div class="arc-set-sub" id="arcBassIndicator" style="color:var(--cyan);display:none;">◈ BASS BOOST ACTIVE — +12dB SUB</div>
+        </div>
+
+        <!-- PIN CODE -->
+        <div class="arc-set-block">
+          <div class="arc-set-label">PIN CODE</div>
+          <div class="arc-set-row" style="gap:6px;">
+            <input type="password" id="arcPinInput" class="arc-pin-input" maxlength="5" placeholder="_ _ _ _ _" oninput="arcCheckPin(this.value)" autocomplete="off">
+            <div class="arc-set-hint" id="arcPinStatus"></div>
+          </div>
+        </div>
+
+        <!-- LOGIN SECTION — hidden until PIN correct -->
+        <div class="arc-set-block arc-login-section" id="arcLoginSection" style="display:none;">
+          <div class="arc-set-label" style="color:var(--cyan);">◈ ADMIN ACCESS</div>
+          <div id="arcLoginForm">
+            <div class="arc-set-row" style="flex-direction:column;gap:6px;align-items:stretch;">
+              <input type="text" id="arcLoginUser" class="arc-text-input" placeholder="LOGIN" autocomplete="off">
+              <input type="password" id="arcLoginPass" class="arc-text-input" placeholder="PASSWORD" autocomplete="off">
+              <button class="arc-login-btn" onclick="arcDoLogin()">ENTER ▶</button>
+              <div id="arcLoginError" style="color:var(--red);font-size:10px;letter-spacing:1px;display:none;">ACCESS DENIED</div>
+            </div>
+          </div>
+          <!-- UPLOAD PANEL — shown after login -->
+          <div class="arc-upload-panel" id="arcUploadPanel" style="display:none;">
+            <div class="arc-set-label" style="color:#00ff88;">◈ UPLOAD TRACKS</div>
+            <div class="arc-dropzone" id="arcDropzone" onclick="document.getElementById('arcFileInput').click()" ondragover="arcDragOver(event)" ondragleave="arcDragLeave(event)" ondrop="arcDrop(event)">
+              <div class="arc-drop-icon">📂</div>
+              <div class="arc-drop-text">DRAG MP3 HERE<br><span style="font-size:10px;color:#666;">OR CLICK TO BROWSE</span></div>
+            </div>
+            <input type="file" id="arcFileInput" accept=".mp3,audio/*" multiple style="display:none" onchange="arcHandleFiles(this.files)">
+            <div class="arc-upload-list" id="arcUploadList"></div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -1234,6 +1478,238 @@ const _origInterval = () => {
 arcRenderList();
 arcUpdateUI();
 window.addEventListener('resize', () => { if (currentMode === 2) arcDrawWave(arcPlaying); });
+
+
+// ════════════════════════════════════════════
+// SETTINGS PANEL — PANEL SWITCHER
+// ════════════════════════════════════════════
+let arcCurrentPanel = 'player';
+
+function arcShowPanel(panel) {
+  arcCurrentPanel = panel;
+  const bodyPlayer   = document.getElementById('arcBodyPlayer');
+  const bodySettings = document.getElementById('arcBodySettings');
+  const navPlayer    = document.getElementById('arcNavPlayer');
+  const navSettings  = document.getElementById('arcNavSettings');
+
+  if (panel === 'settings') {
+    bodyPlayer.style.display   = 'none';
+    bodySettings.style.display = 'flex';
+    navPlayer.classList.remove('active');
+    navSettings.classList.add('active');
+  } else {
+    bodyPlayer.style.display   = 'flex';
+    bodySettings.style.display = 'none';
+    navPlayer.classList.add('active');
+    navSettings.classList.remove('active');
+    setTimeout(() => { arcRenderList(); arcDrawWave(arcPlaying); resizeArcCanvas(); }, 50);
+  }
+}
+
+// ── BRIGHTNESS ──
+function arcSetBrightness(val) {
+  const opacity = val / 100;
+  document.getElementById('mode2').style.filter = `brightness(${opacity + 0.1})`;
+}
+
+// ── BASS BOOST ──
+let arcBassOn = false;
+let arcAudioCtx = null;
+let arcBassNode = null;
+let arcSourceNode = null;
+
+function arcToggleBass() {
+  arcBassOn = !arcBassOn;
+  const track = document.getElementById('arcBassToggle').querySelector('.arc-toggle-track');
+  const state  = document.getElementById('arcBassState');
+  const indicator = document.getElementById('arcBassIndicator');
+
+  track.classList.toggle('on', arcBassOn);
+  state.textContent = arcBassOn ? 'ON' : 'OFF';
+  indicator.style.display = arcBassOn ? 'block' : 'none';
+
+  // Apply to actual audio element if exists
+  if (arcBassOn) {
+    arcInitBass();
+  } else {
+    if (arcBassNode) {
+      try { arcBassNode.gain.value = 0; } catch(e) {}
+    }
+  }
+}
+
+function arcInitBass() {
+  // Web Audio API bass boost — applies when real audio is connected
+  try {
+    if (!arcAudioCtx) {
+      arcAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (!arcBassNode) {
+      arcBassNode = arcAudioCtx.createBiquadFilter();
+      arcBassNode.type = 'lowshelf';
+      arcBassNode.frequency.value = 200;
+    }
+    arcBassNode.gain.value = arcBassOn ? 12 : 0;
+  } catch(e) { console.warn('Bass boost: Web Audio not available', e); }
+}
+
+// ── PIN CODE ──
+let arcPinUnlocked = false;
+
+function arcCheckPin(val) {
+  const status = document.getElementById('arcPinStatus');
+  const loginSection = document.getElementById('arcLoginSection');
+
+  if (val.length < 5) {
+    status.textContent = '';
+    status.style.color = '';
+    return;
+  }
+
+  if (val === '31337') {
+    status.textContent = '◈ ACCESS GRANTED';
+    status.style.color = '#00ff88';
+    arcPinUnlocked = true;
+    loginSection.style.display = 'block';
+    // Glitch flash effect
+    loginSection.style.animation = 'none';
+    void loginSection.offsetHeight;
+    loginSection.style.animation = 'settingsFadeIn 0.4s ease';
+  } else {
+    status.textContent = '✕ DENIED';
+    status.style.color = 'var(--red)';
+    arcPinUnlocked = false;
+    loginSection.style.display = 'none';
+    // Shake effect
+    const input = document.getElementById('arcPinInput');
+    input.style.animation = 'none';
+    input.style.borderColor = 'var(--red)';
+    input.style.boxShadow = '0 0 10px rgba(224,23,74,0.5)';
+    setTimeout(() => {
+      input.style.borderColor = '';
+      input.style.boxShadow = '';
+      input.value = '';
+      status.textContent = '';
+    }, 1200);
+  }
+}
+
+// ── LOGIN ──
+// Credentials: admin / cyber31337
+const ADMIN_USER = 'admin';
+const ADMIN_PASS = 'cyber31337';
+let arcLoggedIn = false;
+
+function arcDoLogin() {
+  const user = document.getElementById('arcLoginUser').value.trim();
+  const pass = document.getElementById('arcLoginPass').value;
+  const errEl = document.getElementById('arcLoginError');
+
+  if (user === ADMIN_USER && pass === ADMIN_PASS) {
+    arcLoggedIn = true;
+    document.getElementById('arcLoginForm').style.display = 'none';
+    errEl.style.display = 'none';
+    document.getElementById('arcUploadPanel').style.display = 'block';
+  } else {
+    errEl.style.display = 'block';
+    document.getElementById('arcLoginPass').value = '';
+    setTimeout(() => { errEl.style.display = 'none'; }, 2000);
+  }
+}
+
+// ── UPLOAD ──
+function arcDragOver(e) {
+  e.preventDefault();
+  document.getElementById('arcDropzone').classList.add('dragover');
+}
+
+function arcDragLeave(e) {
+  document.getElementById('arcDropzone').classList.remove('dragover');
+}
+
+function arcDrop(e) {
+  e.preventDefault();
+  document.getElementById('arcDropzone').classList.remove('dragover');
+  arcHandleFiles(e.dataTransfer.files);
+}
+
+function arcHandleFiles(files) {
+  const list = document.getElementById('arcUploadList');
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('audio/') && !file.name.endsWith('.mp3')) return;
+
+    // Create local object URL so it can actually play
+    const url = URL.createObjectURL(file);
+    const trackName = file.name.replace(/\.mp3$/i,'').toUpperCase().replace(/\s+/g,'_');
+    const sizeMB = (file.size / 1048576).toFixed(1);
+
+    // Add to tracklist in memory
+    // Estimate duration from file size (~1MB ≈ 1 min at 128kbps)
+    const estSec = Math.round((file.size / 128000) * 8);
+    const estMin = Math.floor(estSec/60).toString().padStart(2,'0');
+    const estSec2 = (estSec%60).toString().padStart(2,'0');
+
+    tracks.push({
+      name: trackName,
+      artist: 'LOCAL',
+      dur: `${estMin}:${estSec2}`,
+      total: estSec,
+      url: url
+    });
+
+    // Update total count in nav
+    arcUpdateTrackCount();
+
+    // Show in upload list
+    const item = document.createElement('div');
+    item.className = 'arc-upload-item';
+    item.innerHTML = `
+      <span class="arc-up-name">${file.name}</span>
+      <span class="arc-up-size">${sizeMB} MB</span>
+      <span class="arc-up-status">✓ ADDED</span>
+    `;
+    list.prepend(item);
+  });
+  arcRenderList();
+}
+
+function arcUpdateTrackCount() {
+  const totalSec = tracks.reduce((s, t) => s + t.total, 0);
+  const hrs = (totalSec / 3600).toFixed(1);
+  document.getElementById('arcTotalBtn').textContent = `${tracks.length} SONGS / ${hrs} HRS`;
+}
+
+// ════════════════════════════════════════════
+// MEDIA SESSION API — background playback
+// ════════════════════════════════════════════
+function arcSetMediaSession() {
+  if (!('mediaSession' in navigator)) return;
+  const t = tracks[arcIdx];
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title:  t.name.replace(/_/g, ' '),
+    artist: t.artist,
+    album:  'CYBER_PLAYER',
+  });
+  navigator.mediaSession.setActionHandler('play',         () => arcPlay());
+  navigator.mediaSession.setActionHandler('pause',        () => arcPause());
+  navigator.mediaSession.setActionHandler('stop',         () => arcStop());
+  navigator.mediaSession.setActionHandler('nexttrack',    () => { arcIdx = (arcIdx+1)%tracks.length; arcElapsed=0; arcRenderList(); arcUpdateUI(); arcSetMediaSession(); });
+  navigator.mediaSession.setActionHandler('previoustrack',() => { arcIdx = (arcIdx-1+tracks.length)%tracks.length; arcElapsed=0; arcRenderList(); arcUpdateUI(); arcSetMediaSession(); });
+}
+
+// Call on select
+const _origArcSelect = arcSelect;
+// Patch arcSelect to also update media session
+window.arcSelectPatched = function(i) {
+  _origArcSelect(i);
+  arcSetMediaSession();
+};
+
+// Init media session on load
+arcSetMediaSession();
+
+// Set MUSIC PLAYER nav as default active
+document.getElementById('arcNavPlayer').classList.add('active');
 </script>
 </body>
 </html>
