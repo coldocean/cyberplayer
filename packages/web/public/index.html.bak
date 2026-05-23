@@ -739,7 +739,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 }
 
 /* ═══════════════════════════════════════════
-   RADIO (shared across all modes)
+   RADIO (inline-rendered classes still in use)
 ═══════════════════════════════════════════ */
 @keyframes radPulse{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes radSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
@@ -749,49 +749,6 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 .rad-cache-status.ready{background:#00ff88;}
 .rad-cache-status.error{background:var(--red);}
 .rad-cache-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--red));width:0%;transition:width .3s;}
-
-/* Signal strength bars */
-.rad-signal{display:inline-flex;align-items:flex-end;gap:2px;height:14px;vertical-align:middle;margin-left:4px;}
-.rad-signal-bar{width:3px;background:#333;border-radius:1px;transition:background .3s,height .3s;}
-.rad-signal-bar.lit{background:var(--cyan);}
-.rad-signal-bar.lit.warn{background:#ff8800;}
-.rad-signal-bar.lit.bad{background:var(--red);}
-
-/* M2 Radio body panel */
-#arcBodyRadio{flex-direction:row;}
-.arc-radio-right{flex:1;padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
-.arc-radio-hero{display:flex;align-items:center;gap:12px;}
-.arc-radio-icon{font-size:28px;}
-.arc-radio-name{font-size:15px;letter-spacing:2px;color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.arc-radio-genre{font-size:9px;color:#555;letter-spacing:1px;margin-top:2px;}
-.arc-radio-buf{display:flex;align-items:center;gap:8px;}
-.arc-radio-bufbar{flex:1;height:3px;background:#111;overflow:hidden;}
-.arc-radio-buftext{font-size:8px;color:#444;letter-spacing:.5px;white-space:nowrap;}
-
-/* Winamp radio panel */
-.wamp-radio-wrap{margin-top:3px;border-width:2px;border-style:solid;}
-.wamp-radio-hdr{font-size:8px;letter-spacing:2px;padding:3px 8px;border-bottom:1px solid currentColor;display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
-.wamp-radio-body{padding:4px 0;}
-.wamp-radio-now{padding:4px 8px;font-size:8px;letter-spacing:.5px;}
-.wamp-radio-list{height:80px;overflow-y:auto;padding:2px 0;}
-.wamp-radio-list::-webkit-scrollbar{width:4px;}
-.wamp-radio-list::-webkit-scrollbar-thumb{background:currentColor;opacity:.3;}
-.wamp-radio-item{padding:2px 8px;font-size:8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:4px;}
-.wamp-radio-item:hover{opacity:.7;}
-.wamp-radio-item.active{font-weight:bold;}
-.wamp-radio-genre-hdr{padding:2px 8px 1px;font-size:7px;letter-spacing:1px;opacity:.5;border-top:1px solid rgba(128,128,128,.15);margin-top:2px;}
-
-/* CLI radio section */
-.cli-radio-wrap{margin-top:6px;border-top:1px solid #111;padding-top:6px;}
-.cli-radio-hdr{font-size:10px;color:#555;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:4px;}
-.cli-radio-now{font-size:10px;color:#aaff00;letter-spacing:.5px;padding:2px 0;}
-.cli-radio-list{max-height:120px;overflow-y:auto;}
-.cli-radio-list::-webkit-scrollbar{width:4px;}
-.cli-radio-list::-webkit-scrollbar-thumb{background:#1a3a1a;}
-.cli-radio-genre{font-size:9px;color:#333;letter-spacing:1px;padding:3px 0 1px 4px;}
-.cli-radio-station{font-size:10px;color:#555;cursor:pointer;padding:2px 0 2px 12px;display:flex;align-items:center;gap:6px;}
-.cli-radio-station:hover{color:#00aa00;}
-.cli-radio-station.active{color:#aaff00;}
 </style>
 </head>
 <body class="skin-1">
@@ -911,28 +868,6 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
         <span class="wamp-pl-time" id="wampPlTime">0:00 / 0:00</span>
       </div>
     </div>
-
-    <!-- RADIO PANEL (M1) -->
-    <div class="wamp-radio-wrap" id="wampRadioWrap">
-      <div class="wamp-radio-hdr" onclick="wampToggleRadio()">
-        <span>📡 RADIO</span>
-        <span id="wampRadioSignalHdr" style="display:flex;align-items:center;gap:4px;">
-          <span id="wampRadioStatus" style="font-size:7px;letter-spacing:1px;opacity:.5;">OFF</span>
-          <span class="rad-signal" id="wampRadioSignal">
-            <span class="rad-signal-bar" id="wampSigB1" style="height:4px;"></span>
-            <span class="rad-signal-bar" id="wampSigB2" style="height:6px;"></span>
-            <span class="rad-signal-bar" id="wampSigB3" style="height:8px;"></span>
-            <span class="rad-signal-bar" id="wampSigB4" style="height:10px;"></span>
-            <span class="rad-signal-bar" id="wampSigB5" style="height:13px;"></span>
-          </span>
-          <span id="wampRadioToggleArrow" style="font-size:7px;opacity:.5;">▼</span>
-        </span>
-      </div>
-      <div class="wamp-radio-body" id="wampRadioBody" style="display:none;">
-        <div class="wamp-radio-now" id="wampRadioNow" style="opacity:.4;">No station — click to tune in</div>
-        <div class="wamp-radio-list" id="wampRadioList"></div>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -949,7 +884,6 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
       <div class="arc-nav-item" id="arcRepeatBtn" onclick="arcToggleRepeat(this)">🔂</div>
       <div class="arc-nav-item" id="arcTotalBtn" style="cursor:default;letter-spacing:.5px;font-size:10px;">0 SONGS</div>
       <div class="arc-nav-item active" id="arcNavPlayer" onclick="arcShowPanel('player')">MUSIC PLAYER</div>
-      <div class="arc-nav-item" id="arcNavRadio" onclick="arcShowPanel('radio')">📡 RADIO</div>
       <div class="arc-nav-item" id="arcNavSettings" onclick="arcShowPanel('settings')">SETTINGS</div>
       <div class="arc-trigger" style="margin-left:auto">ZR</div>
     </div>
@@ -1047,45 +981,6 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
       </div>
     </div>
 
-    <!-- RADIO BODY -->
-    <div class="arc-body" id="arcBodyRadio" style="display:none;">
-      <div class="arc-tracklist" id="arcRadioTracklist"></div>
-      <div class="arc-radio-right" id="arcRadioRight">
-        <div class="arc-radio-hero">
-          <div class="arc-radio-icon" id="arcRadioIcon">📻</div>
-          <div style="flex:1;min-width:0;">
-            <div class="arc-radio-name" id="arcRadioName">SELECT A STATION</div>
-            <div class="arc-radio-genre" id="arcRadioGenre">Browse genres on the left →</div>
-          </div>
-          <!-- signal strength -->
-          <div class="rad-signal" id="arcRadioSignal" title="Signal strength">
-            <div class="rad-signal-bar" id="arcSigB1" style="height:4px;"></div>
-            <div class="rad-signal-bar" id="arcSigB2" style="height:6px;"></div>
-            <div class="rad-signal-bar" id="arcSigB3" style="height:8px;"></div>
-            <div class="rad-signal-bar" id="arcSigB4" style="height:10px;"></div>
-            <div class="rad-signal-bar" id="arcSigB5" style="height:13px;"></div>
-          </div>
-        </div>
-        <div id="arcRadioDesc" style="font-size:9px;color:#444;letter-spacing:.5px;line-height:1.6;">Pick a genre, expand it, click a station.</div>
-        <div class="arc-radio-buf">
-          <div class="rad-cache-status" id="arcRadioDot"></div>
-          <div class="arc-radio-bufbar"><div id="arcRadioBufFill" class="rad-cache-fill"></div></div>
-          <div class="arc-radio-buftext" id="arcRadioBufText">IDLE</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:8px;color:#555;letter-spacing:1px;">VOL</span>
-          <input type="range" id="arcRadioVol" min="0" max="100" value="80"
-            style="flex:1;height:3px;-webkit-appearance:none;background:#222;outline:none;cursor:pointer;"
-            oninput="radSetVol(this.value)">
-          <span id="arcRadioVolVal" style="font-size:8px;color:#555;width:28px;text-align:right;">80%</span>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:auto;">
-          <button id="arcRadioStopBtn" onclick="radStop()"
-            style="display:none;flex:1;background:none;border:1px solid var(--red);color:var(--red);padding:8px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;">■ STOP RADIO</button>
-        </div>
-      </div>
-    </div>
-
     <div class="arc-bottom">
       <div class="arc-bottom-icon"></div>
       <span class="arc-bottom-label">SELECT TRACK</span>
@@ -1176,27 +1071,6 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
         <span id="cliUploadLabel">[🔒] LOGIN REQUIRED — enter PIN in SETTINGS to upload</span>
       </div>
       <input type="file" id="cliFileInput" accept=".mp3,audio/*" multiple style="display:none" onchange="cliHandleFiles(this.files)">
-
-      <!-- RADIO (M3) -->
-      <div class="cli-radio-wrap" id="cliRadioWrap">
-        <div class="cli-radio-hdr" onclick="cliToggleRadio()">
-          <span style="color:#aaff00;">📡</span>
-          <span>RADIO</span>
-          <span id="cliRadioStatus" style="color:#444;">— OFF</span>
-          <span class="rad-signal" id="cliRadioSignal" style="margin-left:4px;">
-            <span class="rad-signal-bar" id="cliSigB1" style="height:4px;background:#333;"></span>
-            <span class="rad-signal-bar" id="cliSigB2" style="height:6px;background:#333;"></span>
-            <span class="rad-signal-bar" id="cliSigB3" style="height:8px;background:#333;"></span>
-            <span class="rad-signal-bar" id="cliSigB4" style="height:10px;background:#333;"></span>
-            <span class="rad-signal-bar" id="cliSigB5" style="height:13px;background:#333;"></span>
-          </span>
-          <span id="cliRadioArrow" style="margin-left:auto;color:#444;font-size:9px;">▼</span>
-        </div>
-        <div id="cliRadioBody" style="display:none;">
-          <div class="cli-radio-now" id="cliRadioNow" style="color:#444;">No station tuned in</div>
-          <div class="cli-radio-list" id="cliRadioList"></div>
-        </div>
-      </div>
 
       <!-- keybinds -->
       <div class="cli-keys">
@@ -1377,12 +1251,19 @@ function switchPlaylist(n) {
   document.querySelectorAll('.arc-pl-switch-btn').forEach((b, i) => {
     b.classList.toggle('active', i === n);
   });
-  // n===4 was old radio mode; redirect to dedicated radio panel
+  // Switch between radio and normal tracklist
+  const rightPanel = document.querySelector('.arc-right');
   if(n === 4){
-    arcShowPanel('radio');
-    return;
+    // Show radio mode
+    radRenderTracklist();
+    radShowRightPanel(rightPanel);
+    document.getElementById('arcPlSwitchInfo').textContent = 'Viewing: 📡 RADIO STATIONS';
+    document.getElementById('arcPlSwitchInfo').style.color = 'var(--cyan)';
+  } else {
+    // Restore normal player
+    if(wasRadio) radRestoreRightPanel(rightPanel);
+    syncAllUIs();
   }
-  syncAllUIs();
 }
 
 // ── ARC LOGIN / LOGOUT ──
@@ -1794,22 +1675,17 @@ function arcShowPanel(panel){
   arcCurrentPanel=panel;
   const bp=document.getElementById('arcBodyPlayer');
   const bs=document.getElementById('arcBodySettings');
-  const br=document.getElementById('arcBodyRadio');
   const np=document.getElementById('arcNavPlayer');
   const ns=document.getElementById('arcNavSettings');
-  const nr=document.getElementById('arcNavRadio');
-  // hide all
-  bp.style.display='none';bs.style.display='none';br.style.display='none';
-  np.classList.remove('active');ns.classList.remove('active');if(nr)nr.classList.remove('active');
   if(panel==='settings'){
-    bs.style.display='flex';ns.classList.add('active');
-  } else if(panel==='radio'){
-    br.style.display='flex';if(nr)nr.classList.add('active');
-    setTimeout(()=>radRenderArcRadio(),30);
+    bp.style.display='none';bs.style.display='flex';
+    np.classList.remove('active');ns.classList.add('active');
   } else {
-    bp.style.display='flex';np.classList.add('active');
+    bp.style.display='flex';bs.style.display='none';
+    np.classList.add('active');ns.classList.remove('active');
     setTimeout(()=>{
-      arcRenderList();
+      if(activePlaylistView===4) radRenderTracklist();
+      else arcRenderList();
       arcDrawWave(currentAudio&&!currentAudio.paused);resizeArcCanvas();
     },50);
   }
@@ -2571,14 +2447,17 @@ let radReconnectTimer = null;
 let radReconnectAttempts = 0;
 let radBufferInterval = null;
 const RAD_MAX_RECONNECT = 5;
-// ── RENDER RADIO DIRECTORY INTO #arcRadioTracklist (M2 radio panel) ──
-window.radRenderArcRadio = function(){
-  const tl = document.getElementById('arcRadioTracklist');
-  if(!tl) return;
+let _radRightBackup = null; // backup of normal right panel HTML
+
+// ── RENDER RADIO DIRECTORY INTO arcTracklist ──
+window.radRenderTracklist = function(){
+  const tl = document.getElementById('arcTracklist');
   tl.innerHTML = '';
+  // Collapsed genre state
   if(!window._radOpenGenres) window._radOpenGenres = {};
 
   for(const [genre, data] of Object.entries(RADIO_DIR)){
+    // Genre header row
     const gRow = document.createElement('div');
     gRow.className = 'arc-track';
     gRow.style.cssText = 'color:var(--cyan);border-left-color:var(--cyan);font-weight:bold;padding:7px 10px;cursor:pointer;justify-content:flex-start;gap:6px;';
@@ -2588,26 +2467,32 @@ window.radRenderArcRadio = function(){
       <span class="arc-track-name" style="max-width:none;color:var(--cyan);">${genre}</span>`;
     gRow.onclick = function(){
       window._radOpenGenres[genre] = !window._radOpenGenres[genre];
-      radRenderArcRadio();
+      radRenderTracklist();
     };
     tl.appendChild(gRow);
 
     if(isOpen){
       for(const [sub, stations] of Object.entries(data.subs)){
+        // Sub-genre label
         const subRow = document.createElement('div');
         subRow.style.cssText = 'padding:3px 10px 3px 28px;font-size:8px;color:var(--cyan);opacity:.5;letter-spacing:1.5px;font-family:"Share Tech Mono",monospace;';
         subRow.textContent = '┌ ' + sub.toUpperCase();
         tl.appendChild(subRow);
+
         for(const st of stations){
           const sRow = document.createElement('div');
           const isActive = radCurrentStation && radCurrentStation.url === st.url;
           sRow.className = 'arc-track' + (isActive ? ' active' : '');
           sRow.style.cssText = 'padding:5px 10px 5px 34px;font-size:9px;';
-          if(isActive){ sRow.style.borderLeftColor='var(--cyan)';sRow.style.background='rgba(0,229,200,.08)';sRow.style.color='var(--cyan)'; }
+          if(isActive){
+            sRow.style.borderLeftColor = 'var(--cyan)';
+            sRow.style.background = 'rgba(0,229,200,.08)';
+            sRow.style.color = 'var(--cyan)';
+          }
           sRow.innerHTML = `<span class="arc-track-name" style="max-width:150px;${isActive?'color:var(--cyan);':''}">${st.name}</span>
             ${isActive ? '<span style="color:var(--red);font-size:7px;animation:radPulse 1.5s infinite;">● LIVE</span>' : '<span class="arc-track-dur" style="font-size:7px;color:#444;">▶</span>'}`;
-          const _st=st,_g=genre,_s=sub;
-          sRow.onclick = function(){ radPlayStation(_st, _g+' › '+_s); };
+          const _st = st, _genre = genre, _sub = sub;
+          sRow.onclick = function(){ radPlayStation(_st, _genre + ' › ' + _sub); };
           tl.appendChild(sRow);
         }
       }
@@ -2615,63 +2500,58 @@ window.radRenderArcRadio = function(){
   }
 };
 
-// ── RENDER FLAT STATION LIST FOR WINAMP / CLI ──
-function radRenderFlatList(containerId){
-  const tl = document.getElementById(containerId);
-  if(!tl) return;
-  tl.innerHTML = '';
-  for(const [genre, data] of Object.entries(RADIO_DIR)){
-    for(const [sub, stations] of Object.entries(data.subs)){
-      for(const st of stations){
-        const row = document.createElement('div');
-        const isActive = radCurrentStation && radCurrentStation.url === st.url;
-        row.style.cssText = `padding:4px 8px;font-size:9px;cursor:pointer;display:flex;align-items:center;gap:6px;border-left:2px solid ${isActive?'var(--cyan)':'transparent'};background:${isActive?'rgba(0,229,200,.08)':'transparent'};color:${isActive?'var(--cyan)':'#aaa'};`;
-        row.innerHTML = `<span style="font-size:7px;">${data.icon}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${st.name}</span>${isActive?'<span style="color:var(--red);font-size:7px;animation:radPulse 1.5s infinite;">●</span>':''}`;
-        const _st=st,_g=genre,_s=sub;
-        row.onclick = function(){ radPlayStation(_st, _g+' › '+_s); };
-        tl.appendChild(row);
-      }
-    }
-  }
-}
-
-// ── WAMP RADIO TOGGLE ──
-window.wampToggleRadio = function(){
-  const body = document.getElementById('wampRadioBody');
-  if(!body) return;
-  const open = body.style.display !== 'none' && body.style.display !== '';
-  body.style.display = open ? 'none' : 'block';
-  if(!open) radRenderFlatList('wampRadioList');
+// ── SWAP RIGHT PANEL TO RADIO MODE ──
+window.radShowRightPanel = function(rightPanel){
+  if(!rightPanel) return;
+  // Save current right panel content
+  if(!_radRightBackup) _radRightBackup = rightPanel.innerHTML;
+  rightPanel.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div id="radNowIcon" style="font-size:26px;animation:radSpin 3s linear infinite;animation-play-state:${radPlaying?'running':'paused'};">📻</div>
+      <div style="flex:1;min-width:0;">
+        <div id="radNowTitle" style="font-size:14px;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 16px rgba(0,229,200,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+          ${radCurrentStation ? radCurrentStation.name : 'SELECT A STATION'}
+        </div>
+        <div id="radNowGenre" style="font-size:9px;color:#555;letter-spacing:1px;margin-top:2px;">
+          ${radCurrentStation ? (radCurrentStation._genre||'') : 'Browse genres on the left'}
+        </div>
+      </div>
+    </div>
+    <div id="radNowDesc" style="font-size:9px;color:#444;letter-spacing:.5px;line-height:1.6;">
+      ${radCurrentStation ? radCurrentStation.desc : 'Pick a genre, expand it, click a station.'}
+    </div>
+    <!-- Buffer bar -->
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div id="radCacheStatus" class="rad-cache-status${radPlaying?' ready':''}"></div>
+      <div style="flex:1;height:3px;background:#111;border-radius:2px;overflow:hidden;"><div id="radCacheFill" style="height:100%;background:linear-gradient(90deg,var(--cyan),var(--red));width:0%;transition:width .3s;"></div></div>
+      <div id="radCacheText" style="font-size:8px;color:#444;letter-spacing:.5px;font-family:'Share Tech Mono',monospace;">${radPlaying?'PLAYING':'IDLE'}</div>
+    </div>
+    <!-- Volume -->
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:8px;color:#555;letter-spacing:1px;font-family:'Share Tech Mono',monospace;">VOL</span>
+      <input type="range" id="radVolume" min="0" max="100" value="${radAudio?Math.round(radAudio.volume*100):80}" 
+        style="flex:1;height:3px;-webkit-appearance:none;background:#222;outline:none;border-radius:2px;cursor:pointer;"
+        oninput="radSetVol(this.value)">
+      <span id="radVolVal" style="font-size:8px;color:#555;width:28px;text-align:right;font-family:'Share Tech Mono',monospace;">${radAudio?Math.round(radAudio.volume*100):80}%</span>
+    </div>
+    <!-- Stop button -->
+    <div style="display:flex;gap:8px;margin-top:auto;">
+      <button onclick="radStop()" style="flex:1;background:none;border:1px solid var(--red);color:var(--red);padding:8px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;${radPlaying?'':'display:none;'}" id="radStopBtn">■ STOP RADIO</button>
+    </div>
+  `;
 };
 
-// ── CLI RADIO TOGGLE ──
-window.cliToggleRadio = function(){
-  const body = document.getElementById('cliRadioBody');
-  if(!body) return;
-  const open = body.style.display !== 'none' && body.style.display !== '';
-  body.style.display = open ? 'none' : 'block';
-  if(!open) radRenderFlatList('cliRadioList');
+// ── RESTORE NORMAL RIGHT PANEL ──
+window.radRestoreRightPanel = function(rightPanel){
+  if(!rightPanel || !_radRightBackup) return;
+  rightPanel.innerHTML = _radRightBackup;
+  _radRightBackup = null;
+  // Re-grab canvas refs after DOM restore
+  try{
+    arcWaveCanvas = document.getElementById('arcWaveCanvas');
+    if(arcWaveCanvas) arcWaveCtx = arcWaveCanvas.getContext('2d');
+  }catch(e){}
 };
-
-// ── SIGNAL BARS — set 0-5 bars across all modes ──
-function radSetSignal(bars){
-  // bars = 0..5
-  ['arc','wamp','cli'].forEach(prefix=>{
-    for(let i=1;i<=5;i++){
-      const el=document.getElementById(prefix+'SigB'+i);
-      if(el) el.style.background = i<=bars ? (bars<=1?'var(--red)':bars<=3?'var(--yellow)':'var(--cyan)') : '#333';
-    }
-  });
-}
-
-function radBarsFromAhead(ahead){
-  if(ahead<=0) return 0;
-  if(ahead<3)  return 1;
-  if(ahead<8)  return 2;
-  if(ahead<15) return 3;
-  if(ahead<25) return 4;
-  return 5;
-}
 
 // ── PLAY STATION ──
 window.radPlayStation = function(station, genrePath){
@@ -2680,43 +2560,21 @@ window.radPlayStation = function(station, genrePath){
     currentAudio.pause();
     try{ document.getElementById('arcBtnPlay').style.display=''; document.getElementById('arcBtnPause').style.display='none'; }catch(e){}
   }
+  // Stop existing radio
   radStopInternal();
   radCurrentStation = station;
   radCurrentStation._genre = genrePath;
   radPlaying = true;
   radReconnectAttempts = 0;
 
-  // Update M2 radio panel info
-  const rName=document.getElementById('arcRadioName');
-  const rGenre=document.getElementById('arcRadioGenre');
-  const rDesc=document.getElementById('arcRadioDesc');
-  const rStop=document.getElementById('arcRadioStopBtn');
-  const rIcon=document.getElementById('arcRadioIcon');
-  if(rName) rName.textContent = station.name;
-  if(rGenre) rGenre.textContent = genrePath||'';
-  if(rDesc) rDesc.textContent = station.desc||'';
-  if(rStop) rStop.style.display='';
-  if(rIcon){ rIcon.style.animationPlayState='running'; }
+  // Update right panel if we're in radio view
+  if(activePlaylistView === 4){
+    const rp = document.querySelector('.arc-right');
+    radShowRightPanel(rp);
+    radRenderTracklist();
+  }
 
-  // Update now-playing labels in M1/M3
-  const wNow=document.getElementById('wampRadioNow');
-  if(wNow){ wNow.textContent=station.name; wNow.style.opacity='1'; }
-  const cNow=document.getElementById('cliRadioNow');
-  if(cNow){ cNow.textContent=station.name; cNow.style.color='var(--green,#aaff00)'; }
-  const wStat=document.getElementById('wampRadioStatus');
-  if(wStat) wStat.textContent='LIVE';
-  const cStat=document.getElementById('cliRadioStatus');
-  if(cStat){ cStat.textContent='— LIVE'; cStat.style.color='var(--cyan,#00e5c8)'; }
-
-  // Re-render lists to show active station
-  if(arcCurrentPanel==='radio') radRenderArcRadio();
-  const wampBody=document.getElementById('wampRadioBody');
-  if(wampBody && wampBody.style.display!=='none') radRenderFlatList('wampRadioList');
-  const cliBody=document.getElementById('cliRadioBody');
-  if(cliBody && cliBody.style.display!=='none') radRenderFlatList('cliRadioList');
-
-  radSetSignal(0);
-  radSetCacheStatus('buffering','CONNECTING...');
+  radSetCacheStatus('buffering', 'CONNECTING...');
   radStartBufferedStream(station.url);
 };
 
@@ -2774,30 +2632,24 @@ function radUpdateCacheDisplay(){
     if(buf.start(i) <= ct && buf.end(i) >= ct){ ahead = buf.end(i) - ct; break; }
   }
   const pct = Math.min(100, (ahead / 30) * 100);
-  // M2 buf bar
-  const fill = document.getElementById('arcRadioBufFill');
+  const fill = document.getElementById('radCacheFill');
+  const text = document.getElementById('radCacheText');
   if(fill) fill.style.width = pct + '%';
-  // Signal bars (all modes)
-  radSetSignal(radBarsFromAhead(ahead));
   if(ahead < 2) radSetCacheStatus('buffering', `LOW BUFFER: ${ahead.toFixed(1)}s`);
   else radSetCacheStatus('ready', `BUFFERED: ${ahead.toFixed(1)}s`);
 }
 
 function radSetCacheStatus(status, text){
-  // M2 panel
-  const dot = document.getElementById('arcRadioDot');
-  const txt = document.getElementById('arcRadioBufText');
+  const dot = document.getElementById('radCacheStatus');
+  const txt = document.getElementById('radCacheText');
   if(dot){ dot.className = 'rad-cache-status'; if(status) dot.classList.add(status); }
   if(txt && text) txt.textContent = text;
 }
 
 window.radSetVol = function(val){
   if(radAudio) radAudio.volume = val / 100;
-  const v = document.getElementById('arcRadioVolVal');
+  const v = document.getElementById('radVolVal');
   if(v) v.textContent = val + '%';
-  // sync wamp vol slider if exists
-  const wv = document.getElementById('wampRadioVol');
-  if(wv && wv.value != val) wv.value = val;
 };
 
 function radStopInternal(){
@@ -2810,37 +2662,12 @@ function radStopInternal(){
 window.radStop = function(){
   radStopInternal();
   radCurrentStation = null;
-  radSetSignal(0);
-  // Reset M2 panel
-  const rName=document.getElementById('arcRadioName');
-  const rGenre=document.getElementById('arcRadioGenre');
-  const rDesc=document.getElementById('arcRadioDesc');
-  const rStop=document.getElementById('arcRadioStopBtn');
-  const rIcon=document.getElementById('arcRadioIcon');
-  const rBuf=document.getElementById('arcRadioBufFill');
-  const rTxt=document.getElementById('arcRadioBufText');
-  if(rName) rName.textContent='SELECT A STATION';
-  if(rGenre) rGenre.textContent='Browse genres on the left →';
-  if(rDesc) rDesc.textContent='Pick a genre, expand it, click a station.';
-  if(rStop) rStop.style.display='none';
-  if(rIcon) rIcon.style.animationPlayState='paused';
-  if(rBuf) rBuf.style.width='0%';
-  if(rTxt) rTxt.textContent='IDLE';
-  // Reset M1/M3 labels
-  const wNow=document.getElementById('wampRadioNow');
-  if(wNow){ wNow.textContent='No station — click to tune in'; wNow.style.opacity='.4'; }
-  const cNow=document.getElementById('cliRadioNow');
-  if(cNow){ cNow.textContent='No station tuned in'; cNow.style.color='#444'; }
-  const wStat=document.getElementById('wampRadioStatus');
-  if(wStat) wStat.textContent='OFF';
-  const cStat=document.getElementById('cliRadioStatus');
-  if(cStat){ cStat.textContent='— OFF'; cStat.style.color='#444'; }
-  // Re-render lists
-  if(arcCurrentPanel==='radio') radRenderArcRadio();
-  const wampBody=document.getElementById('wampRadioBody');
-  if(wampBody && wampBody.style.display!=='none') radRenderFlatList('wampRadioList');
-  const cliBody=document.getElementById('cliRadioBody');
-  if(cliBody && cliBody.style.display!=='none') radRenderFlatList('cliRadioList');
+  // Update UI if in radio view
+  if(activePlaylistView === 4){
+    const rp = document.querySelector('.arc-right');
+    radShowRightPanel(rp);
+    radRenderTracklist();
+  }
 };
 
 })();
