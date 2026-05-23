@@ -1,5 +1,14 @@
 import { cors } from './_db.js';
 
+// Vercel Pro — allow up to 300s for streaming
+export const config = {
+  api: {
+    responseLimit: false,
+    bodyParser: false,
+  },
+  maxDuration: 300,
+};
+
 export default async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -8,6 +17,15 @@ export default async function handler(req, res) {
   if (!url) return res.status(400).json({ error: 'No URL' });
 
   try {
+    // HTTPS streams: redirect directly — no timeout risk, browser handles it
+    if (url.startsWith('https://')) {
+      // Add CORS preflight check first, then redirect
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Cache-Control', 'no-store');
+      return res.redirect(302, url);
+    }
+
+    // HTTP streams: must proxy through server (mixed-content blocked by browser)
     const upstream = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; CyberpunkPlayer/1.0)',
@@ -17,8 +35,6 @@ export default async function handler(req, res) {
     });
 
     const ct = upstream.headers.get('content-type') || 'audio/mpeg';
-
-    // Stream the response body
     const body = upstream.body;
     if (!body) return res.status(502).json({ error: 'No body from upstream' });
 
@@ -47,10 +63,3 @@ export default async function handler(req, res) {
     }
   }
 }
-
-export const config = {
-  api: {
-    responseLimit: false,
-    bodyParser: false,
-  },
-};
