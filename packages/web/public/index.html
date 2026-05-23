@@ -4,6 +4,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>CYBER_PLAYER</title>
+<link rel="icon" type="image/png" href="favicon.png"/>
+<link rel="shortcut icon" href="favicon.ico"/>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
 
@@ -3758,32 +3760,33 @@ async function radFindSong() {
 
 async function _sendToShazam(blob) {
   const resultEl = document.getElementById('radFindSongResult');
-  resultEl.textContent = 'Identifying...';
+  if (!resultEl) return;
+  resultEl.innerHTML = '<span style="color:#ff0;animation:blink 0.5s infinite">⟳ IDENTIFYING...</span>';
   try {
-    // Convert to base64 for server-side identification
-    const ab = await blob.arrayBuffer();
-    const b64 = btoa(String.fromCharCode(...new Uint8Array(ab)));
+    // Send raw audio blob directly to local shazamio Python microservice (free, no key)
+    // Powered by: github.com/shazamio/ShazamIO (6k+ stars, reverse-engineered Shazam)
     const r = await fetch('/api/identify-song', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) },
-      body: JSON.stringify({ audio_base64: b64, mime: 'audio/webm' })
+      headers: { 'Content-Type': blob.type || 'audio/webm' },
+      body: blob
     });
     if (r.ok) {
       const d = await r.json();
-      if (d.title) {
-        resultEl.innerHTML = `<span style="color:#00ff88">${d.title}</span> — <span style="color:#aaa">${d.artist || '?'}</span>` +
-          (d.album ? `<br><span style="color:#555">album: ${d.album}</span>` : '');
+      if (d.found && d.title) {
+        resultEl.innerHTML =
+          (d.coverart ? `<img src="${d.coverart}" style="width:32px;height:32px;vertical-align:middle;border:1px solid #ff003c;margin-right:6px;border-radius:3px">` : '') +
+          `<span style="color:#00ff88;font-weight:bold">${d.title}</span> — <span style="color:#ccc">${d.artist || '?'}</span>` +
+          (d.genre ? `<br><span style="color:#555;font-size:9px">${d.genre}</span>` : '');
       } else {
-        resultEl.textContent = d.message || '❌ Song not recognized';
+        const stName = radCurrentStation ? radCurrentStation.name : '?';
+        resultEl.innerHTML = `<span style="color:#ff3">❌ Not recognized</span><br><span style="color:#555;font-size:9px">Station: ${stName}</span>`;
       }
     } else {
-      // Fallback: show station metadata
-      const stName = radCurrentStation ? radCurrentStation.name : 'unknown station';
-      resultEl.innerHTML = `Station: <span style="color:#00ff88">${stName}</span><br><span style="color:#555;font-size:8px;">Song ID service unavailable (API key required)</span>`;
+      throw new Error('HTTP ' + r.status);
     }
   } catch (e) {
-    const stName = radCurrentStation ? radCurrentStation.name : 'unknown station';
-    resultEl.innerHTML = `Station: <span style="color:#00ff88">${stName}</span><br><span style="color:#555;font-size:8px;">${e.message}</span>`;
+    const stName = radCurrentStation ? radCurrentStation.name : '?';
+    resultEl.innerHTML = `<span style="color:#f55">⚡ ID error</span><br><span style="color:#444;font-size:9px">${e.message}</span>`;
   }
 }
 

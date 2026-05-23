@@ -63,3 +63,16 @@ bun run db:generate    # Generate migration files
 bun run db:migrate     # Run migrations
 bun run db:studio      # Open Drizzle Studio
 ```
+
+## Song Identification
+Uses [shazamio/ShazamIO](https://github.com/shazamio/ShazamIO) — free Python library, no API key required.
+
+Start the microservice:
+```bash
+python3 shazam_service.py
+# or
+./start-shazam.sh
+```
+
+It runs on port 7331 (configurable via `SHAZAM_PORT` env var).
+The main server proxies `/api/identify-song` → `localhost:7331/identify`.
