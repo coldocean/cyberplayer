@@ -1,60 +1,36 @@
-# MEGA BUILD TASK
+# MEGA BUILD TASK — STATUS
 
-## Architecture
-- **Frontend**: Static `index.html` with inline JS/CSS (3022 lines)
-- **Backend**: Vercel serverless functions in `/api/` directory
-  - `_db.js` — Turso HTTP helper
-  - `coins.js`, `ban.js`, `spin.js` — existing endpoints
-  - `[[...route]].ts` — catch-all routing to Hono app (better-auth + tracks CRUD)
-- **DB**: Turso (libsql) — tables: bans, coins, attempts
-- **Deploy**: Vercel static + serverless, `dist-static/` as output
+## ✅ COMPLETED
+1. ✅ DB tables created (users, sessions, email_verification, password_reset, uploaded_tracks, votes, recordings)
+2. ✅ 3 admin users seeded in Turso (deemah=superadmin, rastix=admin, robbmobb=admin)
+3. ✅ API: auth-user.js (register, login, verify-email, forgot-password, reset-password, me, logout, change-password)
+4. ✅ API: vote.js (list tracks, cast vote, admin-decide, admin-delete)
+5. ✅ API: record.js (start, stop, upload recording)
+6. ✅ Auth overlay UI (login/register/forgot/reset forms, crying Jesus for unauthenticated)
+7. ✅ Mode 5 voting booth UI
+8. ✅ Jesus sky animation function + CSS
+9. ✅ Track info bar (bottom fixed bar showing current track + duration)
+10. ✅ User status bar (top right, shows logged-in user + role badge)
+11. ✅ Recording indicator (REC dot + timer)
+12. ✅ jesusFromSky() calls inserted into wampPlay/wampStop/wampPrev/wampNext, arcPlay/arcStop, radPlayStation/radStop
+13. ✅ startTrackInfoUpdater()/stopTrackInfoUpdater() inserted into play/stop functions
+14. ✅ Record button (🔴) added to M1 (wamp), M2 (arc), M3 (cli)
+15. ✅ toggleRecBtn() function for start/stop recording
+16. ✅ Old arcDoLogin bridged to new API auth (no more hardcoded passwords)
+17. ✅ Old patched arcDoLogin removed (no longer needed)
+18. ✅ trackInfoBar updater fixed (correct var names: currentTrackIdx, tracks array)
+19. ✅ Copied to all 4 targets
+20. ✅ Committed + pushed to main
 
-## What to Build
+## ⚠️ REMAINING / KNOWN ISSUES
+- RESEND_API_KEY not configured — emails (verification, password reset) won't work until set up
+- SITE_URL env var needed for email links (needs Vercel env setup)
+- Radio already exists as collapsible dropdown in M1/M3 — no additional work needed
+- Recording via createMediaElementSource may fail if audio element already connected to another AudioContext
+- Vercel deploy should auto-trigger from git push
 
-### 1. Radio in Playlist Dropdown
-- Add RADIO 📻 as a collapsible section inside each mode's playlist area
-- Shows all genres/stations inline within the playlist panel
-
-### 2. Track Name & Duration Display
-- Show current track name and elapsed time in the player UI
-- Use audio element's metadata for duration when available
-
-### 3. RECORD Feature
-- Server-side recording to S3
-- New API endpoint: `/api/record` — start/stop recording
-- Records radio stream or current mix for up to 2hrs
-- Saves to S3, creates track entry
-
-### 4. User Registration & Auth
-- Use better-auth (already configured) with Turso
-- New tables: user, session, account, verification (better-auth schema)
-- Resend for email verification & password reset
-- Migrate 3 admins to DB with hashed passwords
-- Non-registered users see "Jesus thumbs down" crying — must register
-- Frontend: registration/login forms in the player
-
-### 5. Jesus Animation (New)
-- Keep existing coin-to-Jesus animation
-- ADD: Jesus rises from bottom of screen with thumbs up on play/stop/next
-- Deducts 1 coin per action
-- Shows coin flying up to sky
-
-### 6. Mode 5: Voting (NEW label)
-- Custom voting in Turso
-- New table: `votes` (track_id, user_id, vote, created_at)
-- All uploaded songs go to voting
-- Users vote to keep/remove tracks
-- deemaah (superadmin) can override — always add/delete
-- rastix/robbmobb are limited admins
-
-### 7. Role System
-- superadmin (deemaah): full control, add/delete anything
-- admin (rastix, robbmobb): limited powers (manage own playlists)
-- registered user: can vote, play with coins
-- guest: sees Jesus crying, must register
-
-## Execution Order
-1. Create DB tables (users, votes, recordings)
-2. Create API endpoints (auth, register, vote, record)
-3. Update index.html (radio in playlist, track info, record UI, voting mode, auth UI, Jesus animations)
-4. Copy to all targets, deploy
+## ARCHITECTURE NOTES
+- Auth: custom serverless functions, NOT better-auth library
+- Passwords: scrypt hashed with salt
+- Sessions: Turso `sessions` table, token in localStorage as `cp_token`
+- Roles: superadmin > admin > user > guest
