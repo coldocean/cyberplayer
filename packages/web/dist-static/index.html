@@ -739,81 +739,16 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 }
 
 /* ═══════════════════════════════════════════
-   RADIO PANEL
+   RADIO (inline-rendered classes still in use)
 ═══════════════════════════════════════════ */
-.arc-radio-panel{flex-direction:column;padding:0;overflow:hidden;height:100%;}
-.rad-wrap{display:flex;flex:1;overflow:hidden;min-height:0;}
-
-/* LEFT: Directory tree */
-.rad-tree{width:220px;min-width:180px;background:rgba(0,0,0,.4);border-right:1px solid rgba(0,229,200,.08);overflow-y:auto;padding:6px 0;font-family:'Share Tech Mono',monospace;font-size:11px;flex-shrink:0;}
-.rad-tree::-webkit-scrollbar{width:4px}.rad-tree::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:2px;}
-.rad-genre{cursor:pointer;padding:5px 10px 5px 12px;color:var(--cyan);letter-spacing:1.2px;display:flex;align-items:center;gap:6px;user-select:none;transition:background .15s;}
-.rad-genre:hover{background:rgba(0,229,200,.06);}
-.rad-genre.open{background:rgba(0,229,200,.04);}
-.rad-genre .rad-arrow{font-size:8px;transition:transform .2s;display:inline-block;width:10px;text-align:center;}
-.rad-genre.open .rad-arrow{transform:rotate(90deg);}
-.rad-genre-icon{font-size:13px;}
-.rad-subs{display:none;padding-left:0;}
-.rad-genre.open + .rad-subs{display:block;}
-.rad-station{cursor:pointer;padding:4px 10px 4px 32px;color:#888;font-size:10px;letter-spacing:.8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .15s;}
-.rad-station:hover{color:var(--cyan);background:rgba(0,229,200,.05);}
-.rad-station.active{color:#000;background:var(--cyan);font-weight:bold;}
-.rad-station .rad-live{color:var(--red);font-size:7px;margin-left:4px;animation:radPulse 1.5s infinite;}
 @keyframes radPulse{0%,100%{opacity:1}50%{opacity:.3}}
-
-/* RIGHT: Now playing + stations grid */
-.rad-main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
-
-/* Now playing bar */
-.rad-now{background:linear-gradient(90deg,rgba(0,229,200,.08),rgba(224,23,74,.05));border-bottom:1px solid rgba(0,229,200,.1);padding:10px 16px;display:flex;align-items:center;gap:12px;min-height:52px;}
-.rad-now-icon{font-size:22px;animation:radSpin 3s linear infinite;animation-play-state:paused;}
-.rad-now-icon.spinning{animation-play-state:running;}
 @keyframes radSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-.rad-now-info{flex:1;min-width:0;}
-.rad-now-title{color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:1.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.rad-now-genre{color:#555;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;margin-top:2px;}
-.rad-now-meta{color:#444;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.5px;margin-top:1px;}
-.rad-now-controls{display:flex;gap:6px;align-items:center;}
-.rad-btn{background:none;border:1px solid var(--cyan);color:var(--cyan);padding:4px 10px;font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;transition:all .15s;}
-.rad-btn:hover{background:var(--cyan);color:#000;}
-.rad-btn.stop{border-color:var(--red);color:var(--red);}
-.rad-btn.stop:hover{background:var(--red);color:#fff;}
-.rad-vol-wrap{display:flex;align-items:center;gap:4px;}
-.rad-vol-label{color:#555;font-size:8px;font-family:'Share Tech Mono',monospace;}
-.rad-vol{width:60px;height:3px;-webkit-appearance:none;background:#222;outline:none;border-radius:2px;}
-.rad-vol::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;background:var(--cyan);border-radius:50%;cursor:pointer;}
-
-/* Cache indicator */
-.rad-cache{display:flex;align-items:center;gap:6px;padding:4px 16px;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(0,229,200,.04);min-height:24px;}
-.rad-cache-bar{flex:1;height:3px;background:#111;border-radius:2px;overflow:hidden;max-width:200px;}
-.rad-cache-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--red));width:0%;transition:width .3s;}
-.rad-cache-text{color:#444;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.5px;}
+.rad-live{color:var(--red);font-size:7px;margin-left:4px;animation:radPulse 1.5s infinite;}
 .rad-cache-status{width:6px;height:6px;border-radius:50%;background:#333;flex-shrink:0;}
 .rad-cache-status.buffering{background:#ff8800;animation:radPulse 1s infinite;}
 .rad-cache-status.ready{background:#00ff88;}
 .rad-cache-status.error{background:var(--red);}
-
-/* Station grid / list area */
-.rad-content{flex:1;overflow-y:auto;padding:12px 16px;}
-.rad-content::-webkit-scrollbar{width:4px}.rad-content::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:2px;}
-.rad-welcome{text-align:center;padding:40px 20px;color:#333;font-family:'Share Tech Mono',monospace;}
-.rad-welcome h2{color:var(--cyan);font-size:14px;letter-spacing:3px;margin-bottom:12px;}
-.rad-welcome p{font-size:10px;letter-spacing:1px;line-height:1.8;}
-.rad-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;}
-.rad-card{background:rgba(0,229,200,.03);border:1px solid rgba(0,229,200,.08);padding:10px 12px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;}
-.rad-card:hover{border-color:var(--cyan);background:rgba(0,229,200,.06);transform:translateY(-1px);}
-.rad-card.active{border-color:var(--cyan);background:rgba(0,229,200,.1);box-shadow:0 0 12px rgba(0,229,200,.1);}
-.rad-card-name{color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.rad-card-desc{color:#555;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.5px;margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.rad-card-badge{position:absolute;top:4px;right:6px;font-size:7px;color:var(--red);font-family:'Share Tech Mono',monospace;letter-spacing:1px;}
-.rad-section-title{color:#444;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;margin:12px 0 8px 0;padding-bottom:4px;border-bottom:1px solid rgba(0,229,200,.06);}
-.rad-section-title:first-child{margin-top:0;}
-
-@media(max-width:700px){
-  .rad-wrap{flex-direction:column;}
-  .rad-tree{width:100%;max-height:150px;border-right:none;border-bottom:1px solid rgba(0,229,200,.08);}
-  .rad-grid{grid-template-columns:1fr;}
-}
+.rad-cache-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--red));width:0%;transition:width .3s;}
 </style>
 </head>
 <body class="skin-1">
@@ -950,7 +885,6 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
       <div class="arc-nav-item" id="arcTotalBtn" style="cursor:default;letter-spacing:.5px;font-size:10px;">0 SONGS</div>
       <div class="arc-nav-item active" id="arcNavPlayer" onclick="arcShowPanel('player')">MUSIC PLAYER</div>
       <div class="arc-nav-item" id="arcNavSettings" onclick="arcShowPanel('settings')">SETTINGS</div>
-      <div class="arc-nav-item" id="arcNavRadio" onclick="arcShowPanel('radio')">📡 RADIO</div>
       <div class="arc-trigger" style="margin-left:auto">ZR</div>
     </div>
 
@@ -1002,6 +936,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
             <button class="arc-pl-switch-btn" id="arcPlBtn1" onclick="switchPlaylist(1)">DEEMAH</button>
             <button class="arc-pl-switch-btn" id="arcPlBtn2" onclick="switchPlaylist(2)">RASTIX</button>
             <button class="arc-pl-switch-btn" id="arcPlBtn3" onclick="switchPlaylist(3)">ROBBMOBB</button>
+            <button class="arc-pl-switch-btn" id="arcPlBtn4" onclick="switchPlaylist(4)" style="border-color:var(--cyan);color:var(--cyan);">📡 RADIO</button>
           </div>
           <div class="arc-set-sub" id="arcPlSwitchInfo" style="color:var(--cyan);margin-top:6px;">Viewing: ALL TRACKS</div>
         </div>
@@ -1040,48 +975,6 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
               </div>
               <input type="file" id="arcFileInput" accept=".mp3,audio/*" multiple style="display:none" onchange="arcHandleFiles(this.files)">
               <div class="arc-upload-list" id="arcUploadList"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- RADIO BODY -->
-    <div class="arc-body arc-radio-panel" id="arcBodyRadio" style="display:none;">
-      <div class="rad-wrap">
-        <!-- Directory tree -->
-        <div class="rad-tree" id="radTree"></div>
-        <!-- Main area -->
-        <div class="rad-main">
-          <!-- Now playing bar -->
-          <div class="rad-now">
-            <div class="rad-now-icon" id="radNowIcon">📻</div>
-            <div class="rad-now-info">
-              <div class="rad-now-title" id="radNowTitle">SELECT A STATION</div>
-              <div class="rad-now-genre" id="radNowGenre">Browse genres on the left</div>
-              <div class="rad-now-meta" id="radNowMeta"></div>
-            </div>
-            <div class="rad-now-controls">
-              <div class="rad-vol-wrap">
-                <span class="rad-vol-label">VOL</span>
-                <input type="range" class="rad-vol" id="radVolume" min="0" max="100" value="80" oninput="radSetVol(this.value)">
-              </div>
-              <button class="rad-btn stop" id="radStopBtn" onclick="radStop()" style="display:none;">STOP</button>
-            </div>
-          </div>
-          <!-- Cache indicator -->
-          <div class="rad-cache" id="radCacheBar">
-            <div class="rad-cache-status" id="radCacheStatus"></div>
-            <div class="rad-cache-bar"><div class="rad-cache-fill" id="radCacheFill"></div></div>
-            <div class="rad-cache-text" id="radCacheText">IDLE</div>
-          </div>
-          <!-- Station content area -->
-          <div class="rad-content" id="radContent">
-            <div class="rad-welcome">
-              <h2>📡 GLUMINATOR RADIO</h2>
-              <p>SELECT A GENRE FROM THE DIRECTORY<br>
-              SMART PRE-CACHE ENSURES GAPLESS PLAYBACK<br>
-              EVEN ON SLOW CONNECTIONS</p>
             </div>
           </div>
         </div>
@@ -1351,13 +1244,26 @@ function addFilesToLibrary(files, cb) {
 
 // ── PLAYLIST VIEW SWITCHER ──
 function switchPlaylist(n) {
+  const wasRadio = activePlaylistView === 4;
   activePlaylistView = n;
-  currentTrackIdx = -1;
+  if(n !== 4) currentTrackIdx = -1;
   // highlight buttons
   document.querySelectorAll('.arc-pl-switch-btn').forEach((b, i) => {
     b.classList.toggle('active', i === n);
   });
-  syncAllUIs();
+  // Switch between radio and normal tracklist
+  const rightPanel = document.querySelector('.arc-right');
+  if(n === 4){
+    // Show radio mode
+    radRenderTracklist();
+    radShowRightPanel(rightPanel);
+    document.getElementById('arcPlSwitchInfo').textContent = 'Viewing: 📡 RADIO STATIONS';
+    document.getElementById('arcPlSwitchInfo').style.color = 'var(--cyan)';
+  } else {
+    // Restore normal player
+    if(wasRadio) radRestoreRightPanel(rightPanel);
+    syncAllUIs();
+  }
 }
 
 // ── ARC LOGIN / LOGOUT ──
@@ -1659,8 +1565,8 @@ let arcAudioCtx = null;
 let arcBassNode = null;
 
 const arcTracklist  = document.getElementById('arcTracklist');
-const arcWaveCanvas = document.getElementById('arcWaveCanvas');
-const arcWaveCtx    = arcWaveCanvas.getContext('2d');
+let arcWaveCanvas = document.getElementById('arcWaveCanvas');
+let arcWaveCtx    = arcWaveCanvas ? arcWaveCanvas.getContext('2d') : null;
 
 function seededBars(seed, count) {
   const bars=[]; let s=seed;
@@ -1722,12 +1628,14 @@ document.getElementById('arcProgressWrap').addEventListener('click', e=>{
 });
 
 function resizeArcCanvas(){
+  if(!arcWaveCanvas) return;
   arcWaveCanvas.width=arcWaveCanvas.offsetWidth||500;
   arcWaveCanvas.height=arcWaveCanvas.offsetHeight||120;
 }
 
 function arcDrawWave(animate){
   cancelAnimationFrame(arcWaveAnim);
+  if(!arcWaveCanvas || !arcWaveCtx) return;
   resizeArcCanvas();
   const W=arcWaveCanvas.width,H=arcWaveCanvas.height;
   const BAR=4,GAP=2;
@@ -1767,20 +1675,19 @@ function arcShowPanel(panel){
   arcCurrentPanel=panel;
   const bp=document.getElementById('arcBodyPlayer');
   const bs=document.getElementById('arcBodySettings');
-  const br=document.getElementById('arcBodyRadio');
   const np=document.getElementById('arcNavPlayer');
   const ns=document.getElementById('arcNavSettings');
-  const nr=document.getElementById('arcNavRadio');
-  bp.style.display='none';bs.style.display='none';br.style.display='none';
-  np.classList.remove('active');ns.classList.remove('active');nr.classList.remove('active');
   if(panel==='settings'){
-    bs.style.display='flex';ns.classList.add('active');
-  } else if(panel==='radio'){
-    br.style.display='flex';nr.classList.add('active');
-    if(!window._radTreeBuilt){radBuildTree();window._radTreeBuilt=true;}
+    bp.style.display='none';bs.style.display='flex';
+    np.classList.remove('active');ns.classList.add('active');
   } else {
-    bp.style.display='flex';np.classList.add('active');
-    setTimeout(()=>{arcRenderList();arcDrawWave(currentAudio&&!currentAudio.paused);resizeArcCanvas();},50);
+    bp.style.display='flex';bs.style.display='none';
+    np.classList.add('active');ns.classList.remove('active');
+    setTimeout(()=>{
+      if(activePlaylistView===4) radRenderTracklist();
+      else arcRenderList();
+      arcDrawWave(currentAudio&&!currentAudio.paused);resizeArcCanvas();
+    },50);
   }
 }
 
@@ -2355,13 +2262,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ════════════════════════════════════════════════
-// 📡 RADIO ENGINE — Smart Pre-Cache Streaming
+// 📡 RADIO ENGINE — Inside Playlist Switcher
 // ════════════════════════════════════════════════
 (function(){
 'use strict';
 
-// ── STATION DIRECTORY ──
-// Structure: { genre: { icon, subs: { subgenre: [ {name, url, desc} ] } } }
 const RADIO_DIR = {
   'EASY LISTENING': {
     icon: '🍸',
@@ -2535,167 +2440,170 @@ const RADIO_DIR = {
 };
 
 // ── STATE ──
-let radAudio = null;        // HTMLAudioElement for radio
+let radAudio = null;
 let radPlaying = false;
 let radCurrentStation = null;
-let radCacheTimer = null;
 let radReconnectTimer = null;
 let radReconnectAttempts = 0;
+let radBufferInterval = null;
 const RAD_MAX_RECONNECT = 5;
+let _radRightBackup = null; // backup of normal right panel HTML
 
-// ── BUILD DIRECTORY TREE ──
-window.radBuildTree = function(){
-  const tree = document.getElementById('radTree');
-  tree.innerHTML = '';
+// ── RENDER RADIO DIRECTORY INTO arcTracklist ──
+window.radRenderTracklist = function(){
+  const tl = document.getElementById('arcTracklist');
+  tl.innerHTML = '';
+  // Collapsed genre state
+  if(!window._radOpenGenres) window._radOpenGenres = {};
+
   for(const [genre, data] of Object.entries(RADIO_DIR)){
-    // Genre header
-    const gDiv = document.createElement('div');
-    gDiv.className = 'rad-genre';
-    gDiv.innerHTML = `<span class="rad-arrow">▶</span><span class="rad-genre-icon">${data.icon}</span> ${genre}`;
-    gDiv.onclick = function(e){
-      e.stopPropagation();
-      this.classList.toggle('open');
-      // Show stations in main area for this genre
-      if(this.classList.contains('open')) radShowGenre(genre);
+    // Genre header row
+    const gRow = document.createElement('div');
+    gRow.className = 'arc-track';
+    gRow.style.cssText = 'color:var(--cyan);border-left-color:var(--cyan);font-weight:bold;padding:7px 10px;cursor:pointer;justify-content:flex-start;gap:6px;';
+    const isOpen = window._radOpenGenres[genre];
+    gRow.innerHTML = `<span style="font-size:7px;display:inline-block;width:10px;transition:transform .2s;transform:rotate(${isOpen?'90':'0'}deg);">▶</span>
+      <span>${data.icon}</span>
+      <span class="arc-track-name" style="max-width:none;color:var(--cyan);">${genre}</span>`;
+    gRow.onclick = function(){
+      window._radOpenGenres[genre] = !window._radOpenGenres[genre];
+      radRenderTracklist();
     };
-    tree.appendChild(gDiv);
+    tl.appendChild(gRow);
 
-    // Sub-genres container
-    const subsDiv = document.createElement('div');
-    subsDiv.className = 'rad-subs';
-    for(const [sub, stations] of Object.entries(data.subs)){
-      // Sub-genre label
-      const subLabel = document.createElement('div');
-      subLabel.className = 'rad-station';
-      subLabel.style.cssText = 'color:var(--cyan);opacity:.6;font-size:9px;letter-spacing:1.5px;padding-left:26px;cursor:default;margin-top:4px;';
-      subLabel.textContent = '┌ ' + sub.toUpperCase();
-      subsDiv.appendChild(subLabel);
+    if(isOpen){
+      for(const [sub, stations] of Object.entries(data.subs)){
+        // Sub-genre label
+        const subRow = document.createElement('div');
+        subRow.style.cssText = 'padding:3px 10px 3px 28px;font-size:8px;color:var(--cyan);opacity:.5;letter-spacing:1.5px;font-family:"Share Tech Mono",monospace;';
+        subRow.textContent = '┌ ' + sub.toUpperCase();
+        tl.appendChild(subRow);
 
-      for(const st of stations){
-        const sDiv = document.createElement('div');
-        sDiv.className = 'rad-station';
-        sDiv.setAttribute('data-url', st.url);
-        sDiv.setAttribute('data-name', st.name);
-        sDiv.setAttribute('data-genre', genre + ' › ' + sub);
-        sDiv.setAttribute('data-desc', st.desc);
-        sDiv.innerHTML = st.name + (radCurrentStation && radCurrentStation.url === st.url ? ' <span class="rad-live">● LIVE</span>' : '');
-        sDiv.onclick = function(){ radPlayStation(st, genre + ' › ' + sub); radHighlightTree(st.url); };
-        subsDiv.appendChild(sDiv);
+        for(const st of stations){
+          const sRow = document.createElement('div');
+          const isActive = radCurrentStation && radCurrentStation.url === st.url;
+          sRow.className = 'arc-track' + (isActive ? ' active' : '');
+          sRow.style.cssText = 'padding:5px 10px 5px 34px;font-size:9px;';
+          if(isActive){
+            sRow.style.borderLeftColor = 'var(--cyan)';
+            sRow.style.background = 'rgba(0,229,200,.08)';
+            sRow.style.color = 'var(--cyan)';
+          }
+          sRow.innerHTML = `<span class="arc-track-name" style="max-width:150px;${isActive?'color:var(--cyan);':''}">${st.name}</span>
+            ${isActive ? '<span style="color:var(--red);font-size:7px;animation:radPulse 1.5s infinite;">● LIVE</span>' : '<span class="arc-track-dur" style="font-size:7px;color:#444;">▶</span>'}`;
+          const _st = st, _genre = genre, _sub = sub;
+          sRow.onclick = function(){ radPlayStation(_st, _genre + ' › ' + _sub); };
+          tl.appendChild(sRow);
+        }
       }
     }
-    tree.appendChild(subsDiv);
   }
 };
 
-function radHighlightTree(url){
-  document.querySelectorAll('.rad-station').forEach(s => {
-    if(s.getAttribute('data-url') === url){
-      s.classList.add('active');
-      if(!s.querySelector('.rad-live')){
-        s.innerHTML = s.getAttribute('data-name') + ' <span class="rad-live">● LIVE</span>';
-      }
-    } else {
-      s.classList.remove('active');
-      const n = s.getAttribute('data-name');
-      if(n) s.textContent = n;
-    }
-  });
-}
+// ── SWAP RIGHT PANEL TO RADIO MODE ──
+window.radShowRightPanel = function(rightPanel){
+  if(!rightPanel) return;
+  // Save current right panel content
+  if(!_radRightBackup) _radRightBackup = rightPanel.innerHTML;
+  rightPanel.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div id="radNowIcon" style="font-size:26px;animation:radSpin 3s linear infinite;animation-play-state:${radPlaying?'running':'paused'};">📻</div>
+      <div style="flex:1;min-width:0;">
+        <div id="radNowTitle" style="font-size:14px;letter-spacing:2px;color:var(--cyan);text-shadow:0 0 16px rgba(0,229,200,.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+          ${radCurrentStation ? radCurrentStation.name : 'SELECT A STATION'}
+        </div>
+        <div id="radNowGenre" style="font-size:9px;color:#555;letter-spacing:1px;margin-top:2px;">
+          ${radCurrentStation ? (radCurrentStation._genre||'') : 'Browse genres on the left'}
+        </div>
+      </div>
+    </div>
+    <div id="radNowDesc" style="font-size:9px;color:#444;letter-spacing:.5px;line-height:1.6;">
+      ${radCurrentStation ? radCurrentStation.desc : 'Pick a genre, expand it, click a station.'}
+    </div>
+    <!-- Buffer bar -->
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div id="radCacheStatus" class="rad-cache-status${radPlaying?' ready':''}"></div>
+      <div style="flex:1;height:3px;background:#111;border-radius:2px;overflow:hidden;"><div id="radCacheFill" style="height:100%;background:linear-gradient(90deg,var(--cyan),var(--red));width:0%;transition:width .3s;"></div></div>
+      <div id="radCacheText" style="font-size:8px;color:#444;letter-spacing:.5px;font-family:'Share Tech Mono',monospace;">${radPlaying?'PLAYING':'IDLE'}</div>
+    </div>
+    <!-- Volume -->
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:8px;color:#555;letter-spacing:1px;font-family:'Share Tech Mono',monospace;">VOL</span>
+      <input type="range" id="radVolume" min="0" max="100" value="${radAudio?Math.round(radAudio.volume*100):80}" 
+        style="flex:1;height:3px;-webkit-appearance:none;background:#222;outline:none;border-radius:2px;cursor:pointer;"
+        oninput="radSetVol(this.value)">
+      <span id="radVolVal" style="font-size:8px;color:#555;width:28px;text-align:right;font-family:'Share Tech Mono',monospace;">${radAudio?Math.round(radAudio.volume*100):80}%</span>
+    </div>
+    <!-- Stop button -->
+    <div style="display:flex;gap:8px;margin-top:auto;">
+      <button onclick="radStop()" style="flex:1;background:none;border:1px solid var(--red);color:var(--red);padding:8px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;${radPlaying?'':'display:none;'}" id="radStopBtn">■ STOP RADIO</button>
+    </div>
+  `;
+};
 
-// ── SHOW GENRE IN MAIN AREA ──
-function radShowGenre(genre){
-  const content = document.getElementById('radContent');
-  const data = RADIO_DIR[genre];
-  if(!data) return;
-  let html = '';
-  for(const [sub, stations] of Object.entries(data.subs)){
-    html += `<div class="rad-section-title">${data.icon} ${genre} › ${sub.toUpperCase()}</div>`;
-    html += '<div class="rad-grid">';
-    for(const st of stations){
-      const isActive = radCurrentStation && radCurrentStation.url === st.url;
-      html += `<div class="rad-card${isActive?' active':''}" onclick="radPlayStation(${JSON.stringify(st).replace(/"/g,'&quot;')},'${genre} › ${sub}')">
-        <div class="rad-card-name">${st.name}</div>
-        <div class="rad-card-desc">${st.desc}</div>
-        ${isActive ? '<div class="rad-card-badge">● LIVE</div>' : ''}
-      </div>`;
-    }
-    html += '</div>';
-  }
-  content.innerHTML = html;
-}
+// ── RESTORE NORMAL RIGHT PANEL ──
+window.radRestoreRightPanel = function(rightPanel){
+  if(!rightPanel || !_radRightBackup) return;
+  rightPanel.innerHTML = _radRightBackup;
+  _radRightBackup = null;
+  // Re-grab canvas refs after DOM restore
+  try{
+    arcWaveCanvas = document.getElementById('arcWaveCanvas');
+    if(arcWaveCanvas) arcWaveCtx = arcWaveCanvas.getContext('2d');
+  }catch(e){}
+};
 
-// ── SMART PRE-CACHE STREAM ENGINE ──
-// Strategy: Use MediaSource API where available, fallback to dual-Audio ping-pong buffer
-// For ICEcast/Shoutcast MP3 streams, we fetch chunks, buffer ahead, and crossfade
-
+// ── PLAY STATION ──
 window.radPlayStation = function(station, genrePath){
-  // Stop any current playback
+  // Stop music player if playing
+  if(currentAudio && !currentAudio.paused){
+    currentAudio.pause();
+    try{ document.getElementById('arcBtnPlay').style.display=''; document.getElementById('arcBtnPause').style.display='none'; }catch(e){}
+  }
+  // Stop existing radio
   radStopInternal();
   radCurrentStation = station;
+  radCurrentStation._genre = genrePath;
   radPlaying = true;
   radReconnectAttempts = 0;
 
-  // Update UI
-  document.getElementById('radNowTitle').textContent = station.name;
-  document.getElementById('radNowGenre').textContent = genrePath || '';
-  document.getElementById('radNowMeta').textContent = station.desc || '';
-  document.getElementById('radNowIcon').classList.add('spinning');
-  document.getElementById('radStopBtn').style.display = '';
-  radHighlightTree(station.url);
-  radSetCacheStatus('buffering', 'CONNECTING...');
+  // Update right panel if we're in radio view
+  if(activePlaylistView === 4){
+    const rp = document.querySelector('.arc-right');
+    radShowRightPanel(rp);
+    radRenderTracklist();
+  }
 
-  // Use the smart buffered approach
+  radSetCacheStatus('buffering', 'CONNECTING...');
   radStartBufferedStream(station.url);
 };
 
 function radStartBufferedStream(url){
-  // Create audio element with pre-buffering hints
   radAudio = new Audio();
   radAudio.crossOrigin = 'anonymous';
   radAudio.preload = 'auto';
-  radAudio.volume = (document.getElementById('radVolume')?.value || 80) / 100;
+  const volEl = document.getElementById('radVolume');
+  radAudio.volume = volEl ? volEl.value / 100 : 0.8;
 
-  // Buffer monitoring
-  let bufferCheckInterval = null;
-
-  radAudio.addEventListener('loadstart', () => {
-    radSetCacheStatus('buffering', 'BUFFERING...');
-  });
-
+  radAudio.addEventListener('loadstart', () => radSetCacheStatus('buffering', 'BUFFERING...'));
   radAudio.addEventListener('canplay', () => {
     radSetCacheStatus('ready', 'STREAM READY');
     if(radPlaying) radAudio.play().catch(()=>{});
   });
-
   radAudio.addEventListener('playing', () => {
     radSetCacheStatus('ready', 'PLAYING — LIVE');
-    // Start buffer monitor
-    if(bufferCheckInterval) clearInterval(bufferCheckInterval);
-    bufferCheckInterval = setInterval(() => radUpdateCacheDisplay(), 500);
+    if(radBufferInterval) clearInterval(radBufferInterval);
+    radBufferInterval = setInterval(radUpdateCacheDisplay, 500);
   });
-
-  radAudio.addEventListener('waiting', () => {
-    radSetCacheStatus('buffering', 'REBUFFERING...');
-  });
-
-  radAudio.addEventListener('stalled', () => {
-    radSetCacheStatus('buffering', 'STALLED — WAITING FOR DATA');
-  });
-
-  radAudio.addEventListener('error', (e) => {
-    console.warn('Radio stream error:', e);
+  radAudio.addEventListener('waiting', () => radSetCacheStatus('buffering', 'REBUFFERING...'));
+  radAudio.addEventListener('stalled', () => radSetCacheStatus('buffering', 'STALLED...'));
+  radAudio.addEventListener('error', () => {
     radSetCacheStatus('error', 'STREAM ERROR');
-    if(bufferCheckInterval) clearInterval(bufferCheckInterval);
-    // Auto-reconnect
+    if(radBufferInterval) clearInterval(radBufferInterval);
     radAttemptReconnect(url);
   });
+  radAudio.addEventListener('ended', () => radAttemptReconnect(url));
 
-  radAudio.addEventListener('ended', () => {
-    // Streams shouldn't end, so reconnect
-    radAttemptReconnect(url);
-  });
-
-  // Add cache-busting to prevent stale connections
   const sep = url.includes('?') ? '&' : '?';
   radAudio.src = url + sep + '_t=' + Date.now();
   radAudio.load();
@@ -2705,16 +2613,14 @@ function radAttemptReconnect(url){
   if(!radPlaying || !radCurrentStation) return;
   radReconnectAttempts++;
   if(radReconnectAttempts > RAD_MAX_RECONNECT){
-    radSetCacheStatus('error', 'FAILED — TAP TO RETRY');
+    radSetCacheStatus('error', 'FAILED — TAP STATION TO RETRY');
     return;
   }
-  radSetCacheStatus('buffering', `RECONNECTING (${radReconnectAttempts}/${RAD_MAX_RECONNECT})...`);
+  radSetCacheStatus('buffering', `RECONNECT ${radReconnectAttempts}/${RAD_MAX_RECONNECT}...`);
   clearTimeout(radReconnectTimer);
   radReconnectTimer = setTimeout(() => {
-    if(radPlaying && radCurrentStation && radCurrentStation.url === url){
-      radStartBufferedStream(url);
-    }
-  }, 2000 * radReconnectAttempts); // exponential backoff
+    if(radPlaying && radCurrentStation && radCurrentStation.url === url) radStartBufferedStream(url);
+  }, 2000 * radReconnectAttempts);
 }
 
 function radUpdateCacheDisplay(){
@@ -2723,23 +2629,14 @@ function radUpdateCacheDisplay(){
   const ct = radAudio.currentTime;
   let ahead = 0;
   for(let i = 0; i < buf.length; i++){
-    if(buf.start(i) <= ct && buf.end(i) >= ct){
-      ahead = buf.end(i) - ct;
-      break;
-    }
+    if(buf.start(i) <= ct && buf.end(i) >= ct){ ahead = buf.end(i) - ct; break; }
   }
-  // For live streams, buffer is typically 5-30s ahead
   const pct = Math.min(100, (ahead / 30) * 100);
   const fill = document.getElementById('radCacheFill');
   const text = document.getElementById('radCacheText');
   if(fill) fill.style.width = pct + '%';
-  if(text) text.textContent = `BUFFERED: ${ahead.toFixed(1)}s AHEAD`;
-
-  if(ahead < 2){
-    radSetCacheStatus('buffering', `LOW BUFFER: ${ahead.toFixed(1)}s`);
-  } else {
-    radSetCacheStatus('ready', `BUFFERED: ${ahead.toFixed(1)}s AHEAD`);
-  }
+  if(ahead < 2) radSetCacheStatus('buffering', `LOW BUFFER: ${ahead.toFixed(1)}s`);
+  else radSetCacheStatus('ready', `BUFFERED: ${ahead.toFixed(1)}s`);
 }
 
 function radSetCacheStatus(status, text){
@@ -2749,53 +2646,28 @@ function radSetCacheStatus(status, text){
   if(txt && text) txt.textContent = text;
 }
 
-// ── VOLUME ──
 window.radSetVol = function(val){
   if(radAudio) radAudio.volume = val / 100;
+  const v = document.getElementById('radVolVal');
+  if(v) v.textContent = val + '%';
 };
 
-// ── STOP ──
 function radStopInternal(){
   radPlaying = false;
-  if(radAudio){
-    radAudio.pause();
-    radAudio.removeAttribute('src');
-    radAudio.load();
-    radAudio = null;
-  }
+  if(radAudio){ radAudio.pause(); radAudio.removeAttribute('src'); radAudio.load(); radAudio = null; }
   clearTimeout(radReconnectTimer);
-  clearInterval(radCacheTimer);
+  if(radBufferInterval){ clearInterval(radBufferInterval); radBufferInterval = null; }
 }
 
 window.radStop = function(){
   radStopInternal();
   radCurrentStation = null;
-  document.getElementById('radNowTitle').textContent = 'SELECT A STATION';
-  document.getElementById('radNowGenre').textContent = 'Browse genres on the left';
-  document.getElementById('radNowMeta').textContent = '';
-  document.getElementById('radNowIcon').classList.remove('spinning');
-  document.getElementById('radStopBtn').style.display = 'none';
-  radSetCacheStatus('', 'IDLE');
-  document.getElementById('radCacheFill').style.width = '0%';
-  radHighlightTree('');
-  // Clear active cards
-  document.querySelectorAll('.rad-card.active').forEach(c => {
-    c.classList.remove('active');
-    const badge = c.querySelector('.rad-card-badge');
-    if(badge) badge.remove();
-  });
-};
-
-// ── PAUSE MUSIC PLAYER WHEN RADIO STARTS ──
-const _origRadPlay = window.radPlayStation;
-window.radPlayStation = function(station, genrePath){
-  // Stop the main music player if playing
-  if(currentAudio && !currentAudio.paused){
-    currentAudio.pause();
-    // Update UI across all modes
-    try{ document.getElementById('arcBtnPlay').style.display=''; document.getElementById('arcBtnPause').style.display='none'; }catch(e){}
+  // Update UI if in radio view
+  if(activePlaylistView === 4){
+    const rp = document.querySelector('.arc-right');
+    radShowRightPanel(rp);
+    radRenderTracklist();
   }
-  _origRadPlay(station, genrePath);
 };
 
 })();
