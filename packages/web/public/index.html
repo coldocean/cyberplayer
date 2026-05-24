@@ -2062,7 +2062,7 @@ function setMode(m) {
   if (m===1) setTimeout(()=>{ wampRenderList(); wampDrawVu(currentAudio&&!currentAudio.paused); },50);
   if (m===3) setTimeout(()=>{ cliRenderList(); cliInitSpectrum(); },50);
   if (m===4) setTimeout(()=>{ const el=document.getElementById('slotCoinCount'); if(el) el.textContent=loggedInUser?'∞':guestCoins; },50);
-  if (m===5) { setTimeout(()=>{ if(!hellLoaded) hellLoadMessages(); else hellRenderMessages(); },50); showDjSuperNovaqPopup(); }
+  if (m===5) { setTimeout(()=>{ if(!hellLoaded) hellLoadMessages(); else hellRenderMessages(); },50); }
 }
 
 // ════════════════════════════════════════════════
@@ -5018,13 +5018,50 @@ function hellRenderMessages(){
   // Clear existing cards but keep empty placeholder
   list.querySelectorAll('.hell-msg-card').forEach(c => c.remove());
 
-  if(!hellMessages.length){
-    if(empty) empty.style.display = '';
-    return;
-  }
   if(empty) empty.style.display = 'none';
 
   const isSuperAdmin = loggedInUser && (loggedInUser === 'deemah' || window._userRole === 'superadmin');
+
+  // === PINNED FIRST MESSAGE FROM HELL — DJ SUPERNOVAQ ===
+  const pinnedCard = document.createElement('div');
+  pinnedCard.className = 'hell-msg-card';
+  pinnedCard.style.borderColor = '#cc0000';
+  pinnedCard.style.background = 'rgba(80,0,0,.35)';
+  pinnedCard.style.position = 'relative';
+
+  const pinnedBadge = document.createElement('div');
+  pinnedBadge.style.cssText = 'position:absolute;top:6px;right:8px;font-size:7px;color:#ff2222;letter-spacing:2px;text-transform:uppercase;opacity:.7;';
+  pinnedBadge.textContent = '📌 PINNED · FROM HELL';
+
+  const pinnedTitle = document.createElement('div');
+  pinnedTitle.style.cssText = 'font-family:Creepster,cursive;font-size:22px;color:#ff2222;text-shadow:0 0 15px rgba(255,0,0,.6);margin-bottom:8px;letter-spacing:2px;';
+  pinnedTitle.textContent = '🦾 Dj SuperNovaq 🦾';
+
+  const pinnedText = document.createElement('div');
+  pinnedText.className = 'hell-msg-text';
+  pinnedText.style.color = '#ff4444';
+  pinnedText.style.textShadow = '0 0 8px #ff444444';
+  pinnedText.style.whiteSpace = 'pre-line';
+  pinnedText.style.fontSize = '11px';
+  pinnedText.style.lineHeight = '1.5';
+  pinnedText.textContent = 'SEREDINA feat LATENTNIY GOMOSEKSUALIST\n\nDJ NOVAQ - SEREDINA TRACKA feat RUNI, ZERKALO, JENYAVIY\nmix 2026 top on beatport in HELL\n\nshall you open your anus bigger?\nYou thought you were safe...\n\nYou was living under Riga.\nCrawling through the basements of Tornakalns.\nMixing shit up RIX to LIEPAJA\non the train of the damned.\n\nThe bass was so deep it cracked\nthe foundations of Jugla.\nEvery track a confession.\nEvery beat a sin.\n\n--> PAPA DELAET MNE DOM.\n--> A DOM DELAET PAPУ.\n--> V ETOM DOME NIKTO NE SPIT.\n\nThe walls bleed frequencies.\nThe speakers scream in Latvian.\nNo one escapes the MIX.';
+
+  const pinnedMeta = document.createElement('div');
+  pinnedMeta.className = 'hell-msg-meta';
+  const pinnedAuthor = document.createElement('span');
+  pinnedAuthor.className = 'hell-msg-author';
+  pinnedAuthor.textContent = '⛧ DJ SUPERNOVAQ';
+  pinnedMeta.appendChild(pinnedAuthor);
+  const pinnedTime = document.createElement('span');
+  pinnedTime.textContent = '∞ ETERNAL';
+  pinnedMeta.appendChild(pinnedTime);
+
+  pinnedCard.appendChild(pinnedBadge);
+  pinnedCard.appendChild(pinnedTitle);
+  pinnedCard.appendChild(pinnedText);
+  pinnedCard.appendChild(pinnedMeta);
+  list.appendChild(pinnedCard);
+  // === END PINNED MESSAGE ===
 
   hellMessages.forEach(msg => {
     const card = document.createElement('div');
