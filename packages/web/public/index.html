@@ -1563,6 +1563,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
               <div class="arc-dropzone" id="arcDropzone" onclick="document.getElementById('arcFileInput').click()" ondragover="arcDragOver(event)" ondragleave="arcDragLeave(event)" ondrop="arcDrop(event)">
                 <div class="arc-drop-icon">📂</div>
                 <div class="arc-drop-text">DRAG MP3 HERE<br><span style="font-size:10px;color:#666;">OR CLICK TO BROWSE</span></div>
+              <div id="arcUploadCost" style="font-size:9px;color:#d4c87a;margin-top:6px;letter-spacing:1px;">🪙 50 COINS PER SONG</div>
               </div>
               <input type="file" id="arcFileInput" accept=".mp3,audio/*" multiple style="display:none" onchange="arcHandleFiles(this.files)">
               <div class="arc-upload-list" id="arcUploadList"></div>
@@ -1839,14 +1840,32 @@ function syncAllUIs() {
   cliSyncUploadLabel();
 }
 
+function getUploadCost() {
+  const isAdmin = authUser && (authUser.role === 'superadmin' || authUser.role === 'admin');
+  if (isAdmin) return 0;
+  if (loggedInUser) return 50;
+  return 100; // dark souls (guests)
+}
+
 function cliSyncUploadLabel() {
   const el = document.getElementById('cliUploadLabel');
   if (!el) return;
-  if (loggedInUser) {
+  const isAdmin = authUser && (authUser.role === 'superadmin' || authUser.role === 'admin');
+  if (isAdmin) {
     const names = {1:'DEEMAH',2:'RASTIX',3:'ROBBMOBB'};
-    el.textContent = `[+] ADD FILES — DRAG MP3 OR CLICK TO BROWSE (${names[loggedInUser]})`;
+    el.textContent = `[+] ADD FILES — DRAG MP3 OR CLICK TO BROWSE (${names[loggedInUser]}) · FREE`;
+  } else if (loggedInUser) {
+    const names = {1:'DEEMAH',2:'RASTIX',3:'ROBBMOBB'};
+    el.textContent = `[+] ADD FILES — 🪙50 COINS PER SONG (${names[loggedInUser]})`;
   } else {
-    el.textContent = '[🔒] LOGIN REQUIRED — enter PIN in SETTINGS to upload';
+    el.textContent = '[+] UPLOAD — 🪙100 COINS PER SONG (DARK SOUL)';
+  }
+  // Also update arc upload cost label
+  const arcCost = document.getElementById('arcUploadCost');
+  if (arcCost) {
+    if (isAdmin) arcCost.textContent = 'UPLOAD FREE (ADMIN)';
+    else if (loggedInUser) arcCost.textContent = '🪙 50 COINS PER SONG';
+    else arcCost.textContent = '🪙 100 COINS PER SONG (DARK SOUL)';
   }
 }
 
@@ -1860,12 +1879,24 @@ function updateAllCounts() {
 
 // ── ADD TRACKS from file input ──
 function addFilesToLibrary(files, cb) {
-  if (!loggedInUser) {
-    alert('LOGIN REQUIRED TO ADD TRACKS');
-    return;
-  }
   const isAdmin = authUser && (authUser.role === 'superadmin' || authUser.role === 'admin');
-  const targetList = userPlaylists[loggedInUser];
+  const cost = getUploadCost();
+  const totalCost = cost * files.length;
+
+  // Coin gate for uploads (non-admins)
+  if (!isAdmin && totalCost > 0) {
+    if (guestCoins < totalCost) {
+      showNoCoinsMsg();
+      return;
+    }
+    // Deduct coins
+    guestCoins = Math.max(0, guestCoins - totalCost);
+    if (typeof updateCoinHud === 'function') updateCoinHud(null);
+    document.getElementById('coinCount').textContent = guestCoins;
+    fetch('/api/coins?action=spend', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({amount:totalCost}) }).catch(()=>{});
+  }
+
+  const targetList = loggedInUser ? userPlaylists[loggedInUser] : (userPlaylists[0] = userPlaylists[0] || []);
   let pending = files.length;
   if (!pending) { syncAllUIs(); if(cb) cb(); return; }
   Array.from(files).forEach(file => {
@@ -1874,7 +1905,7 @@ function addFilesToLibrary(files, cb) {
     }
     const localUrl = URL.createObjectURL(file);
     const trackName = file.name.replace(/\.[^.]+$/,'').toUpperCase().replace(/\s+/g,'_');
-    const artistLabel = loggedInUser===1?'DEEMAH':loggedInUser===2?'RASTIX':'ROBBMOBB';
+    const artistLabel = loggedInUser===1?'DEEMAH':loggedInUser===2?'RASTIX':loggedInUser===3?'ROBBMOBB':'DARK SOUL';
 
     const onMeta = (dur, estUrl) => {
       const m = Math.floor(dur/60).toString().padStart(2,'0');
@@ -2613,21 +2644,21 @@ document.addEventListener('keydown', e=>{
 
 // cli upload
 function cliDragOver(e){
-  if(!loggedInUser){e.preventDefault();return;}
   e.preventDefault();document.getElementById('cliDropArea').classList.add('dragover');
 }
 function cliDragLeave(){document.getElementById('cliDropArea').classList.remove('dragover');}
 function cliDrop(e){
   e.preventDefault();document.getElementById('cliDropArea').classList.remove('dragover');
-  if(!loggedInUser){alert('[ ACCESS DENIED ] — enter PIN and login first');return;}
+  const cost = getUploadCost();
+  if(!loggedInUser && cost > 0 && guestCoins < cost){ showNoCoinsMsg(); return; }
   cliHandleFiles(e.dataTransfer.files);
 }
 function cliHandleFiles(files){
-  if(!loggedInUser){alert('[ ACCESS DENIED ] — enter PIN and login first');return;}
   addFilesToLibrary(files);
 }
 function cliClickUpload(){
-  if(!loggedInUser){alert('[ ACCESS DENIED ] — enter PIN and login first');return;}
+  const cost = getUploadCost();
+  if(!loggedInUser && cost > 0 && guestCoins < cost){ showNoCoinsMsg(); return; }
   document.getElementById('cliFileInput').click();
 }
 
