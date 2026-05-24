@@ -858,79 +858,97 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 .arc-radio-buf{display:flex;align-items:center;gap:8px;}
 .arc-radio-bufbar{flex:1;height:3px;background:#111;overflow:hidden;}
 .arc-radio-buftext{font-size:8px;color:#444;letter-spacing:.5px;white-space:nowrap;}
-/* ── STATION GRID ── */
-#arcRadioTracklist{background:#000;padding:10px 12px 16px;}
+/* ── STATION LIST (bloody theme) ── */
+#arcRadioTracklist{background:#0a0000;padding:6px 8px 16px;position:relative;}
 #arcRadioTracklist::-webkit-scrollbar{width:3px;}
-#arcRadioTracklist::-webkit-scrollbar-track{background:#000;}
-#arcRadioTracklist::-webkit-scrollbar-thumb{background:#1a2200;}
+#arcRadioTracklist::-webkit-scrollbar-track{background:#0a0000;}
+#arcRadioTracklist::-webkit-scrollbar-thumb{background:#3a0000;border-radius:2px;}
 
 /* Genre section block */
-.rad-genre-block{margin-bottom:14px;}
+.rad-genre-block{margin-bottom:10px;position:relative;}
 .rad-genre-hdr{
   display:flex;align-items:center;gap:7px;
-  padding:4px 0 6px;
-  font-size:8px;letter-spacing:3px;color:#333;
-  border-bottom:1px solid #111;margin-bottom:6px;
+  padding:6px 4px 5px;
+  font-size:11px;font-weight:900;letter-spacing:4px;color:#fff;
+  border-bottom:2px solid rgba(180,0,0,.5);margin-bottom:4px;
+  text-transform:uppercase;
+  position:relative;
+}
+.rad-genre-hdr::after{
+  content:'';position:absolute;right:0;top:0;
+  width:18px;height:18px;
+  background:radial-gradient(circle,rgba(160,0,0,.45) 30%,transparent 70%);
+  border-radius:50%;pointer-events:none;
 }
 .rad-genre-hdr:first-child{border-top:none;}
-.rad-genre-hdr-icon{font-size:12px;}
-.rad-genre-hdr-label{letter-spacing:3px;color:#2a2a00;}
-.rad-sub-block{margin-bottom:8px;}
+.rad-genre-hdr-icon{font-size:14px;}
+.rad-genre-hdr-label{letter-spacing:4px;color:#fff;}
+.rad-sub-block{margin-bottom:6px;position:relative;}
+.rad-sub-block::before{
+  content:'';position:absolute;bottom:-2px;left:0;
+  width:30px;height:6px;
+  background:radial-gradient(ellipse,rgba(140,0,0,.35) 40%,transparent 80%);
+  pointer-events:none;
+}
 .rad-sub-hdr{
-  font-size:7px;letter-spacing:2px;color:#1e1e00;
-  padding:0 0 4px 2px;margin-bottom:4px;
-  border-bottom:1px solid #0d0d00;
+  font-size:9px;font-weight:700;letter-spacing:3px;color:rgba(255,120,120,.7);
+  padding:2px 0 3px 6px;margin-bottom:2px;
+  border-left:2px solid rgba(180,0,0,.5);
 }
 
-/* Grid of station cards */
-.rad-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
-  gap:4px;
-}
-.rad-card{
-  background:#050500;
-  border:1px solid #1a1a00;
-  padding:7px 9px;
+/* Flat list rows */
+.rad-row{
+  display:flex;align-items:center;gap:8px;
+  padding:5px 8px;
   cursor:pointer;
   position:relative;
   overflow:hidden;
-  transition:background .12s,border-color .12s;
-  min-height:46px;
-  display:flex;flex-direction:column;justify-content:space-between;
+  transition:background .12s;
+  border-bottom:1px solid rgba(60,0,0,.25);
 }
-.rad-card::before{
-  content:'';position:absolute;top:0;left:0;
-  width:2px;height:100%;
-  background:#1a1a00;
+.rad-row::before{
+  content:'';position:absolute;left:0;top:0;
+  width:3px;height:100%;
+  background:transparent;
   transition:background .12s;
 }
-.rad-card:hover{background:#0a0a00;border-color:#aaff00;}
-.rad-card:hover::before{background:#aaff00;}
-.rad-card.active{background:#0c0c01;border-color:#aaff00;}
-.rad-card.active::before{background:#aaff00;box-shadow:0 0 6px #aaff00;}
-.rad-card-name{
-  font-size:9px;letter-spacing:.8px;color:#555;
+.rad-row:hover{background:rgba(120,0,0,.12);}
+.rad-row:hover::before{background:rgba(200,0,0,.7);}
+.rad-row:hover .rad-row-name{color:#fff;text-shadow:0 0 8px rgba(200,0,0,.3);}
+.rad-row.active{background:rgba(140,0,0,.15);}
+.rad-row.active::before{background:#c00;box-shadow:0 0 8px rgba(200,0,0,.5);}
+.rad-row.active .rad-row-name{color:#fff;font-weight:900;text-shadow:0 0 10px rgba(255,40,40,.4);}
+/* bloody corner spots on active */
+.rad-row.active::after{
+  content:'';position:absolute;top:-4px;right:-4px;
+  width:16px;height:16px;
+  background:radial-gradient(circle,rgba(180,0,0,.5) 20%,transparent 70%);
+  border-radius:50%;pointer-events:none;
+}
+.rad-row-icon{font-size:10px;flex-shrink:0;opacity:.7;}
+.rad-row-name{
+  font-size:12px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.85);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  flex:1;
   transition:color .12s;line-height:1.3;
 }
-.rad-card:hover .rad-card-name{color:#aaff00;}
-.rad-card.active .rad-card-name{color:#aaff00;text-shadow:0 0 6px rgba(170,255,0,.4);}
-.rad-card-desc{
-  font-size:7px;color:#1e1e00;letter-spacing:.3px;
+.rad-row-desc{
+  font-size:8px;color:rgba(255,255,255,.3);letter-spacing:.3px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  margin-top:3px;transition:color .12s;
+  max-width:120px;flex-shrink:0;
 }
-.rad-card:hover .rad-card-desc{color:#333;}
-.rad-card-foot{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-top:5px;
+.rad-row-play{font-size:9px;color:rgba(255,255,255,.25);transition:color .12s;flex-shrink:0;}
+.rad-row:hover .rad-row-play{color:#e44;}
+.rad-row-live{
+  font-size:8px;color:#e33;letter-spacing:1px;font-weight:700;
+  animation:radPulse 1.5s infinite;flex-shrink:0;
 }
-.rad-card-play{font-size:8px;color:#1e1e00;transition:color .12s;}
-.rad-card:hover .rad-card-play{color:#aaff00;}
-.rad-card-live{
-  font-size:7px;color:#aaff00;letter-spacing:1px;
-  animation:radPulse 1.5s infinite;
+/* bloody transparent splatter spots scattered */
+.rad-genre-block::after{
+  content:'';position:absolute;top:50%;right:8px;
+  width:24px;height:24px;
+  background:radial-gradient(circle,rgba(120,0,0,.2) 25%,transparent 65%);
+  border-radius:50%;pointer-events:none;transform:translateY(-50%);
 }
 /* legacy list classes kept for winamp/cli */
 .rad-station-row{display:none;}
@@ -3587,50 +3605,47 @@ window.radRenderArcRadio = function(){
       subHdr.textContent = '— ' + sub.toUpperCase();
       subBlock.appendChild(subHdr);
 
-      // Card grid
-      const grid = document.createElement('div');
-      grid.className = 'rad-grid';
-
+      // Flat list rows (no grid)
       for(const st of stations){
         totalStations++;
         const isActive = radCurrentStation && radCurrentStation.url === st.url;
 
-        const card = document.createElement('div');
-        card.className = 'rad-card' + (isActive ? ' active' : '');
+        const row = document.createElement('div');
+        row.className = 'rad-row' + (isActive ? ' active' : '');
+
+        const iconEl = document.createElement('span');
+        iconEl.className = 'rad-row-icon';
+        iconEl.textContent = data.icon;
 
         const nameEl = document.createElement('div');
-        nameEl.className = 'rad-card-name';
+        nameEl.className = 'rad-row-name';
         nameEl.textContent = st.name;
 
         const descEl = document.createElement('div');
-        descEl.className = 'rad-card-desc';
+        descEl.className = 'rad-row-desc';
         descEl.textContent = st.desc || '';
 
-        const foot = document.createElement('div');
-        foot.className = 'rad-card-foot';
+        row.appendChild(iconEl);
+        row.appendChild(nameEl);
+        row.appendChild(descEl);
 
         if(isActive){
           const liveEl = document.createElement('span');
-          liveEl.className = 'rad-card-live';
+          liveEl.className = 'rad-row-live';
           liveEl.textContent = '● LIVE';
-          foot.appendChild(liveEl);
+          row.appendChild(liveEl);
         } else {
           const playEl = document.createElement('span');
-          playEl.className = 'rad-card-play';
+          playEl.className = 'rad-row-play';
           playEl.textContent = '▶';
-          foot.appendChild(playEl);
+          row.appendChild(playEl);
         }
 
-        card.appendChild(nameEl);
-        card.appendChild(descEl);
-        card.appendChild(foot);
-
         const _st=st,_g=genre,_s=sub;
-        card.onclick = function(){ radPlayStation(_st, _g+' › '+_s); };
-        grid.appendChild(card);
+        row.onclick = function(){ radPlayStation(_st, _g+' › '+_s); };
+        subBlock.appendChild(row);
       }
 
-      subBlock.appendChild(grid);
       gBlock.appendChild(subBlock);
     }
 
