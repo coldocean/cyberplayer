@@ -3364,10 +3364,14 @@ const RADIO_DIR = {
   },
 };
 
-// ── STATE ──
+// ── STATE (exposed on window for cross-scope access) ──
 var radAudio = null;
 var radPlaying = false;
 var radCurrentStation = null;
+// Expose radio state globally so updateTrackInfoBar etc. can access
+Object.defineProperty(window, 'radPlaying', { get(){ return radPlaying; }, set(v){ radPlaying=v; } });
+Object.defineProperty(window, 'radAudio', { get(){ return radAudio; }, set(v){ radAudio=v; } });
+Object.defineProperty(window, 'radCurrentStation', { get(){ return radCurrentStation; }, set(v){ radCurrentStation=v; } });
 var radReconnectTimer = null;
 var radReconnectAttempts = 0;
 var radBufferInterval = null;
