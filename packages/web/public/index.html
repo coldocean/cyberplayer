@@ -3518,13 +3518,7 @@ function radBarsFromAhead(ahead){
 
 // ── PLAY STATION ──
 window.radPlayStation = function(station, genrePath){
-  // Coin gate for guests — need coins to change station
-  if(!loggedInUser && guestCoins <= 0){ showNoCoinsMsg(); return; }
-  if(!loggedInUser){
-    guestCoins = Math.max(0, guestCoins - 1);
-    document.getElementById('coinCount').textContent = guestCoins;
-    fetch('/api/coins?action=spend', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({amount:1}) }).catch(()=>{});
-  }
+  // Radio is free — no coin gate for live streams
   // Stop music player if playing
   if(currentAudio && !currentAudio.paused){
     currentAudio.pause();
