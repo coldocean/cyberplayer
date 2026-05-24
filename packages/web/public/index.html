@@ -1069,9 +1069,37 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 .vote-btn.voted-down{border-color:#ff4444;color:#ff4444;background:rgba(255,0,0,.1);}
 .vote-admin-btn{background:transparent;border:1px solid #ff4444;color:#ff4444;padding:4px 8px;font-family:'Share Tech Mono',monospace;font-size:8px;cursor:pointer;letter-spacing:1px;}
 /* ── Track info bar ── */
-#trackInfoBar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99997;background:rgba(10,10,20,.95);border-top:1px solid #222;padding:6px 16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#888;letter-spacing:1px;backdrop-filter:blur(4px);}
+#trackInfoBar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99997;background:rgba(10,10,20,.95);border-top:1px solid #222;padding:6px 16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#888;letter-spacing:1px;backdrop-filter:blur(4px);cursor:pointer;transition:border-color .3s;}
+#trackInfoBar:hover{border-top-color:#8b0000;}
 #trackInfoBar .ti-name{color:var(--green,#00ff88);font-size:11px;}
 #trackInfoBar .ti-dur{color:#555;margin-left:auto;}
+/* ── Radio Mini Player ── */
+#radioMiniPlayer{display:none;position:fixed;bottom:32px;left:50%;transform:translateX(-50%);z-index:99998;width:340px;background:rgba(8,6,16,.97);border:1px solid #8b0000;border-radius:4px;font-family:'Share Tech Mono',monospace;backdrop-filter:blur(10px);box-shadow:0 0 30px rgba(139,0,0,.3),0 -4px 20px rgba(0,0,0,.8),inset 0 0 40px rgba(139,0,0,.05);animation:miniPlayerIn .25s ease-out;}
+@keyframes miniPlayerIn{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+#radioMiniPlayer.closing{animation:miniPlayerOut .2s ease-in forwards;}
+@keyframes miniPlayerOut{to{opacity:0;transform:translateX(-50%) translateY(10px);}}
+.rmp-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px 4px;border-bottom:1px solid rgba(139,0,0,.3);}
+.rmp-title{font-size:8px;letter-spacing:3px;color:#8b0000;text-transform:uppercase;}
+.rmp-close{background:none;border:none;color:#555;font-size:14px;cursor:pointer;padding:0 4px;font-family:inherit;}
+.rmp-close:hover{color:#e0174a;}
+.rmp-body{padding:10px 12px;}
+.rmp-station{font-size:13px;color:#cc0000;letter-spacing:1px;text-shadow:0 0 8px rgba(200,0,0,.3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.rmp-genre{font-size:8px;color:#555;letter-spacing:2px;margin-bottom:2px;}
+.rmp-desc{font-size:9px;color:#444;margin-bottom:8px;}
+.rmp-status{font-size:8px;letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.rmp-status-dot{width:6px;height:6px;border-radius:50%;background:#8b0000;animation:rmpPulse 1.5s infinite;}
+.rmp-status.live .rmp-status-dot{background:#00ff88;animation:rmpPulse 1s infinite;}
+@keyframes rmpPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.rmp-status-text{color:#666;}
+.rmp-status.live .rmp-status-text{color:#00ff88;}
+.rmp-controls{display:flex;align-items:center;justify-content:center;gap:6px;}
+.rmp-btn{background:none;border:1px solid #333;color:#888;font-size:14px;width:36px;height:30px;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;border-radius:2px;}
+.rmp-btn:hover{border-color:#8b0000;color:#e0174a;box-shadow:0 0 8px rgba(139,0,0,.3);}
+.rmp-btn.active{border-color:#00ff88;color:#00ff88;box-shadow:0 0 10px rgba(0,255,136,.15);}
+.rmp-btn.rmp-play{width:44px;height:34px;font-size:16px;}
+.rmp-vol{display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(139,0,0,.15);}
+.rmp-vol label{font-size:7px;color:#555;letter-spacing:2px;}
+.rmp-vol input[type=range]{flex:1;height:3px;accent-color:#8b0000;}
 /* ── User status bar ── */
 #userStatusBar{display:none;position:fixed;top:10px;right:10px;z-index:99998;font-family:'Share Tech Mono',monospace;font-size:9px;color:#00ff88;letter-spacing:2px;background:#0a0a14;border:1px solid #222;padding:4px 10px;border-radius:2px;cursor:pointer;}
 #dafoeJesusWrap{display:none!important;}
@@ -1262,9 +1290,36 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 </div>
 
 <!-- TRACK INFO BAR (bottom) -->
-<div id="trackInfoBar">
+<div id="trackInfoBar" onclick="toggleRadioMiniPlayer()">
   <span class="ti-name" id="tiName">—</span>
   <span class="ti-dur" id="tiDur">0:00 / 0:00</span>
+</div>
+
+<!-- RADIO MINI PLAYER -->
+<div id="radioMiniPlayer">
+  <div class="rmp-header">
+    <span class="rmp-title">📻 DARK SOULS RADIO</span>
+    <button class="rmp-close" onclick="closeRadioMiniPlayer()">×</button>
+  </div>
+  <div class="rmp-body">
+    <div class="rmp-station" id="rmpStation">NO STATION</div>
+    <div class="rmp-genre" id="rmpGenre"></div>
+    <div class="rmp-desc" id="rmpDesc"></div>
+    <div class="rmp-status" id="rmpStatus">
+      <span class="rmp-status-dot"></span>
+      <span class="rmp-status-text" id="rmpStatusText">IDLE</span>
+    </div>
+    <div class="rmp-controls">
+      <button class="rmp-btn" onclick="rmpPrev()" title="Previous Station">⏮</button>
+      <button class="rmp-btn rmp-play" id="rmpPlayBtn" onclick="rmpTogglePlay()" title="Play/Pause">▶</button>
+      <button class="rmp-btn" id="rmpStopBtn" onclick="rmpStop()" title="Stop">■</button>
+      <button class="rmp-btn" onclick="rmpNext()" title="Next Station">⏭</button>
+    </div>
+    <div class="rmp-vol">
+      <label>VOL</label>
+      <input type="range" min="0" max="100" value="80" id="rmpVol" oninput="rmpSetVol(this.value)">
+    </div>
+  </div>
 </div>
 
 <!-- REC INDICATOR -->
@@ -3804,6 +3859,151 @@ window.radCoinAnimation = function(){
   }
   requestAnimationFrame(animateCoin);
 };
+
+// ════════════════════════════════════════════════
+// RADIO MINI PLAYER
+// ════════════════════════════════════════════════
+
+// Build flat list of all stations for prev/next
+var rmpFlatStations = [];
+(function buildFlatList(){
+  for(var genre in RADIO_DIR){
+    var subs = RADIO_DIR[genre].subs;
+    for(var sub in subs){
+      var list = subs[sub];
+      for(var i=0;i<list.length;i++){
+        rmpFlatStations.push({ station: list[i], genre: genre + ' › ' + sub });
+      }
+    }
+  }
+})();
+
+var rmpOpen = false;
+var rmpUpdateInterval = null;
+
+window.toggleRadioMiniPlayer = function(){
+  if(!radPlaying && !radCurrentStation) return; // nothing to show
+  var mp = document.getElementById('radioMiniPlayer');
+  if(rmpOpen){ closeRadioMiniPlayer(); return; }
+  rmpOpen = true;
+  mp.classList.remove('closing');
+  mp.style.display = 'block';
+  rmpSyncUI();
+  if(rmpUpdateInterval) clearInterval(rmpUpdateInterval);
+  rmpUpdateInterval = setInterval(rmpSyncUI, 500);
+};
+
+window.closeRadioMiniPlayer = function(){
+  var mp = document.getElementById('radioMiniPlayer');
+  mp.classList.add('closing');
+  rmpOpen = false;
+  if(rmpUpdateInterval){ clearInterval(rmpUpdateInterval); rmpUpdateInterval = null; }
+  setTimeout(function(){ if(!rmpOpen) mp.style.display = 'none'; }, 200);
+};
+
+function rmpSyncUI(){
+  var el = document.getElementById('rmpStation');
+  var genre = document.getElementById('rmpGenre');
+  var desc = document.getElementById('rmpDesc');
+  var status = document.getElementById('rmpStatus');
+  var statusText = document.getElementById('rmpStatusText');
+  var playBtn = document.getElementById('rmpPlayBtn');
+
+  if(radCurrentStation){
+    el.textContent = radCurrentStation.name || 'UNKNOWN';
+    genre.textContent = radCurrentStation._genre || '';
+    desc.textContent = radCurrentStation.desc || '';
+  } else {
+    el.textContent = 'NO STATION';
+    genre.textContent = '';
+    desc.textContent = '';
+  }
+
+  if(radPlaying && radAudio){
+    if(!radAudio.paused){
+      status.className = 'rmp-status live';
+      statusText.textContent = 'PLAYING — LIVE';
+      playBtn.textContent = '⏸';
+      playBtn.classList.add('active');
+    } else {
+      status.className = 'rmp-status';
+      statusText.textContent = 'PAUSED';
+      playBtn.textContent = '▶';
+      playBtn.classList.remove('active');
+    }
+  } else {
+    status.className = 'rmp-status';
+    statusText.textContent = 'STOPPED';
+    playBtn.textContent = '▶';
+    playBtn.classList.remove('active');
+  }
+
+  // Sync volume slider
+  var volSlider = document.getElementById('rmpVol');
+  if(radAudio && volSlider) volSlider.value = Math.round(radAudio.volume * 100);
+}
+
+function rmpGetCurrentIndex(){
+  if(!radCurrentStation) return -1;
+  for(var i=0;i<rmpFlatStations.length;i++){
+    if(rmpFlatStations[i].station.url === radCurrentStation.url) return i;
+  }
+  return -1;
+}
+
+window.rmpTogglePlay = function(){
+  if(!radCurrentStation && rmpFlatStations.length > 0){
+    // Nothing playing — start first station
+    var s = rmpFlatStations[0];
+    window.radPlayStation(s.station, s.genre);
+    return;
+  }
+  if(radAudio){
+    if(radAudio.paused){
+      radAudio.play().catch(function(){});
+      radPlaying = true;
+    } else {
+      radAudio.pause();
+    }
+    rmpSyncUI();
+  }
+};
+
+window.rmpStop = function(){
+  window.radStop();
+  rmpSyncUI();
+  setTimeout(function(){ closeRadioMiniPlayer(); }, 300);
+};
+
+window.rmpNext = function(){
+  var idx = rmpGetCurrentIndex();
+  var next = (idx + 1) % rmpFlatStations.length;
+  var s = rmpFlatStations[next];
+  window.radPlayStation(s.station, s.genre);
+  setTimeout(rmpSyncUI, 300);
+};
+
+window.rmpPrev = function(){
+  var idx = rmpGetCurrentIndex();
+  var prev = idx <= 0 ? rmpFlatStations.length - 1 : idx - 1;
+  var s = rmpFlatStations[prev];
+  window.radPlayStation(s.station, s.genre);
+  setTimeout(rmpSyncUI, 300);
+};
+
+window.rmpSetVol = function(val){
+  if(radAudio) radAudio.volume = val / 100;
+};
+
+// Close mini player when clicking outside
+document.addEventListener('click', function(e){
+  if(!rmpOpen) return;
+  var mp = document.getElementById('radioMiniPlayer');
+  var bar = document.getElementById('trackInfoBar');
+  if(!mp.contains(e.target) && !bar.contains(e.target)){
+    closeRadioMiniPlayer();
+  }
+});
 
 })();
 
