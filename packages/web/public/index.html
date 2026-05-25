@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>CYBER_PLAYER</title>
-<link rel="icon" type="image/png" href="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FbeEHmn8R0m_7OuSH4_Z-x%2Ffavicon.png"/>
-<link rel="shortcut icon" href="favicon.ico"/>
+<link rel="icon" type="image/png" href="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FbeEHmn8R0m_7OuSH4_Z-x%2Ffavicon.png">
+<link rel="shortcut icon" href="favicon.ico">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap');
 
@@ -738,22 +736,58 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 .gam-spin{border:2px solid #e0174a;background:#1a0010;color:#e0174a;}
 .gam-spin:hover{background:#2a0010;box-shadow:0 0 16px rgba(224,23,74,.4);}
 .slot-cell{
-  height:52px;display:flex;align-items:center;justify-content:center;
-  font-size:30px;font-family:'VT323',monospace;cursor:default;
-  transition:color .1s,text-shadow .1s;
+  height:58px;display:flex;align-items:center;justify-content:center;
+  font-size:34px;font-family:'VT323',monospace;cursor:default;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
   position:relative;
+  transform:translateZ(0);
+  border-radius:6px;
+  background:rgba(0,0,0,.3);
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.6),inset 0 -1px 4px rgba(255,255,255,.02);
+}
+.slot-cell::before{
+  content:'';position:absolute;inset:0;border-radius:6px;
+  background:linear-gradient(180deg,rgba(255,255,255,.04) 0%,transparent 40%,rgba(0,0,0,.2) 100%);
+  pointer-events:none;z-index:1;
 }
 .slot-mid{
-  border-top:1px solid rgba(255,215,0,.15);
-  border-bottom:1px solid rgba(255,215,0,.15);
-  background:rgba(255,215,0,.03);
+  border-top:1px solid rgba(255,215,0,.2);
+  border-bottom:1px solid rgba(255,215,0,.2);
+  background:rgba(255,215,0,.04);
 }
-.slot-win{animation:slotWin .4s ease-in-out infinite alternate;}
-@keyframes slotWin{from{transform:scale(1);}to{transform:scale(1.18);filter:brightness(1.5);}}
+/* ── Win animations ── */
+.slot-win{animation:slotWinPop .5s ease-in-out infinite alternate;}
+@keyframes slotWinPop{
+  0%{transform:scale(1) translateZ(0);filter:brightness(1);box-shadow:inset 0 2px 8px rgba(0,0,0,.6);}
+  100%{transform:scale(1.15) translateZ(20px);filter:brightness(1.8) saturate(1.5);box-shadow:0 0 20px currentColor,0 0 40px currentColor,inset 0 0 15px rgba(255,255,255,.15);}
+}
+.slot-win-jackpot{animation:slotJackpot .3s ease-in-out infinite alternate;}
+@keyframes slotJackpot{
+  0%{transform:scale(1) rotate(0deg);filter:brightness(1);}
+  50%{transform:scale(1.25) rotate(-2deg);filter:brightness(2) saturate(2);}
+  100%{transform:scale(1.2) rotate(2deg);filter:brightness(2.2) saturate(2);box-shadow:0 0 30px #ffd700,0 0 60px rgba(255,215,0,.5),0 0 90px rgba(255,140,0,.3);}
+}
+/* ── Win line SVG overlay ── */
+.win-line-svg{position:absolute;inset:0;pointer-events:none;z-index:10;}
+.win-line{stroke-width:3;fill:none;stroke-linecap:round;filter:drop-shadow(0 0 6px currentColor);opacity:0;animation:winLineIn .4s ease-out forwards;}
+@keyframes winLineIn{0%{opacity:0;stroke-dasharray:300;stroke-dashoffset:300;}100%{opacity:.9;stroke-dasharray:300;stroke-dashoffset:0;}}
+.win-line-pulse{animation:winLinePulse 1s ease-in-out infinite alternate;}
+@keyframes winLinePulse{0%{opacity:.6;stroke-width:2;}100%{opacity:1;stroke-width:4;filter:drop-shadow(0 0 12px currentColor);}}
+/* ── 3D Machine wrapper ── */
+.slot-machine-3d{perspective:800px;transform-style:preserve-3d;}
+.slot-machine-inner{transform:rotateX(2deg);transform-style:preserve-3d;transition:transform .3s;}
+.slot-machine-inner:hover{transform:rotateX(0deg);}
+.gam-reel{transform-style:preserve-3d;transition:transform .2s;}
+.reel-spinning .slot-cell{animation:reelBlur .08s linear infinite;}
+@keyframes reelBlur{0%{filter:blur(0);}50%{filter:blur(2px);}100%{filter:blur(0);}}
+/* ── Particle burst on win ── */
+.win-particle{position:absolute;width:4px;height:4px;border-radius:50%;pointer-events:none;z-index:20;animation:particleBurst .8s ease-out forwards;}
+@keyframes particleBurst{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--px),var(--py)) scale(0);}}
 .slot-bet-btn.active-btn{background:#2a0020 !important;color:#e0174a !important;border-color:#e0174a !important;}
 #slotSpinBtn:hover{background:#2a0010;box-shadow:0 0 16px rgba(224,23,74,.4);}
 #slotSpinBtn:active{transform:scale(.97);}
 #slotSpinBtn:disabled{opacity:.5;cursor:not-allowed;}
+@keyframes shakeX{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
 
 /* ── PAY TO PLAY — TREASURE BOX popup ── */
 #treasureOverlay{display:none;position:fixed;inset:0;z-index:200001;background:rgba(0,0,0,.92);flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;}
@@ -799,7 +833,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 .pay-play-btn:hover{background:linear-gradient(135deg,#2a1800,#3a2200);box-shadow:0 0 30px rgba(255,215,0,.4);}
 .pay-play-btn:disabled{opacity:.4;cursor:not-allowed;}
 
-@media(max-width:600px){.slot-cell{height:58px;font-size:34px;}}
+@media(max-width:600px){.slot-cell{height:54px;font-size:30px;}}
 
 /* ═══════════════════════════════════════════
    RADIO (shared across all modes)
@@ -1005,6 +1039,33 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 }
 @keyframes zeusCoinReveal{0%{opacity:0;transform:translateX(-50%) scale(0.5);}60%{opacity:1;transform:translateX(-50%) scale(1.15);}100%{opacity:1;transform:translateX(-50%) scale(1);}}
 @keyframes zeusLaughReveal{0%{opacity:0;}40%{opacity:0;}100%{opacity:0.8;}}
+
+/* ── HADES FROM BELOW — ascends from hell, mirror of Zeus ── */
+.hades-below{position:fixed;z-index:100001;pointer-events:none;bottom:-220px;left:50%;transform:translateX(-50%) scale(0.15);transform-origin:bottom center;transition:none;}
+.hades-below img{width:180px;height:180px;object-fit:cover;border-radius:50%;border:3px solid #ff2200;filter:drop-shadow(0 0 24px #ff0000) drop-shadow(0 0 50px rgba(255,0,0,.7)) drop-shadow(0 0 80px rgba(180,0,0,.4));}
+.hades-below .hades-flames{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);font-size:48px;opacity:0.8;filter:blur(2px);text-shadow:0 0 20px rgba(255,60,0,0.8);white-space:nowrap;pointer-events:none;}
+.hades-below .hades-coin-txt{position:absolute;top:-36px;left:50%;transform:translateX(-50%);font-size:22px;font-weight:bold;color:#ff4400;font-family:'VT323',monospace;letter-spacing:4px;text-shadow:0 0 14px #ff2200,0 0 28px rgba(255,50,0,.7);white-space:nowrap;opacity:0;}
+.hades-below .hades-speech{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:13px;color:rgba(255,80,0,.9);font-family:'Share Tech Mono',monospace;letter-spacing:2px;white-space:nowrap;opacity:0;}
+#hadesHellfireFlash{position:fixed;inset:0;z-index:100000;pointer-events:none;background:rgba(255,40,0,0);transition:none;}
+@keyframes hadesAscend{
+  0%{bottom:-220px;transform:translateX(-50%) scale(0.12);opacity:0;}
+  8%{opacity:1;}
+  35%{bottom:8vh;transform:translateX(-50%) scale(1.1);}
+  50%{bottom:10vh;transform:translateX(-50%) scale(1.0);}
+  70%{bottom:10vh;transform:translateX(-50%) scale(1.0);opacity:1;}
+  90%{bottom:8vh;transform:translateX(-50%) scale(0.95);opacity:0.8;}
+  100%{bottom:-200px;transform:translateX(-50%) scale(0.1);opacity:0;}
+}
+@keyframes hadesHellfire{
+  0%{background:rgba(255,40,0,0);}
+  5%{background:rgba(255,40,0,0.15);}
+  12%{background:rgba(255,40,0,0.03);}
+  18%{background:rgba(255,40,0,0.2);}
+  30%{background:rgba(255,40,0,0);}
+  100%{background:rgba(255,40,0,0);}
+}
+@keyframes hadesCoinReveal{0%{opacity:0;transform:translateX(-50%) scale(0.5);}60%{opacity:1;transform:translateX(-50%) scale(1.15);}100%{opacity:1;transform:translateX(-50%) scale(1);}}
+@keyframes hadesSpeechReveal{0%{opacity:0;}40%{opacity:0;}100%{opacity:0.9;}}
 @keyframes boltFlash{0%{opacity:0;transform:translate(-50%,-50%) scale(.5);}30%{opacity:1;transform:translate(-50%,-50%) scale(1.4);}100%{opacity:0;transform:translate(-50%,-50%) scale(2);}}
 /* ── Dark Soul guest animation ── */
 @keyframes darkSoulGlitch{
@@ -1163,7 +1224,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 <!-- ════════════════════════════════════
      HELL CAGE — LOADING SCREEN
 ════════════════════════════════════ -->
-<div id="hellCageScreen" style="display:flex;position:fixed;inset:0;z-index:999999;background:#000;flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;overflow:hidden;">
+<div id="hellCageScreen" style="display: none; position: fixed; inset: 0px; z-index: 999999; background: rgb(0, 0, 0); flex-direction: column; align-items: center; justify-content: center; font-family: &quot;Share Tech Mono&quot;, monospace; overflow: hidden; transition: opacity 0.8s; opacity: 0;">
   <!-- Cage bars -->
   <div style="position:absolute;inset:0;pointer-events:none;z-index:1;">
     <div style="position:absolute;left:8%;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#330000,#8b0000,#330000);box-shadow:0 0 10px #8b0000;opacity:.7;"></div>
@@ -1189,14 +1250,14 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
       <div style="position:absolute;right:-10px;top:50%;transform:translateY(-50%);width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,#8b0000 0%,#440000 40%,#1a0000 70%,transparent 100%);box-shadow:0 0 30px #8b0000,0 0 60px rgba(139,0,0,.5);z-index:3;"></div>
       <!-- Loading bar track -->
       <div style="height:6px;background:#1a0000;border:1px solid #440000;overflow:hidden;position:relative;z-index:1;">
-        <div id="hellLoadBar" style="height:100%;width:0%;background:linear-gradient(90deg,#8b0000,#ff2200,#ff4400);box-shadow:0 0 12px #ff2200,0 0 24px rgba(255,34,0,.3);transition:width .1s linear;"></div>
+        <div id="hellLoadBar" style="height: 100%; width: 100%; background: linear-gradient(90deg, rgb(139, 0, 0), rgb(255, 34, 0), rgb(255, 68, 0)); box-shadow: rgb(255, 34, 0) 0px 0px 12px, rgba(255, 34, 0, 0.3) 0px 0px 24px; transition: width 0.1s linear;"></div>
       </div>
       <!-- The severed hand — moves right as progress increases, dissolves near the cage hole -->
-      <div id="hellHand" style="position:absolute;top:50%;transform:translateY(-50%);left:0%;font-size:42px;z-index:2;filter:drop-shadow(0 0 8px rgba(255,0,0,.6)) drop-shadow(0 0 20px rgba(139,0,0,.4));transition:left .1s linear,opacity .3s,filter .3s;">🖐️</div>
+      <div id="hellHand" style="position: absolute; top: 50%; transform: translateY(-50%) scale(0) rotate(90deg); left: 85%; font-size: 42px; z-index: 2; filter: drop-shadow(rgb(255, 0, 0) 0px 0px 38px) blur(3px); transition: left 0.1s linear, opacity 0.3s, filter 0.3s; opacity: 0;">🖐️</div>
       <!-- Blood trail behind hand -->
-      <div id="hellBloodTrail" style="position:absolute;top:50%;transform:translateY(-50%);left:0;height:8px;width:0%;background:linear-gradient(90deg,transparent,rgba(139,0,0,.3),rgba(180,0,0,.5));z-index:0;transition:width .1s linear;border-radius:2px;"></div>
+      <div id="hellBloodTrail" style="position: absolute; top: 50%; transform: translateY(-50%); left: 0px; height: 8px; width: 85%; background: linear-gradient(90deg, transparent, rgba(139, 0, 0, 0.3), rgba(180, 0, 0, 0.5)); z-index: 0; transition: width 0.1s linear; border-radius: 2px;"></div>
     </div>
-    <div id="hellLoadTxt" style="font-size:9px;color:#440000;letter-spacing:3px;">LOADING SOUL DATA...</div>
+    <div id="hellLoadTxt" style="font-size:9px;color:#440000;letter-spacing:3px;">ENTER THE CAGE...</div>
   </div>
 </div>
 
@@ -1210,7 +1271,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 ════════════════════════════════════ -->
 <div id="evilFaceOverlay" style="display:none;position:fixed;inset:0;z-index:999998;background:rgba(0,0,0,.95);flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;text-align:center;">
   <div id="evilFaceContent" style="position:relative;">
-    <img src="/evil-face.png" id="evilFaceImg" style="width:min(320px,80vw);height:auto;border:3px solid #8b0000;box-shadow:0 0 60px rgba(255,0,0,.6);border-radius:8px;animation:evilPulse 1s ease-in-out infinite alternate;" />
+    <img src="/evil-face.png" id="evilFaceImg" style="width:min(320px,80vw);height:auto;border:3px solid #8b0000;box-shadow:0 0 60px rgba(255,0,0,.6);border-radius:8px;animation:evilPulse 1s ease-in-out infinite alternate;">
     <div style="margin-top:20px;font-size:clamp(14px,4vw,22px);color:#cc0000;letter-spacing:4px;text-shadow:0 0 20px #ff0000;font-family:'VT323',monospace;">THE EVIL CAN SMILE TOO...</div>
   </div>
   <audio id="evilLaughAudio" src="/evil-laugh.mp3" preload="auto"></audio>
@@ -1260,21 +1321,21 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
     <div id="payCardForm">
       <div style="margin-bottom:14px;">
         <label style="font-size:9px;color:#660000;letter-spacing:2px;display:block;margin-bottom:5px;">CARD NUMBER</label>
-        <input id="payCardNum" type="text" maxlength="19" placeholder="0000 0000 0000 0000" oninput="formatCardNum(this)" style="width:100%;background:#0f0000;border:1px solid #440000;color:#cc6600;font-family:'Share Tech Mono',monospace;font-size:14px;padding:10px;letter-spacing:2px;box-sizing:border-box;outline:none;" />
+        <input id="payCardNum" type="text" maxlength="19" placeholder="0000 0000 0000 0000" oninput="formatCardNum(this)" style="width:100%;background:#0f0000;border:1px solid #440000;color:#cc6600;font-family:'Share Tech Mono',monospace;font-size:14px;padding:10px;letter-spacing:2px;box-sizing:border-box;outline:none;">
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
         <div>
           <label style="font-size:9px;color:#660000;letter-spacing:2px;display:block;margin-bottom:5px;">EXPIRY</label>
-          <input id="payCardExp" type="text" maxlength="5" placeholder="MM/YY" oninput="formatCardExp(this)" style="width:100%;background:#0f0000;border:1px solid #440000;color:#cc6600;font-family:'Share Tech Mono',monospace;font-size:14px;padding:10px;box-sizing:border-box;outline:none;" />
+          <input id="payCardExp" type="text" maxlength="5" placeholder="MM/YY" oninput="formatCardExp(this)" style="width:100%;background:#0f0000;border:1px solid #440000;color:#cc6600;font-family:'Share Tech Mono',monospace;font-size:14px;padding:10px;box-sizing:border-box;outline:none;">
         </div>
         <div>
           <label style="font-size:9px;color:#660000;letter-spacing:2px;display:block;margin-bottom:5px;">CVV</label>
-          <input id="payCardCvv" type="password" maxlength="4" placeholder="•••" style="width:100%;background:#0f0000;border:1px solid #440000;color:#cc6600;font-family:'Share Tech Mono',monospace;font-size:14px;padding:10px;box-sizing:border-box;outline:none;" />
+          <input id="payCardCvv" type="password" maxlength="4" placeholder="•••" style="width:100%;background:#0f0000;border:1px solid #440000;color:#cc6600;font-family:'Share Tech Mono',monospace;font-size:14px;padding:10px;box-sizing:border-box;outline:none;">
         </div>
       </div>
       <div style="margin-bottom:20px;">
         <label style="font-size:9px;color:#660000;letter-spacing:2px;display:block;margin-bottom:5px;">CARDHOLDER NAME</label>
-        <input id="payCardName" type="text" placeholder="YOUR NAME" style="width:100%;background:#0f0000;border:1px solid #440000;color:#cc6600;font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px;box-sizing:border-box;outline:none;" />
+        <input id="payCardName" type="text" placeholder="YOUR NAME" style="width:100%;background:#0f0000;border:1px solid #440000;color:#cc6600;font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px;box-sizing:border-box;outline:none;">
       </div>
       <div id="payCardErr" style="font-size:9px;color:#ff4444;letter-spacing:2px;min-height:14px;margin-bottom:12px;"></div>
       <button onclick="submitPayment()" style="width:100%;background:linear-gradient(135deg,#1a0000,#2a0a00);border:2px solid #cc0000;color:#cc0000;font-family:'VT323',monospace;font-size:22px;letter-spacing:6px;padding:12px;cursor:pointer;text-shadow:0 0 10px rgba(200,0,0,.4);box-shadow:0 0 20px rgba(180,0,0,.2);transition:all .2s;" onmouseover="this.style.boxShadow='0 0 40px rgba(200,0,0,.4)'" onmouseout="this.style.boxShadow='0 0 20px rgba(180,0,0,.2)'">
@@ -1303,7 +1364,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 </div>
 
 <!-- COIN HUD (guests only) -->
-<div id="coinHud" style="display:none;position:fixed;top:10px;left:10px;z-index:9998;font-family:'Share Tech Mono',monospace;font-size:11px;color:#ffd700;letter-spacing:1px;background:#0a0a14;border:1px solid #443300;padding:4px 10px;border-radius:2px;">
+<div id="coinHud" style="display: block; position: fixed; top: 10px; left: 10px; z-index: 9998; font-family: &quot;Share Tech Mono&quot;, monospace; font-size: 11px; color: rgb(255, 215, 0); letter-spacing: 1px; background: rgb(10, 10, 20); border: 1px solid rgb(68, 51, 0); padding: 4px 10px; border-radius: 2px;">
   🪙 <span id="coinCount">0</span> <span id="coinDailyMsg" style="font-size:9px;color:#888;"></span>
 </div>
 
@@ -1356,15 +1417,15 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 </div>
 
 <!-- AUTH OVERLAY (shown for non-registered users) -->
-<div id="authOverlay" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.92);flex-direction:column;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;overflow:hidden;">
+<div id="authOverlay" style="display: flex; position: fixed; inset: 0px; z-index: 100000; background: rgba(0, 0, 0, 0.92); flex-direction: column; align-items: center; justify-content: center; font-family: &quot;Share Tech Mono&quot;, monospace; overflow: hidden;">
   <!-- Blood drip container for dark soul effect -->
-  <div id="darkSoulBlood" style="display:none;position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;"></div>
+  <div id="darkSoulBlood" style="display: block; position: absolute; inset: 0px; pointer-events: none; z-index: 1; overflow: hidden;"><div style="position: absolute; top: 0%; left: 0.792601%; width: 10.0522px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 3.45848s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 12.3588%; width: 6.94295px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.9889s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 13.8815%; top: 50.7875%; width: 57.3824px; height: 24.1948px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 39.2894% 77.3819% 52.16% 43.4432%; pointer-events: none; transform: scale(0); opacity: 0; animation: 2.16994s ease-out 1.18081s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.752265%; width: 4.24747px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 9.12463s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 96.3236%; width: 13.2228px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.9472s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 56.022%; top: 51.5848%; width: 78.888px; height: 56.5709px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 51.4478% 51.7328% 61.5497% 74.2071%; pointer-events: none; transform: scale(0); opacity: 0; animation: 2.10015s ease-out 1.89576s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; bottom: 1.32841%; left: 57.6531%; width: 81.8034px; height: 20.5141px; background: radial-gradient(rgba(160, 0, 0, 0.9), rgba(80, 0, 0, 0)); border-radius: 50%; pointer-events: none; transform: scaleX(0); opacity: 0; animation: 2.45089s ease-out 0.363794s 1 normal forwards running passivePool; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.265061%; width: 7.20962px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 4.6805s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 76.6735%; width: 14.5787px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.9056s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 18.7731%; top: 56.94%; width: 22.5828px; height: 22.0714px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 76.5731% 65.1027% 77.1114% 41.7003%; pointer-events: none; transform: scale(0); opacity: 0; animation: 2.86616s ease-out 0.0305017s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.274151%; width: 6.90099px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 7.72349s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 17.7635%; width: 5.07635px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.8641s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 30.8907%; top: 42.9887%; width: 94.3752px; height: 70.2043px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 36.242% 55.1201% 82.5378% 78.4464%; pointer-events: none; transform: scale(0); opacity: 0; animation: 2.82906s ease-out 1.94782s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.427938%; width: 3.33664px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 3.61738s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 22.0682%; width: 18.5224px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.8226s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 26.4249%; top: 41.6159%; width: 66.1322px; height: 33.8303px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 41.426% 70.7412% 81.8445% 69.9984%; pointer-events: none; transform: scale(0); opacity: 0; animation: 2.47534s ease-out 0.208793s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; bottom: 24.9515%; left: 76.0268%; width: 144.13px; height: 20.3625px; background: radial-gradient(rgba(160, 0, 0, 0.9), rgba(80, 0, 0, 0)); border-radius: 50%; pointer-events: none; transform: scaleX(0); opacity: 0; animation: 3.95014s ease-out 0.164642s 1 normal forwards running passivePool; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.835209%; width: 3.20467px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 4.02889s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 20.7824%; width: 10.1592px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.7812s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 18.5679%; top: 75.0158%; width: 39.6729px; height: 16.8281px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 57.6469% 87.3146% 73.4776% 38.8203%; pointer-events: none; transform: scale(0); opacity: 0; animation: 2.17306s ease-out 0.505488s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; bottom: 12.8218%; left: 62.7578%; width: 62.0126px; height: 16.9303px; background: radial-gradient(rgba(160, 0, 0, 0.9), rgba(80, 0, 0, 0)); border-radius: 50%; pointer-events: none; transform: scaleX(0); opacity: 0; animation: 4.55211s ease-out 0.541097s 1 normal forwards running passivePool; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.735865%; width: 8.88197px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 3.18035s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 47.4766%; width: 14.726px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.7399s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 72.8223%; top: 71.1046%; width: 47.0853px; height: 28.4077px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 78.0657% 88.4266% 57.6121% 39.3208%; pointer-events: none; transform: scale(0); opacity: 0; animation: 3.29799s ease-out 1.09115s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; bottom: 21.133%; left: 46.2722%; width: 60.0073px; height: 23.3648px; background: radial-gradient(rgba(160, 0, 0, 0.9), rgba(80, 0, 0, 0)); border-radius: 50%; pointer-events: none; transform: scaleX(0); opacity: 0; animation: 4.54782s ease-out 0.260445s 1 normal forwards running passivePool; z-index: 4;"></div><div style="position: absolute; top: 0%; left: -0.309597%; width: 10.4872px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 5.22526s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 8.25708%; width: 16.0627px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.6986s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 73.0755%; top: 82.7392%; width: 53.9547px; height: 42.4418px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 61.6644% 76.9764% 76.2431% 57.5905%; pointer-events: none; transform: scale(0); opacity: 0; animation: 2.56968s ease-out 1.03429s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; bottom: 5.44172%; left: 83.521%; width: 89.0528px; height: 14.5659px; background: radial-gradient(rgba(160, 0, 0, 0.9), rgba(80, 0, 0, 0)); border-radius: 50%; pointer-events: none; transform: scaleX(0); opacity: 0; animation: 2.14146s ease-out 0.921897s 1 normal forwards running passivePool; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.180724%; width: 5.06271px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 9.28531s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 35.9495%; width: 20.7315px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.6574s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 39.9133%; top: 40.1996%; width: 99.6727px; height: 89.007px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 64.7925% 50.5854% 81.8909% 39.7091%; pointer-events: none; transform: scale(0); opacity: 0; animation: 2.16144s ease-out 0.775974s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.29607%; width: 3.2437px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 7.26784s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 48.0234%; width: 6.18831px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.6163s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 28.3559%; top: 56.6795%; width: 48.7533px; height: 36.3542px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 32.5947% 82.7897% 83.5494% 34.7918%; pointer-events: none; transform: scale(0); opacity: 0; animation: 3.29416s ease-out 1.59758s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; top: 0%; left: -0.325171%; width: 4.03555px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 5.64311s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 24.1766%; width: 11.3569px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.5751s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 31.7559%; top: 66.5297%; width: 64.3078px; height: 36.835px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 58.3662% 86.5687% 77.7626% 41.8963%; pointer-events: none; transform: scale(0); opacity: 0; animation: 2.78345s ease-out 0.593259s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.161467%; width: 5.32456px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 6.23456s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 67.6505%; width: 20.7197px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.5341s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 79.1101%; top: 71.1134%; width: 87.2455px; height: 73.7012px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 30.032% 72.0046% 80.9674% 36.8731%; pointer-events: none; transform: scale(0); opacity: 0; animation: 2.61617s ease-out 1.42562s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; bottom: 18.4912%; left: 19.6825%; width: 44.1651px; height: 23.2855px; background: radial-gradient(rgba(160, 0, 0, 0.9), rgba(80, 0, 0, 0)); border-radius: 50%; pointer-events: none; transform: scaleX(0); opacity: 0; animation: 2.84406s ease-out 0.361177s 1 normal forwards running passivePool; z-index: 4;"></div><div style="position: absolute; top: 0%; left: -0.971496%; width: 4.64551px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 9.66056s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 69.5255%; width: 11.9256px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.4931s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 78.6299%; top: 48.2476%; width: 62.5362px; height: 57.2856px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 73.2404% 84.7937% 85.9593% 71.5992%; pointer-events: none; transform: scale(0); opacity: 0; animation: 3.41747s ease-out 1.11462s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; top: 0%; left: -0.937255%; width: 4.59647px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 8.0083s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 39.5644%; width: 17.5224px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.4522s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 41.8871%; top: 69.3904%; width: 48.4047px; height: 40.305px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 31.6965% 52.733% 41.802% 30.26%; pointer-events: none; transform: scale(0); opacity: 0; animation: 3.16135s ease-out 1.12313s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.890298%; width: 3.58985px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 4.8078s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 94.3494%; width: 19.0913px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.4114s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 58.3535%; top: 89.5277%; width: 54.966px; height: 52.1947px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 64.8729% 75.6067% 48.9363% 32.0121%; pointer-events: none; transform: scale(0); opacity: 0; animation: 1.73996s ease-out 0.512394s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.295876%; width: 9.40789px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 4.18835s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 42.4033%; width: 4.95435px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.3706s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 60.0251%; top: 52.8291%; width: 42.0343px; height: 27.6716px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 66.813% 54.8925% 44.8371% 79.0905%; pointer-events: none; transform: scale(0); opacity: 0; animation: 3.19027s ease-out 0.261359s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; bottom: 1.4654%; left: 53.5993%; width: 90.4178px; height: 27.6148px; background: radial-gradient(rgba(160, 0, 0, 0.9), rgba(80, 0, 0, 0)); border-radius: 50%; pointer-events: none; transform: scaleX(0); opacity: 0; animation: 4.58174s ease-out 0.787608s 1 normal forwards running passivePool; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.532528%; width: 9.8756px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 4.39904s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 74.3081%; width: 8.39278px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.3298s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 23.4432%; top: 55.2908%; width: 63.7514px; height: 40.4723px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 46.3486% 75.563% 47.4138% 74.5459%; pointer-events: none; transform: scale(0); opacity: 0; animation: 2.52765s ease-out 1.52643s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.84297%; width: 9.85413px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 5.01074s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 99.1197%; width: 7.49127px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.2892s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 42.2985%; top: 57.1729%; width: 59.6579px; height: 57.1259px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 60.5467% 74.1349% 79.4013% 37.4109%; pointer-events: none; transform: scale(0); opacity: 0; animation: 1.9348s ease-out 0.87375s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; top: 0%; left: -0.698002%; width: 4.79108px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 7.17175s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 50.9697%; width: 14.3315px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.2486s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 75.7982%; top: 82.5267%; width: 31.6188px; height: 30.8052px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 43.4032% 83.3436% 84.4176% 47.4122%; pointer-events: none; transform: scale(0); opacity: 0; animation: 2.82113s ease-out 1.38937s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; top: 0%; left: -0.839078%; width: 8.44418px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 8.68282s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 86.8159%; width: 14.1206px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.208s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 63.8419%; top: 69.4827%; width: 59.0329px; height: 38.1316px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 48.2679% 64.6848% 65.9894% 47.3286%; pointer-events: none; transform: scale(0); opacity: 0; animation: 2.66716s ease-out 0.733257s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; bottom: 7.34275%; left: 70.178%; width: 67.4747px; height: 23.7151px; background: radial-gradient(rgba(160, 0, 0, 0.9), rgba(80, 0, 0, 0)); border-radius: 50%; pointer-events: none; transform: scaleX(0); opacity: 0; animation: 3.18756s ease-out 0.548095s 1 normal forwards running passivePool; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.354784%; width: 9.31284px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 6.06858s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 80.4235%; width: 6.65378px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.1675s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 11.3931%; top: 45.7425%; width: 71.1629px; height: 46.1435px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 78.7928% 75.0148% 75.8151% 40.3526%; pointer-events: none; transform: scale(0); opacity: 0; animation: 2.28678s ease-out 1.34044s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.861144%; width: 8.3159px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 6.58335s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div><div style="position: absolute; top: 0px; left: 33.4786%; width: 19.5759px; height: 0px; background: linear-gradient(rgb(90, 0, 0), rgb(136, 0, 0), rgb(187, 0, 0), rgba(160, 0, 0, 0.8)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 29.1271s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 3;"></div><div style="position: absolute; left: 20.8619%; top: 71.8169%; width: 62.2559px; height: 28.2181px; background: radial-gradient(at 40% 40%, rgb(204, 0, 0), rgb(136, 0, 0), rgba(60, 0, 0, 0)); border-radius: 32.9904% 80.1841% 64.0769% 61.6182%; pointer-events: none; transform: scale(0); opacity: 0; animation: 1.99507s ease-out 1.42315s 1 normal forwards running bloodSpotGrow; z-index: 4;"></div><div style="position: absolute; top: 0%; left: 0.595903%; width: 3.70958px; height: 0px; background: linear-gradient(rgb(204, 0, 0), rgb(136, 0, 0), rgba(100, 0, 0, 0.6)); border-radius: 0px 0px 50% 50%; pointer-events: none; animation: 9.45997s ease-in 0s 1 normal forwards running passiveBloodDrip; z-index: 5;"></div></div>
   <div id="authDafoeThumbsDown" style="margin-bottom:20px;position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;">
-    <img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FzXmJg31R_oQnpa27AQ50y%2Fmel-zeus-thumbsup.png" style="width:130px;height:130px;border-radius:50%;border:3px solid #ffd700;filter:drop-shadow(0 0 20px rgba(255,215,0,.5)) drop-shadow(0 0 40px rgba(255,180,0,.2));transform:scaleX(-1);display:block;margin:0 auto;" alt="Zeus Tha Geep Son">
-    <div style="color:#ffd700;font-size:14px;letter-spacing:3px;text-align:center;margin-top:10px;text-shadow:0 0 10px rgba(255,215,0,.5);">⚡ ZEUS THA GEEP SON AWAITS</div>
+    <img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FzXmJg31R_oQnpa27AQ50y%2Fmel-zeus-thumbsup.png" style="width:200px;height:200px;border-radius:50%;border:4px solid #ffd700;filter:drop-shadow(0 0 30px rgba(255,215,0,.6)) drop-shadow(0 0 60px rgba(255,180,0,.3)) drop-shadow(0 0 100px rgba(255,150,0,.15));transform:scaleX(-1);display:block;margin:0 auto;" alt="Zeus Tha Geep Son">
+    <div style="color:#ffd700;font-size:16px;letter-spacing:3px;text-align:center;margin-top:12px;text-shadow:0 0 10px rgba(255,215,0,.5);">ZEUS GEEP SON's WAITING FOR YOU 🫵</div>
   </div>
   <div style="color:#ff6666;font-size:12px;letter-spacing:2px;text-align:center;max-width:340px;line-height:1.8;margin-bottom:16px;position:relative;z-index:2;">
-    You are the hard sinner and I am here to open your future — <span style="color:#cc0000;text-shadow:0 0 12px rgba(200,0,0,.8);">REGISTER NOW</span>
+    You are the hardest sinner I am here to clean your- <span style="color:#cc0000;text-shadow:0 0 12px rgba(200,0,0,.8);">REGISTER NOW OR ENTER AS A DARK SOUL!</span>
   </div>
   <!-- JOIN AS DARK SOUL (guest mode) -->
   <button id="darkSoulBtn" onclick="joinAsDarkSoul()" style="margin-bottom:18px;background:transparent;border:2px solid #8b0000;color:#cc0000;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;padding:10px 24px;cursor:pointer;text-transform:uppercase;transition:all .3s;position:relative;z-index:2;text-shadow:0 0 8px rgba(200,0,0,.4);">
@@ -1372,7 +1433,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
   </button>
 
   <!-- LOGIN FORM -->
-  <div id="authLoginBox" style="border:1px solid #333;padding:20px;width:320px;background:#0a0a14;">
+  <div id="authLoginBox" style="border: 1px solid rgb(51, 51, 51); padding: 20px; width: 320px; background: rgb(10, 10, 20); display: block;">
     <div style="color:#00ff88;font-size:11px;letter-spacing:3px;margin-bottom:14px;">◈ LOGIN</div>
     <input id="authLoginName" type="text" placeholder="USERNAME" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
     <input id="authLoginPass" type="password" placeholder="PASSWORD" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
@@ -1391,7 +1452,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
     <input id="authRegEmail" type="email" placeholder="EMAIL" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
     <input id="authRegPass" type="password" placeholder="PASSWORD (6+ chars)" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
     <input id="authRegPass2" type="password" placeholder="CONFIRM PASSWORD" style="width:100%;background:#111;border:1px solid #333;color:#0f0;padding:8px;font-family:inherit;font-size:11px;letter-spacing:2px;margin-bottom:8px;box-sizing:border-box;">
-    <button id="registerSubmitBtn" onclick="authDoRegister()" style="width:100%;background:#8b0000;color:#ffcccc;border:2px solid #cc0000;padding:10px;font-family:inherit;font-size:11px;letter-spacing:3px;cursor:pointer;font-weight:bold;position:relative;overflow:hidden;transition:all .3s;">REGISTER ▶</button>
+    <button id="registerSubmitBtn" onclick="authDoRegister()" style="width: 100%; background: rgb(139, 0, 0); color: rgb(255, 204, 204); border: 2px solid rgb(192, 0, 0); padding: 10px; font-family: inherit; font-size: 11px; letter-spacing: 3px; cursor: pointer; font-weight: bold; position: relative; overflow: hidden; transition: 0.3s; box-shadow: rgba(200, 0, 0, 0.4) 0px 6.71733px 26.7933px, rgba(80, 0, 0, 0.384) 0px 0px 13.3967px inset;">REGISTER ▶</button>
     <div id="authRegError" style="color:#ff4444;font-size:10px;letter-spacing:1px;margin-top:8px;display:none;"></div>
     <div id="authRegSuccess" style="color:#00ff88;font-size:10px;letter-spacing:1px;margin-top:8px;display:none;"></div>
     <button onclick="authShowLogin()" style="margin-top:12px;width:100%;background:transparent;border:1px solid #555;color:#555;padding:8px;font-family:inherit;font-size:9px;letter-spacing:2px;cursor:pointer;">← BACK TO LOGIN</button>
@@ -1445,7 +1506,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
     <div class="wamp-main">
       <div class="wamp-top">
         <!-- VU -->
-        <div class="wamp-vu"><canvas id="wampVuCanvas"></canvas></div>
+        <div class="wamp-vu"><canvas id="wampVuCanvas" width="70" height="42"></canvas></div>
         <!-- INFO -->
         <div class="wamp-info">
           <div class="wamp-ticker" id="wampTicker">NO TRACK LOADED</div>
@@ -1477,7 +1538,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
           <input type="range" class="wamp-vol" id="wampVol" min="0" max="100" value="80" oninput="wampSetVol(this.value)">
         </div>
       </div>
-      <input type="file" id="wampFileInput" accept=".mp3,audio/*" multiple style="display:none" onchange="wampHandleFiles(this.files)">
+      <input type="file" id="wampFileInput" accept=".mp3,audio/*" multiple="" style="display:none" onchange="wampHandleFiles(this.files)">
     </div>
 
     <!-- EQ -->
@@ -1489,7 +1550,37 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
       </div>
       <div class="wamp-eq-bands" id="wampEqBands">
         <!-- generated by JS -->
-      </div>
+      <div class="wamp-eq-band">
+      <input type="range" class="wamp-eq-slider" min="-12" max="12" value="0" oninput="wampEqChange(0,this.value)" style="writing-mode:vertical-lr;direction:rtl;">
+      <span class="wamp-eq-lbl">60</span>
+    </div><div class="wamp-eq-band">
+      <input type="range" class="wamp-eq-slider" min="-12" max="12" value="0" oninput="wampEqChange(1,this.value)" style="writing-mode:vertical-lr;direction:rtl;">
+      <span class="wamp-eq-lbl">170</span>
+    </div><div class="wamp-eq-band">
+      <input type="range" class="wamp-eq-slider" min="-12" max="12" value="0" oninput="wampEqChange(2,this.value)" style="writing-mode:vertical-lr;direction:rtl;">
+      <span class="wamp-eq-lbl">310</span>
+    </div><div class="wamp-eq-band">
+      <input type="range" class="wamp-eq-slider" min="-12" max="12" value="0" oninput="wampEqChange(3,this.value)" style="writing-mode:vertical-lr;direction:rtl;">
+      <span class="wamp-eq-lbl">600</span>
+    </div><div class="wamp-eq-band">
+      <input type="range" class="wamp-eq-slider" min="-12" max="12" value="0" oninput="wampEqChange(4,this.value)" style="writing-mode:vertical-lr;direction:rtl;">
+      <span class="wamp-eq-lbl">1K</span>
+    </div><div class="wamp-eq-band">
+      <input type="range" class="wamp-eq-slider" min="-12" max="12" value="0" oninput="wampEqChange(5,this.value)" style="writing-mode:vertical-lr;direction:rtl;">
+      <span class="wamp-eq-lbl">3K</span>
+    </div><div class="wamp-eq-band">
+      <input type="range" class="wamp-eq-slider" min="-12" max="12" value="0" oninput="wampEqChange(6,this.value)" style="writing-mode:vertical-lr;direction:rtl;">
+      <span class="wamp-eq-lbl">6K</span>
+    </div><div class="wamp-eq-band">
+      <input type="range" class="wamp-eq-slider" min="-12" max="12" value="0" oninput="wampEqChange(7,this.value)" style="writing-mode:vertical-lr;direction:rtl;">
+      <span class="wamp-eq-lbl">12K</span>
+    </div><div class="wamp-eq-band">
+      <input type="range" class="wamp-eq-slider" min="-12" max="12" value="0" oninput="wampEqChange(8,this.value)" style="writing-mode:vertical-lr;direction:rtl;">
+      <span class="wamp-eq-lbl">14K</span>
+    </div><div class="wamp-eq-band">
+      <input type="range" class="wamp-eq-slider" min="-12" max="12" value="0" oninput="wampEqChange(9,this.value)" style="writing-mode:vertical-lr;direction:rtl;">
+      <span class="wamp-eq-lbl">16K</span>
+    </div></div>
     </div>
 
     <!-- PLAYLIST -->
@@ -1527,7 +1618,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
       </div>
       <div class="wamp-radio-body" id="wampRadioBody" style="display:block;">
         <div class="wamp-radio-now" id="wampRadioNow" style="opacity:.4;">No station — click to tune in</div>
-        <div class="wamp-radio-list" id="wampRadioList"></div>
+        <div class="wamp-radio-list" id="wampRadioList"><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Русское Радио</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Hit FM Moscow</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Europa Plus Light</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Europa Plus New</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Radio Maximum</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Eldoradio SPb</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Russian Mix</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Megamix</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record EDM</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Party 24/7</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Deep</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Phonk</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record На Хайпе</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record 80-х</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Супердискотека 90-х</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record 00-х</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record 10s Dance</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Russian Gold</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Gold</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Руки Вверх!</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Nashe Radio SPb</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ROCK FM 95.2</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Rock</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Chill-Out</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Lo-Fi</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Organic</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Anima Amoris New Age</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Trancemission</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Trance Classics</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Pirate Station</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Anima Amoris Trance</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Rap Hits</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Black Rap</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Remix</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Radio Mayak</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Jazz FM 89.1 Moscow</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Illinois Street Lounge</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Secret Agent</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ABC Lounge Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Bristol Sound Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Ethereal Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">plusFM Trip-Hop</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Drone Zone</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Deep Space One</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Dark Zone</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">n5MD Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Groove Salad</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Groove Salad Classic</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Radio Schizoid Chill</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Beat Blender</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Suburbs of Goa</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Sunshine Live Tech House</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Technolovers Deep House</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ElectroDance World</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Frisky Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Dance Wave!</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Deep House Lounge</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Dub Step Beyond</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">PulseEDM</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Bass House</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">TranceBase FM</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">The Trip</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Space Station Soma</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">cliqhop idm</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">DEF CON Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Nightwave Plaza</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Vaporwaves</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Synphaera Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Digitalis</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Lush</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">SF 10-33</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Bassdrive</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">DNBRadio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">UK Bass Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">DNBRadio Neurofunk</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Kool FM</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">DnB Liquified</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Dutch Delite DnB</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record DnB Classics</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Kniteforce Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Partyvibe DnB</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎤</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">181.FM Old School HipHop</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎤</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">181.FM The Beat</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎤</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Fluid</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎤</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Chillofi Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎤</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Lo-Fi</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎤</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">90s90s HipHop &amp; Rap</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎤</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Rap Classics</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Underground 80s</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">The Big 80s Station</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">AceRadio 80s</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">FUN Radio 80-90</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record 80-х</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Synphaera Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">PopTron</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Hard Rock Heaven</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">80s Metal</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Dance Wave Retro</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Retro80sRadio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Classic Hits 109</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Retro Hit Mix</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Left Coast 70s</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record 90-х</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record 00-х</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record 10s</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Retro Grooves</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎷</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Sonic Universe</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎷</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Jazz FM Moscow 89.1</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎷</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Seven Inch Soul</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎷</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Soulpower Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎷</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">B4B Disco Funk</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎷</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Bossa Beyond</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Indie Pop Rocks!</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Covers</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ROCK FM Moscow</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Rock</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Metal Detector</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Hard Rock Heaven</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Doomed</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Black Rock FM</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Heavyweight Reggae</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">RMF Reggae</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Alpha Boys School</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Folk Forward</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Boot Liquor</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ThistleRadio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Tiki Time</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">SomaFM Live</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Scanner Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Mission Control</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">SomaFM Specials</span></div></div>
       </div>
     </div>
   </div>
@@ -1553,18 +1644,18 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 
     <!-- PLAYER BODY -->
     <div class="arc-body" id="arcBodyPlayer">
-      <div class="arc-tracklist" id="arcTracklist"></div>
+      <div class="arc-tracklist" id="arcTracklist"><div style="padding:16px 8px;font-size:8px;color:#333;letter-spacing:1px;text-align:center;">NO TRACKS<br>UPLOAD IN SETTINGS</div></div>
       <div class="arc-right">
         <div class="arc-title" id="arcTitle">NO TRACK</div>
-        <div class="arc-waveform"><canvas id="arcWaveCanvas"></canvas></div>
+        <div class="arc-waveform"><canvas id="arcWaveCanvas" width="500" height="120"></canvas></div>
         <div class="arc-timer" id="arcTimer">-00:00</div>
         <div class="arc-progress" id="arcProgressWrap">
           <div class="arc-progress-fill" id="arcProgressFill" style="width:0%"></div>
         </div>
         <div class="arc-controls">
-          <button class="arc-btn" id="arcBtnPlay" title="PLAY"><svg viewBox="0 0 16 16"><polygon points="3,1 14,8 3,15"/></svg></button>
-          <button class="arc-btn" id="arcBtnPause" title="PAUSE"><svg viewBox="0 0 16 16"><rect x="2" y="1" width="4" height="14"/><rect x="10" y="1" width="4" height="14"/></svg></button>
-          <button class="arc-btn" id="arcBtnStop" title="STOP"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12"/></svg></button>
+          <button class="arc-btn" id="arcBtnPlay" title="PLAY"><svg viewBox="0 0 16 16"><polygon points="3,1 14,8 3,15"></polygon></svg></button>
+          <button class="arc-btn" id="arcBtnPause" title="PAUSE"><svg viewBox="0 0 16 16"><rect x="2" y="1" width="4" height="14"></rect><rect x="10" y="1" width="4" height="14"></rect></svg></button>
+          <button class="arc-btn" id="arcBtnStop" title="STOP"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12"></rect></svg></button>
 
           <div class="arc-hatch"></div>
         </div>
@@ -1609,7 +1700,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
         <div class="arc-set-block">
           <div class="arc-set-label">PIN CODE</div>
           <div class="arc-set-row" style="gap:6px;">
-            <input type="password" id="arcPinInput" class="arc-pin-input" maxlength="5" placeholder="_ _ _ _ _" oninput="arcCheckPin(this.value)" autocomplete="off">
+            <input type="password" id="arcPinInput" class="arc-pin-input" maxlength="5" placeholder="_ _ _ _ _" oninput="arcCheckPinGated(this.value)" autocomplete="off">
             <div class="arc-set-hint" id="arcPinStatus"></div>
           </div>
         </div>
@@ -1638,7 +1729,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
                 <div class="arc-drop-text">DRAG MP3 HERE<br><span style="font-size:10px;color:#666;">OR CLICK TO BROWSE</span></div>
               <div id="arcUploadCost" style="font-size:9px;color:#d4c87a;margin-top:6px;letter-spacing:1px;">🪙 50 COINS PER SONG</div>
               </div>
-              <input type="file" id="arcFileInput" accept=".mp3,audio/*" multiple style="display:none" onchange="arcHandleFiles(this.files)">
+              <input type="file" id="arcFileInput" accept=".mp3,audio/*" multiple="" style="display:none" onchange="arcHandleFiles(this.files)">
               <div class="arc-upload-list" id="arcUploadList"></div>
             </div>
           </div>
@@ -1664,9 +1755,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
           </div>
           <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
             <span style="font-size:7px;color:#333;letter-spacing:1px;">VOL</span>
-            <input type="range" id="arcRadioVol" min="0" max="100" value="80"
-              style="width:48px;height:2px;-webkit-appearance:none;background:#1a1a00;outline:none;cursor:pointer;accent-color:#aaff00;"
-              oninput="radSetVol(this.value)">
+            <input type="range" id="arcRadioVol" min="0" max="100" value="80" style="width:48px;height:2px;-webkit-appearance:none;background:#1a1a00;outline:none;cursor:pointer;accent-color:#aaff00;" oninput="radSetVol(this.value)">
           </div>
           <div class="rad-signal" id="arcRadioSignal" title="Signal">
             <div class="rad-signal-bar" id="arcSigB1" style="height:4px;"></div>
@@ -1677,8 +1766,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
           </div>
           <div class="arc-radio-bufbar" style="width:40px;flex-shrink:0;"><div id="arcRadioBufFill" class="rad-cache-fill"></div></div>
           <div class="arc-radio-buftext" id="arcRadioBufText" style="font-size:7px;color:#333;min-width:60px;">IDLE</div>
-          <button id="arcRadioStopBtn" onclick="radStop()"
-            style="display:none;background:none;border:1px solid var(--red);color:var(--red);padding:3px 8px;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:1px;cursor:pointer;white-space:nowrap;flex-shrink:0;">■ STOP</button>
+          <button id="arcRadioStopBtn" onclick="radStop()" style="display:none;background:none;border:1px solid var(--red);color:var(--red);padding:3px 8px;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:1px;cursor:pointer;white-space:nowrap;flex-shrink:0;">■ STOP</button>
         </div>
         <!-- Full scrollable station list -->
         <div id="arcRadioTracklist" style="flex:1;overflow-y:auto;min-height:200px;"></div>
@@ -1728,7 +1816,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
       </div>
 
       <!-- spectrum -->
-      <div class="cli-spectrum" id="cliSpectrum"></div>
+      <div class="cli-spectrum" id="cliSpectrum"><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div><div class="cli-spec-bar" style="height: 4px;"></div></div>
 
       <!-- seek -->
       <div class="cli-seekwrap">
@@ -1764,17 +1852,13 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
       </div>
 
       <!-- playlist -->
-      <div class="cli-pl-list" id="cliPlList">
-        <div class="cli-pl-empty">EMPTY · ADD FILES BELOW</div>
-      </div>
+      <div class="cli-pl-list" id="cliPlList"><div class="cli-pl-empty">EMPTY · ADD FILES BELOW</div></div>
 
       <!-- upload -->
-      <div class="cli-upload-area" id="cliDropArea"
-        onclick="cliClickUpload()"
-        ondragover="cliDragOver(event)" ondragleave="cliDragLeave(event)" ondrop="cliDrop(event)">
+      <div class="cli-upload-area" id="cliDropArea" onclick="cliClickUpload()" ondragover="cliDragOver(event)" ondragleave="cliDragLeave(event)" ondrop="cliDrop(event)">
         <span id="cliUploadLabel">[+] UPLOAD — 🪙100 COINS PER SONG (DARK SOUL)</span>
       </div>
-      <input type="file" id="cliFileInput" accept=".mp3,audio/*" multiple style="display:none" onchange="cliHandleFiles(this.files)">
+      <input type="file" id="cliFileInput" accept=".mp3,audio/*" multiple="" style="display:none" onchange="cliHandleFiles(this.files)">
 
       <!-- RADIO (M3) -->
       <div class="cli-radio-wrap" id="cliRadioWrap">
@@ -1793,7 +1877,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
         </div>
         <div id="cliRadioBody" style="display:block;">
           <div class="cli-radio-now" id="cliRadioNow" style="color:#444;">No station tuned in</div>
-          <div class="cli-radio-list" id="cliRadioList"></div>
+          <div class="cli-radio-list" id="cliRadioList"><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Русское Радио</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Hit FM Moscow</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Europa Plus Light</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Europa Plus New</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Radio Maximum</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Eldoradio SPb</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Russian Mix</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Megamix</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record EDM</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Party 24/7</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Deep</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Phonk</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record На Хайпе</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record 80-х</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Супердискотека 90-х</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record 00-х</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record 10s Dance</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Russian Gold</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Gold</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Руки Вверх!</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Nashe Radio SPb</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ROCK FM 95.2</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Rock</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Chill-Out</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Lo-Fi</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Organic</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Anima Amoris New Age</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Trancemission</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Trance Classics</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Pirate Station</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Anima Amoris Trance</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Rap Hits</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Black Rap</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Remix</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Radio Mayak</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🇷🇺</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Jazz FM 89.1 Moscow</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Illinois Street Lounge</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Secret Agent</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ABC Lounge Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Bristol Sound Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Ethereal Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">plusFM Trip-Hop</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Drone Zone</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Deep Space One</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Dark Zone</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">n5MD Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Groove Salad</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Groove Salad Classic</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Radio Schizoid Chill</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Beat Blender</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🍸</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Suburbs of Goa</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Sunshine Live Tech House</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Technolovers Deep House</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ElectroDance World</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Frisky Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Dance Wave!</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Deep House Lounge</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Dub Step Beyond</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">PulseEDM</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Bass House</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">TranceBase FM</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">The Trip</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Space Station Soma</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">cliqhop idm</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">DEF CON Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Nightwave Plaza</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Vaporwaves</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Synphaera Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Digitalis</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Lush</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">⚡</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">SF 10-33</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Bassdrive</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">DNBRadio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">UK Bass Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">DNBRadio Neurofunk</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Kool FM</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">DnB Liquified</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Dutch Delite DnB</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record DnB Classics</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Kniteforce Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🥁</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Partyvibe DnB</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎤</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">181.FM Old School HipHop</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎤</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">181.FM The Beat</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎤</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Fluid</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎤</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Chillofi Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎤</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Lo-Fi</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎤</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">90s90s HipHop &amp; Rap</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎤</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Rap Classics</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Underground 80s</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">The Big 80s Station</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">AceRadio 80s</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">FUN Radio 80-90</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record 80-х</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Synphaera Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">PopTron</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Hard Rock Heaven</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">80s Metal</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Dance Wave Retro</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Retro80sRadio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Classic Hits 109</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Retro Hit Mix</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Left Coast 70s</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record 90-х</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record 00-х</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record 10s</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">💿</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Retro Grooves</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎷</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Sonic Universe</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎷</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Jazz FM Moscow 89.1</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎷</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Seven Inch Soul</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎷</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Soulpower Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎷</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">B4B Disco Funk</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🎷</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Bossa Beyond</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Indie Pop Rocks!</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Covers</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ROCK FM Moscow</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Record Rock</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Metal Detector</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Hard Rock Heaven</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Doomed</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🤘</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Black Rock FM</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Heavyweight Reggae</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">RMF Reggae</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Alpha Boys School</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Folk Forward</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Boot Liquor</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ThistleRadio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Tiki Time</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">SomaFM Live</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Scanner Radio</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Mission Control</span></div><div style="padding: 4px 8px; font-size: 9px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; background: transparent; color: rgb(170, 170, 170);"><span style="font-size:7px;">🌍</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">SomaFM Specials</span></div></div>
         </div>
       </div>
 
@@ -2929,14 +3013,20 @@ window.syncAllUIs = function() {
 // ════════════════════════════════════════════
 
 const SLOT_SYMBOLS = [
-  { id:'skull',   label:'☠',  color:'#e0174a', glow:'#e0174a' },  // pirate skull – top prize
-  { id:'parrot',  label:'🦜', color:'#00e5c8', glow:'#00e5c8' },  // pirate parrot
-  { id:'poison',  label:'☣',  color:'#39ff14', glow:'#39ff14' },  // toxic
-  { id:'lemon',   label:'🍋', color:'#ffe030', glow:'#ffe030' },  // toxic fruit
-  { id:'bone',    label:'🦴', color:'#cccccc', glow:'#cccccc' },  // bone
-  { id:'hook',    label:'🪝', color:'#ff9900', glow:'#ff9900' },  // pirate hook
-  { id:'anchor',  label:'⚓', color:'#4488ff', glow:'#4488ff' },  // anchor – common
+  { id:'seven',   label:'7️⃣',  color:'#ffd700', glow:'#ffd700', pay:10 },  // JACKPOT – top prize
+  { id:'diamond', label:'💎', color:'#00e5ff', glow:'#00e5ff', pay:7 },  // diamond
+  { id:'skull',   label:'☠',  color:'#e0174a', glow:'#e0174a', pay:5 },  // skull
+  { id:'bolt',    label:'⚡', color:'#ffe030', glow:'#ffe030', pay:4 },  // bolt
+  { id:'red',     label:'🔴', color:'#ff2020', glow:'#ff2020', pay:3 },  // red orb
+  { id:'gold',    label:'🪙', color:'#ff9900', glow:'#ff9900', pay:2 },  // gold coin
+  { id:'card',    label:'🃏', color:'#888888', glow:'#888888', pay:1 },  // card – common
 ];
+// Client-side weighted spin (fallback if server fails)
+const SYMBOL_WEIGHTS = [1, 3, 5, 8, 12, 15, 20]; // matches backend
+const TOTAL_WEIGHT = SYMBOL_WEIGHTS.reduce((a,b)=>a+b,0);
+function clientSpinReel(){ let r=Math.random()*TOTAL_WEIGHT; for(let i=0;i<SLOT_SYMBOLS.length;i++){r-=SYMBOL_WEIGHTS[i];if(r<=0)return SLOT_SYMBOLS[i];} return SLOT_SYMBOLS[SLOT_SYMBOLS.length-1]; }
+function clientSpinReels(){ return Array.from({length:3},()=>Array.from({length:3},clientSpinReel)); }
+function clientCalcWin(reels,betRate){ let w=0; for(let row=0;row<3;row++){if(reels[0][row].id===reels[1][row].id&&reels[1][row].id===reels[2][row].id){w+=Math.round(reels[0][row].pay*betRate);}else if(row===1&&(reels[0][row].id===reels[1][row].id||reels[1][row].id===reels[2][row].id)){w+=1;}} return w; }
 
 let slotSpinning = false;
 let slotBetRate = 1;
@@ -2944,13 +3034,17 @@ let slotReels = [[],[],[]] ; // current display [reel][row]
 let slotResult = null;
 
 function initSlotDisplay() {
-  for (let r = 0; r < 3; r++) {
-    slotReels[r] = [SLOT_SYMBOLS[0], SLOT_SYMBOLS[4], SLOT_SYMBOLS[2]];
-  }
+  // Show a varied initial state
+  slotReels[0] = [SLOT_SYMBOLS[2], SLOT_SYMBOLS[5], SLOT_SYMBOLS[6]];
+  slotReels[1] = [SLOT_SYMBOLS[3], SLOT_SYMBOLS[1], SLOT_SYMBOLS[4]];
+  slotReels[2] = [SLOT_SYMBOLS[6], SLOT_SYMBOLS[0], SLOT_SYMBOLS[2]];
   renderSlot();
 }
 
-function renderSlot(winLines) {
+function renderSlot(winLines, isJackpot) {
+  // Clear old win lines & particles
+  document.querySelectorAll('.win-line-svg, .win-particle').forEach(e=>e.remove());
+  
   for (let r = 0; r < 3; r++) {
     for (let row = 0; row < 3; row++) {
       const el = document.getElementById(`slot_${r}_${row}`);
@@ -2959,10 +3053,81 @@ function renderSlot(winLines) {
       el.textContent = sym.label;
       el.style.color = sym.color;
       el.style.textShadow = `0 0 12px ${sym.glow}`;
-      el.classList.remove('slot-win');
-      if (winLines && winLines.includes(row)) el.classList.add('slot-win');
+      el.classList.remove('slot-win','slot-win-jackpot');
+      el.style.outline = '';
+      el.style.boxShadow = '';
+      el.style.background = '';
+      el.style.zIndex = '';
+      el.style.transform = '';
+      if (winLines && winLines.includes(row)) {
+        el.classList.add(isJackpot ? 'slot-win-jackpot' : 'slot-win');
+        el.style.zIndex = '5';
+        // Spawn particles on winning cells
+        spawnWinParticles(el, sym.color);
+      }
     }
   }
+  
+  // Draw SVG win lines across the reels
+  if (winLines && winLines.length > 0) {
+    drawWinLines(winLines);
+  }
+}
+
+function spawnWinParticles(el, color) {
+  const rect = el.getBoundingClientRect();
+  const parent = el.closest('.gam-machine') || el.parentElement;
+  for (let i = 0; i < 6; i++) {
+    const p = document.createElement('div');
+    p.className = 'win-particle';
+    const angle = (Math.PI * 2 * i) / 6;
+    const dist = 30 + Math.random() * 40;
+    p.style.cssText = `left:${rect.width/2}px;top:${rect.height/2}px;background:${color};box-shadow:0 0 6px ${color};--px:${Math.cos(angle)*dist}px;--py:${Math.sin(angle)*dist}px;animation-delay:${i*0.05}s;`;
+    el.appendChild(p);
+    setTimeout(() => p.remove(), 900);
+  }
+}
+
+function drawWinLines(winLines) {
+  const machine = document.querySelector('.gam-machine');
+  if (!machine) return;
+  const grid = machine.querySelector('[style*="grid-template-columns"]');
+  if (!grid) return;
+  
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.classList.add('win-line-svg');
+  svg.setAttribute('viewBox', `0 0 ${grid.offsetWidth} ${grid.offsetHeight}`);
+  svg.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:10;width:100%;height:100%;';
+  
+  const lineColors = ['#ffd700', '#ff2060', '#00e5ff'];
+  const cellH = grid.offsetHeight / 3;
+  
+  winLines.forEach((row, i) => {
+    const y = cellH * row + cellH / 2;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', '0');
+    line.setAttribute('y1', y);
+    line.setAttribute('x2', grid.offsetWidth);
+    line.setAttribute('y2', y);
+    line.style.stroke = lineColors[row] || '#ffd700';
+    line.classList.add('win-line');
+    // Add pulse after initial draw
+    setTimeout(() => line.classList.add('win-line-pulse'), 500);
+    svg.appendChild(line);
+    
+    // Add line label
+    const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    txt.setAttribute('x', '4');
+    txt.setAttribute('y', y - 6);
+    txt.style.fill = lineColors[row] || '#ffd700';
+    txt.style.fontSize = '9px';
+    txt.style.fontFamily = "'Share Tech Mono',monospace";
+    txt.textContent = `LINE ${row + 1}`;
+    svg.appendChild(txt);
+  });
+  
+  grid.style.position = 'relative';
+  grid.appendChild(svg);
 }
 
 async function doSpin() {
@@ -2976,23 +3141,34 @@ async function doSpin() {
   if (!loggedInUser && guestCoins < slotBetRate) {
     msgEl.style.color = '#ff4060';
     msgEl.textContent = '🪙 NOT ENOUGH COINS';
+    shakeElement(spinBtn);
     return;
   }
 
   slotSpinning = true;
   spinBtn.disabled = true;
   spinBtn.textContent = '▶▶ SPINNING...';
+  spinBtn.style.background = 'rgba(224,23,74,.2)';
   msgEl.textContent = '';
+  hideDoubleUp();
 
-  // Animate reels spinning
+  // Add spinning class to reels for blur effect
+  document.querySelectorAll('.gam-reel').forEach(r => r.classList.add('reel-spinning'));
+
+  // Animate reels spinning with staggered stop
+  let reelsStopped = [false, false, false];
   const spinInterval = setInterval(() => {
     for (let r = 0; r < 3; r++) {
+      if (reelsStopped[r]) continue;
       for (let row = 0; row < 3; row++) {
         slotReels[r][row] = SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
       }
     }
     renderSlot();
-  }, 80);
+  }, 70);
+
+  let serverData = null;
+  let useClientFallback = false;
 
   try {
     const r = await fetch('/api/spin', {
@@ -3002,9 +3178,9 @@ async function doSpin() {
     });
     const d = await r.json();
 
-    // Server rejected — not enough coins
     if (d.error === 'insufficient') {
       clearInterval(spinInterval);
+      document.querySelectorAll('.gam-reel').forEach(r => r.classList.remove('reel-spinning'));
       guestCoins = d.coins;
       updateCoinHud(null);
       document.getElementById('slotCoinCount').textContent = guestCoins;
@@ -3013,78 +3189,117 @@ async function doSpin() {
       slotSpinning = false;
       spinBtn.disabled = false;
       spinBtn.textContent = '▶ SPIN';
+      spinBtn.style.background = '';
       return;
     }
-
-    slotResult = d;
-
-    // Stop animation after 800ms, show real result
-    setTimeout(() => {
-      clearInterval(spinInterval);
-      // Apply server result to display
-      for (let ri = 0; ri < 3; ri++) {
-        for (let row = 0; row < 3; row++) {
-          const sym = SLOT_SYMBOLS.find(s => s.id === d.reels[ri][row].id) || SLOT_SYMBOLS[6];
-          slotReels[ri][row] = sym;
-        }
-      }
-
-      // Find winning lines
-      const winLines = [];
-      for (let row = 0; row < 3; row++) {
-        if (d.reels[0][row].id === d.reels[1][row].id && d.reels[1][row].id === d.reels[2][row].id) winLines.push(row);
-      }
-
-      renderSlot(winLines);
-
-      // Always sync balance from server
-      if (d.new_total !== null && d.new_total !== undefined) {
-        guestCoins = d.new_total;
-        updateCoinHud(null);
-        document.getElementById('slotCoinCount').textContent = loggedInUser ? '∞' : guestCoins;
-      }
-
-      if (d.coins_won > 0) {
-        msgEl.style.color = '#ffd700';
-        const net = d.coins_won - (d.bet_cost || 0);
-        msgEl.textContent = `🪙 +${d.coins_won} WIN! ${net > 0 ? '(NET +' + net + ')' : ''} ${winLines.length > 1 ? 'MULTI-LINE!' : ''}`;
-        // Show win-line highlights with a glowing border on winning rows
-        winLines.forEach(row => {
-          for (let ri = 0; ri < 3; ri++) {
-            const cell = document.getElementById(`slot_${ri}_${row}`);
-            if (cell) {
-              cell.style.outline = '2px solid #ffd700';
-              cell.style.boxShadow = '0 0 12px #ffd700, 0 0 24px rgba(255,215,0,.5)';
-              cell.style.background = 'rgba(255,215,0,.1)';
-              setTimeout(() => {
-                cell.style.outline = '';
-                cell.style.boxShadow = '';
-                cell.style.background = '';
-              }, 2800);
-            }
-          }
-        });
-        // Offer gamble after 1s
-        setTimeout(() => showDoubleUp(d.coins_won), 1000);
-      } else {
-        msgEl.style.color = '#444';
-        msgEl.textContent = `−${d.bet_cost || slotBetRate} 🪙 NO WIN — SPIN AGAIN`;
-        hideDoubleUp();
-      }
-
-      slotSpinning = false;
-      spinBtn.disabled = false;
-      spinBtn.textContent = '▶ SPIN';
-    }, 900);
-
+    serverData = d;
   } catch(e) {
-    clearInterval(spinInterval);
-    msgEl.style.color = '#e0174a';
-    msgEl.textContent = 'SERVER ERROR — TRY AGAIN';
-    slotSpinning = false;
-    spinBtn.disabled = false;
-    spinBtn.textContent = '▶ SPIN';
+    // Fallback to client-side spin
+    useClientFallback = true;
+    if (!loggedInUser) {
+      guestCoins = Math.max(0, guestCoins - slotBetRate);
+      updateCoinHud(null);
+    }
   }
+
+  // Staggered reel stop animation (each reel stops 300ms apart)
+  const finalReels = useClientFallback ? clientSpinReels() : null;
+  
+  for (let ri = 0; ri < 3; ri++) {
+    await new Promise(resolve => setTimeout(resolve, 300 + ri * 280));
+    reelsStopped[ri] = true;
+    
+    // Set final symbols for this reel
+    for (let row = 0; row < 3; row++) {
+      if (useClientFallback) {
+        slotReels[ri][row] = finalReels[ri][row];
+      } else {
+        const sym = SLOT_SYMBOLS.find(s => s.id === serverData.reels[ri][row].id) || SLOT_SYMBOLS[6];
+        slotReels[ri][row] = sym;
+      }
+      const el = document.getElementById(`slot_${ri}_${row}`);
+      if (el) {
+        el.textContent = slotReels[ri][row].label;
+        el.style.color = slotReels[ri][row].color;
+        el.style.textShadow = `0 0 12px ${slotReels[ri][row].glow}`;
+      }
+    }
+    // Reel stop thud effect
+    const reel = document.getElementById(`reel${ri}`);
+    if (reel) {
+      reel.classList.remove('reel-spinning');
+      reel.style.transform = 'translateY(2px)';
+      setTimeout(() => { reel.style.transform = ''; }, 100);
+    }
+  }
+
+  clearInterval(spinInterval);
+
+  // Calculate results
+  let coinsWon, betCost;
+  if (useClientFallback) {
+    coinsWon = clientCalcWin(slotReels.map((r,ri) => finalReels[ri]), slotBetRate);
+    betCost = slotBetRate;
+    if (coinsWon > 0 && !loggedInUser) {
+      guestCoins += coinsWon;
+    }
+    updateCoinHud(null);
+    document.getElementById('slotCoinCount').textContent = loggedInUser ? '∞' : guestCoins;
+  } else {
+    coinsWon = serverData.coins_won;
+    betCost = serverData.bet_cost || slotBetRate;
+    if (serverData.new_total !== null && serverData.new_total !== undefined) {
+      guestCoins = serverData.new_total;
+      updateCoinHud(null);
+      document.getElementById('slotCoinCount').textContent = loggedInUser ? '∞' : guestCoins;
+    }
+  }
+
+  // Find winning lines
+  const winLines = [];
+  for (let row = 0; row < 3; row++) {
+    if (slotReels[0][row].id === slotReels[1][row].id && slotReels[1][row].id === slotReels[2][row].id) winLines.push(row);
+  }
+
+  const isJackpot = winLines.length >= 2 || (winLines.length === 1 && slotReels[0][winLines[0]].pay >= 7);
+  renderSlot(winLines, isJackpot);
+
+  if (coinsWon > 0) {
+    msgEl.style.color = '#ffd700';
+    const net = coinsWon - betCost;
+    const multiLine = winLines.length > 1 ? '⚡ MULTI-LINE!' : '';
+    const jackpotTag = isJackpot ? '🔥 JACKPOT! ' : '';
+    msgEl.textContent = `${jackpotTag}🪙 +${coinsWon} WIN! ${net > 0 ? '(NET +' + net + ')' : ''} ${multiLine}`;
+    
+    // Flash the machine border on win
+    const machine = document.querySelector('.gam-machine');
+    if (machine) {
+      machine.style.borderColor = '#ffd700';
+      machine.style.boxShadow = '0 0 40px rgba(255,215,0,.4), 0 0 80px rgba(255,215,0,.2)';
+      setTimeout(() => { machine.style.borderColor = ''; machine.style.boxShadow = ''; }, 2500);
+    }
+
+    // Only offer gamble on bigger wins (3+ coins or multi-line) — not every tiny win
+    if (coinsWon >= 3 || winLines.length > 1) {
+      setTimeout(() => showDoubleUp(coinsWon), 1200);
+    }
+  } else {
+    msgEl.style.color = '#444';
+    msgEl.textContent = `−${betCost} 🪙 NO WIN — SPIN AGAIN`;
+    hideDoubleUp();
+  }
+
+  slotSpinning = false;
+  spinBtn.disabled = false;
+  spinBtn.textContent = '▶ SPIN';
+  spinBtn.style.background = '';
+}
+
+function shakeElement(el) {
+  el.style.animation = 'none';
+  el.offsetHeight; // trigger reflow
+  el.style.animation = 'shakeX .4s ease-in-out';
+  setTimeout(() => { el.style.animation = ''; }, 500);
 }
 
 function setBetRate(val) {
@@ -4165,7 +4380,7 @@ function _startBloodEngine() {
 
   function spawnBlood() {
     const elapsed = (Date.now() - window._bloodOpenedAt) / 1000;
-    const progress = Math.min(elapsed / 1800, 1); // 0→1 over 30 min
+    const progress = Math.min(elapsed / 5400, 1); // 0→1 over 1.5 hours (5400s)
     const count = 1 + Math.floor(progress * 4);
 
     for (let i = 0; i < count; i++) {
@@ -4452,8 +4667,7 @@ window.jesusFromSky = function(coinText) {
   el.className = 'jesus-sky';
   const isPositive = coinText && (coinText.indexOf('+') !== -1);
   const txt = coinText || '−1 🪙';
-  const laughs = ['HA HA HA', 'HAHAHA!', 'OH SINNER...', 'HA. HA.', 'FOOLISH ONE'];
-  const laugh = laughs[Math.floor(Math.random()*laughs.length)];
+  const laugh = 'I FEEL THAT';
 
   el.innerHTML = `
     <div class="zeus-clouds">☁️ ☁️ ☁️</div>
@@ -5039,40 +5253,50 @@ window.submitPayment = function() {
       <div style="padding:16px 14px;position:relative;z-index:1;">
         <!-- Paytable -->
         <div class="gam-paytable" style="padding:8px 12px;margin-bottom:12px;font-size:9px;letter-spacing:1px;border-radius:4px;">
-          <div style="color:#666;margin-bottom:6px;letter-spacing:2px;font-size:8px;">▸ PAYTABLE — 3 OF A KIND</div>
+          <div style="color:#666;margin-bottom:6px;letter-spacing:2px;font-size:8px;">▸ PAYTABLE — 3 OF A KIND ON ANY LINE</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
-            <span style="color:#e0174a;">☠ SKULL</span><span style="color:#555;">×10 bet</span>
-            <span style="color:#00e5c8;">🦜 PARROT</span><span style="color:#555;">×7 bet</span>
-            <span style="color:#39ff14;">☣ POISON</span><span style="color:#555;">×5 bet</span>
-            <span style="color:#ffe030;">🍋 LEMON</span><span style="color:#555;">×4 bet</span>
-            <span style="color:#ccc;">🦴 BONE</span><span style="color:#555;">×3 bet</span>
-            <span style="color:#ff9900;">🪝 HOOK</span><span style="color:#555;">×2 bet</span>
+            <span style="color:#ffd700;">7️⃣ SEVEN</span><span style="color:#ffd700;">×10 bet 🔥</span>
+            <span style="color:#00e5ff;">💎 DIAMOND</span><span style="color:#555;">×7 bet</span>
+            <span style="color:#e0174a;">☠ SKULL</span><span style="color:#555;">×5 bet</span>
+            <span style="color:#ffe030;">⚡ BOLT</span><span style="color:#555;">×4 bet</span>
+            <span style="color:#ff2020;">🔴 RED</span><span style="color:#555;">×3 bet</span>
+            <span style="color:#ff9900;">🪙 GOLD</span><span style="color:#555;">×2 bet</span>
+            <span style="color:#888;">🃏 CARD</span><span style="color:#555;">×1 bet</span>
           </div>
         </div>
 
-        <!-- Slot machine reels -->
-        <div class="gam-machine" style="padding:16px;position:relative;border-radius:6px;">
-          <!-- Reels grid -->
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:12px;position:relative;z-index:2;">
-            <!-- Win line indicators -->
-            <div style="position:absolute;left:-8px;top:50%;transform:translateY(-50%);width:5px;height:5px;background:#ffd700;border-radius:50%;box-shadow:0 0 8px #ffd700,0 0 16px rgba(255,215,0,.4);"></div>
-            <div style="position:absolute;right:-8px;top:50%;transform:translateY(-50%);width:5px;height:5px;background:#ffd700;border-radius:50%;box-shadow:0 0 8px #ffd700,0 0 16px rgba(255,215,0,.4);"></div>
+        <!-- Slot machine reels — 3D depth -->
+        <div class="gam-machine slot-machine-3d" style="padding:16px;position:relative;border-radius:8px;background:linear-gradient(180deg,#0a0218 0%,#050208 40%,#080015 100%);box-shadow:0 0 30px rgba(224,23,74,.3),inset 0 1px 0 rgba(255,255,255,.05),inset 0 -2px 8px rgba(0,0,0,.8);border-width:2px;border-style:solid;border-image:linear-gradient(180deg,#e0174a,#ff6600,#e0174a) 1;">
+          <!-- 3D inner shadow overlay -->
+          <div style="position:absolute;inset:0;border-radius:8px;box-shadow:inset 0 4px 20px rgba(0,0,0,.7),inset 0 -2px 10px rgba(0,0,0,.5);pointer-events:none;z-index:3;"></div>
+          <!-- Glass reflection -->
+          <div style="position:absolute;top:0;left:10%;right:10%;height:30%;background:linear-gradient(180deg,rgba(255,255,255,.04),transparent);border-radius:8px 8px 0 0;pointer-events:none;z-index:3;"></div>
+          
+          <!-- Reels grid with 3D perspective -->
+          <div class="slot-machine-inner" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;position:relative;z-index:2;padding:4px;background:rgba(0,0,0,.4);border-radius:6px;box-shadow:inset 0 3px 15px rgba(0,0,0,.8),inset 0 0 30px rgba(0,0,0,.5);">
+            <!-- Win line indicators (3 lines) -->
+            <div style="position:absolute;left:-12px;top:16.6%;transform:translateY(-50%);width:8px;height:8px;background:#ffd700;border-radius:50%;box-shadow:0 0 8px #ffd700,0 0 16px rgba(255,215,0,.4);font-size:6px;color:#000;text-align:center;line-height:8px;font-weight:bold;">1</div>
+            <div style="position:absolute;left:-12px;top:50%;transform:translateY(-50%);width:8px;height:8px;background:#ff2060;border-radius:50%;box-shadow:0 0 8px #ff2060,0 0 16px rgba(255,32,96,.4);font-size:6px;color:#000;text-align:center;line-height:8px;font-weight:bold;">2</div>
+            <div style="position:absolute;left:-12px;top:83.3%;transform:translateY(-50%);width:8px;height:8px;background:#00e5ff;border-radius:50%;box-shadow:0 0 8px #00e5ff,0 0 16px rgba(0,229,255,.4);font-size:6px;color:#000;text-align:center;line-height:8px;font-weight:bold;">3</div>
+            <div style="position:absolute;right:-12px;top:16.6%;transform:translateY(-50%);width:8px;height:8px;background:#ffd700;border-radius:50%;box-shadow:0 0 8px #ffd700;font-size:6px;color:#000;text-align:center;line-height:8px;font-weight:bold;">1</div>
+            <div style="position:absolute;right:-12px;top:50%;transform:translateY(-50%);width:8px;height:8px;background:#ff2060;border-radius:50%;box-shadow:0 0 8px #ff2060;font-size:6px;color:#000;text-align:center;line-height:8px;font-weight:bold;">2</div>
+            <div style="position:absolute;right:-12px;top:83.3%;transform:translateY(-50%);width:8px;height:8px;background:#00e5ff;border-radius:50%;box-shadow:0 0 8px #00e5ff;font-size:6px;color:#000;text-align:center;line-height:8px;font-weight:bold;">3</div>
 
             <!-- 3 reels × 3 rows -->
-            <div id="reel0" class="gam-reel" style="border-radius:4px;">
-              <div id="slot_0_0" class="slot-cell" style="color:#4488ff;">⚓</div>
-              <div id="slot_0_1" class="slot-cell slot-mid" style="color:#e0174a;">☠</div>
-              <div id="slot_0_2" class="slot-cell" style="color:#4488ff;">⚓</div>
+            <div id="reel0" class="gam-reel" style="border-radius:6px;overflow:hidden;box-shadow:inset 0 2px 8px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.05);">
+              <div id="slot_0_0" class="slot-cell">🃏</div>
+              <div id="slot_0_1" class="slot-cell slot-mid">🃏</div>
+              <div id="slot_0_2" class="slot-cell">🃏</div>
             </div>
-            <div id="reel1" class="gam-reel" style="border-radius:4px;">
-              <div id="slot_1_0" class="slot-cell" style="color:#4488ff;">⚓</div>
-              <div id="slot_1_1" class="slot-cell slot-mid" style="color:#e0174a;">☠</div>
-              <div id="slot_1_2" class="slot-cell" style="color:#4488ff;">⚓</div>
+            <div id="reel1" class="gam-reel" style="border-radius:6px;overflow:hidden;box-shadow:inset 0 2px 8px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.05);">
+              <div id="slot_1_0" class="slot-cell">🃏</div>
+              <div id="slot_1_1" class="slot-cell slot-mid">🃏</div>
+              <div id="slot_1_2" class="slot-cell">🃏</div>
             </div>
-            <div id="reel2" class="gam-reel" style="border-radius:4px;">
-              <div id="slot_2_0" class="slot-cell" style="color:#4488ff;">⚓</div>
-              <div id="slot_2_1" class="slot-cell slot-mid" style="color:#e0174a;">☠</div>
-              <div id="slot_2_2" class="slot-cell" style="color:#4488ff;">⚓</div>
+            <div id="reel2" class="gam-reel" style="border-radius:6px;overflow:hidden;box-shadow:inset 0 2px 8px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.05);">
+              <div id="slot_2_0" class="slot-cell">🃏</div>
+              <div id="slot_2_1" class="slot-cell slot-mid">🃏</div>
+              <div id="slot_2_2" class="slot-cell">🃏</div>
             </div>
           </div>
 
@@ -5097,11 +5321,11 @@ window.submitPayment = function() {
             <div style="text-align:center;font-size:10px;color:#ff6644;letter-spacing:2px;margin-bottom:8px;">⚡ GAMBLE YOUR WIN ⚡</div>
             <div id="doubleUpWonAmt" style="text-align:center;font-size:13px;color:#ffd700;letter-spacing:2px;margin-bottom:8px;">WIN: 0 🪙</div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:4px;margin-bottom:8px;">
-              <button onclick="doDoubleUp(2)"  class="dub-btn" style="background:#0a1a0a;border:1px solid #00cc44;color:#00cc44;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×2<br><span style="font-size:7px;color:#555;">50%</span></button>
-              <button onclick="doDoubleUp(3)"  class="dub-btn" style="background:#0a1000;border:1px solid #88cc00;color:#88cc00;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×3<br><span style="font-size:7px;color:#555;">33%</span></button>
-              <button onclick="doDoubleUp(4)"  class="dub-btn" style="background:#1a1000;border:1px solid #ffaa00;color:#ffaa00;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×4<br><span style="font-size:7px;color:#555;">25%</span></button>
-              <button onclick="doDoubleUp(5)"  class="dub-btn" style="background:#1a0800;border:1px solid #ff6600;color:#ff6600;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×5<br><span style="font-size:7px;color:#555;">20%</span></button>
-              <button onclick="doDoubleUp(6)"  class="dub-btn" style="background:#1a0000;border:1px solid #ff2020;color:#ff2020;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×6<br><span style="font-size:7px;color:#555;">16%</span></button>
+              <button onclick="doDoubleUp(2)" class="dub-btn" style="background:#0a1a0a;border:1px solid #00cc44;color:#00cc44;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×2<br><span style="font-size:7px;color:#555;">50%</span></button>
+              <button onclick="doDoubleUp(3)" class="dub-btn" style="background:#0a1000;border:1px solid #88cc00;color:#88cc00;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×3<br><span style="font-size:7px;color:#555;">33%</span></button>
+              <button onclick="doDoubleUp(4)" class="dub-btn" style="background:#1a1000;border:1px solid #ffaa00;color:#ffaa00;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×4<br><span style="font-size:7px;color:#555;">25%</span></button>
+              <button onclick="doDoubleUp(5)" class="dub-btn" style="background:#1a0800;border:1px solid #ff6600;color:#ff6600;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×5<br><span style="font-size:7px;color:#555;">20%</span></button>
+              <button onclick="doDoubleUp(6)" class="dub-btn" style="background:#1a0000;border:1px solid #ff2020;color:#ff2020;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 2px;cursor:pointer;letter-spacing:1px;border-radius:3px;">×6<br><span style="font-size:7px;color:#555;">16%</span></button>
             </div>
             <div id="doubleUpMsg" style="text-align:center;font-size:10px;min-height:14px;color:#ff4444;letter-spacing:1px;margin-bottom:6px;"></div>
             <button onclick="collectWin()" style="width:100%;background:transparent;border:1px solid #444;color:#888;font-family:'Share Tech Mono',monospace;font-size:9px;padding:5px;cursor:pointer;letter-spacing:2px;border-radius:3px;">COLLECT &amp; PLAY SAFE</button>
@@ -5172,6 +5396,20 @@ window.submitPayment = function() {
       </div>
     </div>
 
+    <!-- Message navigation -->
+    <div style="display:flex;justify-content:center;gap:12px;margin-top:12px;">
+      <button onclick="hellPrevMessage()" style="background:linear-gradient(135deg,#1a0000,#2a0000);border:1px solid #660000;color:#cc0000;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;padding:8px 18px;cursor:pointer;text-shadow:0 0 6px rgba(255,0,0,.4);transition:all .3s;">◄ PREV SIN</button>
+      <button onclick="hellNextMessage()" style="background:linear-gradient(135deg,#1a0000,#2a0000);border:1px solid #660000;color:#cc0000;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;padding:8px 18px;cursor:pointer;text-shadow:0 0 6px rgba(255,0,0,.4);transition:all .3s;">NEXT SIN ►</button>
+    </div>
+
+    <!-- Hades timer indicator -->
+    <div id="hadesTimerBar" style="margin-top:10px;text-align:center;">
+      <div style="font-size:7px;letter-spacing:2px;color:#440000;">🔥 STAY 10 MIN FOR HADES REWARD 🔥</div>
+      <div style="margin:4px auto;width:80%;max-width:300px;height:4px;background:#1a0000;border:1px solid #330000;border-radius:2px;overflow:hidden;">
+        <div id="hadesTimerFill" style="width:0%;height:100%;background:linear-gradient(90deg,#660000,#cc0000,#ff4400);transition:width 5s linear;border-radius:2px;"></div>
+      </div>
+    </div>
+
     <!-- Superadmin / Admin panel -->
     <div id="hellAdminPanel" style="display:none;margin-top:20px;border:1px solid #550000;background:rgba(40,0,0,.4);padding:16px;">
       <div style="font-size:10px;letter-spacing:3px;color:#ff4444;margin-bottom:14px;text-shadow:0 0 6px rgba(255,0,0,.4);">⛧ ADMIN CONTROLS — COMMAND THE DAMNED ⛧</div>
@@ -5185,7 +5423,14 @@ window.submitPayment = function() {
           <input id="hellMsgColor" type="color" value="#ff4444" style="width:32px;height:24px;border:1px solid #440000;background:#0f0000;cursor:pointer;">
           <label style="font-size:8px;color:#660000;letter-spacing:1px;margin-left:8px;">AUTHOR:</label>
           <input id="hellMsgAuthor" type="text" value="SATAN" placeholder="SATAN" style="flex:1;background:#0f0000;border:1px solid #440000;color:#cc4444;font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 8px;outline:none;">
+          <button onclick="hellPreviewMessage()" style="background:linear-gradient(135deg,#0a0020,#1a0040);border:1px solid #4444aa;color:#8888ff;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:6px 14px;cursor:pointer;text-shadow:0 0 6px rgba(100,100,255,.4);">👁 PREVIEW</button>
           <button onclick="hellPostMessage()" style="background:linear-gradient(135deg,#2a0000,#440000);border:1px solid #880000;color:#ff4444;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:6px 14px;cursor:pointer;text-shadow:0 0 6px rgba(255,0,0,.4);">⛧ POST</button>
+        </div>
+        <!-- Preview area -->
+        <div id="hellMsgPreview" style="display:none;margin-top:10px;border:1px dashed #660000;padding:10px;background:rgba(20,0,0,.5);">
+          <div style="font-size:7px;letter-spacing:2px;color:#660000;margin-bottom:6px;">👁 PREVIEW — NOT YET RELEASED</div>
+          <div id="hellMsgPreviewContent" style="color:#ff4444;font-size:11px;line-height:1.5;white-space:pre-line;"></div>
+          <div id="hellMsgPreviewMeta" style="display:flex;justify-content:space-between;margin-top:8px;font-size:8px;color:#550000;"></div>
         </div>
       </div>
 
@@ -5238,7 +5483,7 @@ window.submitPayment = function() {
         <div style="color:#555;font-size:14px;">◻</div>
       </div>
     </div>
-    <button class="pay-play-btn" id="treasurePayBtn" disabled onclick="openPaymentModal(_selectedTreasureTier)">SELECT A CHEST TIER</button>
+    <button class="pay-play-btn" id="treasurePayBtn" disabled="" onclick="openPaymentModal(_selectedTreasureTier)">SELECT A CHEST TIER</button>
     <button onclick="closeTreasureOverlay()" style="margin-top:12px;width:100%;background:transparent;border:1px solid #333;color:#555;padding:8px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;cursor:pointer;">CANCEL</button>
   </div>
   <!-- Step 2: Pick a chest -->
@@ -5272,7 +5517,7 @@ window.submitPayment = function() {
 
 <!-- HACKED / POWER OFF OVERLAY (every 40 min) -->
 <div id="hackedOverlay">
-  <div id="hackedStatic" style="position:absolute;inset:0;opacity:.15;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%224%22 height=%224%22><rect width=%224%22 height=%224%22 fill=%22%23111%22/><rect x=%220%22 y=%220%22 width=%222%22 height=%222%22 fill=%22%23222%22/></svg>');background-size:4px 4px;animation:staticNoise 0.1s steps(8) infinite;"></div>
+  <div id="hackedStatic" style="position:absolute;inset:0;opacity:.15;background-image:url('data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%224%22 height=%224%22&gt;&lt;rect width=%224%22 height=%224%22 fill=%22%23111%22/&gt;&lt;rect x=%220%22 y=%220%22 width=%222%22 height=%222%22 fill=%22%23222%22/&gt;&lt;/svg&gt;');background-size:4px 4px;animation:staticNoise 0.1s steps(8) infinite;"></div>
   <div id="hackedScanline" style="position:absolute;left:0;right:0;height:4px;background:rgba(0,255,0,.08);animation:scanDown 3s linear infinite;"></div>
   <div id="hackedContent" style="text-align:center;position:relative;z-index:1;">
     <div id="hackedIcon" style="font-size:80px;margin-bottom:20px;animation:hackedGlitch .3s infinite;">📺</div>
@@ -5309,9 +5554,9 @@ the foundations of Jugla.
 Every track a confession.
 Every beat a sin.
 
---> PAPA DELAET MNE DOM.
---> A DOM DELAET PAPУ.
---> V ETOM DOME NIKTO NE SPIT.
+--&gt; PAPA DELAET MNE DOM.
+--&gt; A DOM DELAET PAPУ.
+--&gt; V ETOM DOME NIKTO NE SPIT.
 
 The walls bleed frequencies.
 The speakers scream in Latvian.
@@ -5329,7 +5574,7 @@ No one escapes the MIX.</div>
   </div>
 </div>
 
-<link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Creepster&amp;display=swap" rel="stylesheet">
 
 <script>
 // ════════════════════════════════════════════
@@ -5474,6 +5719,22 @@ async function hellPostMessage(){
   } catch(e){ alert('Network error'); }
 }
 
+function hellPreviewMessage() {
+  const text = document.getElementById('hellMsgInput').value.trim();
+  if (!text) { alert('Write something first'); return; }
+  const color = document.getElementById('hellMsgColor').value;
+  const author = document.getElementById('hellMsgAuthor').value.trim() || 'SATAN';
+  const preview = document.getElementById('hellMsgPreview');
+  const content = document.getElementById('hellMsgPreviewContent');
+  const meta = document.getElementById('hellMsgPreviewMeta');
+  if (!preview || !content || !meta) return;
+  content.textContent = text;
+  content.style.color = color;
+  content.style.textShadow = `0 0 8px ${color}44`;
+  meta.innerHTML = `<span>⛧ ${author}</span><span>${new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</span>`;
+  preview.style.display = 'block';
+}
+
 async function hellDeleteMessage(id){
   if(!confirm('Delete this message from HELL?')) return;
   try {
@@ -5570,6 +5831,140 @@ setTimeout(() => {
 </script>
 
 <script>
+// ════════════════════════════════════════════════
+// HADES FROM BELOW — ascends from hell, rewards the worthy
+// ════════════════════════════════════════════════
+window.hadesFromBelow = function(coinText, speechText) {
+  document.querySelectorAll('.hades-below').forEach(e => e.remove());
+
+  const el = document.createElement('div');
+  el.className = 'hades-below';
+  const txt = coinText || '+1 🪙';
+  const speech = speechText || 'YOU ARE THE ONE!';
+
+  el.innerHTML = `
+    <div class="hades-flames">🔥 🔥 🔥</div>
+    <img src="https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2Fl4kEmE9-GjCtvl6_8Vyf6%2FIMG_0090_T5iMnc.jpeg">
+    <div class="hades-coin-txt">${txt}</div>
+    <div class="hades-speech">${speech}</div>
+  `;
+  document.body.appendChild(el);
+  el.style.animation = 'hadesAscend 3.4s cubic-bezier(.22,.61,.36,1) forwards';
+
+  const coinEl = el.querySelector('.hades-coin-txt');
+  const speechEl = el.querySelector('.hades-speech');
+  if (coinEl) coinEl.style.animation = 'hadesCoinReveal 0.5s ease 0.8s forwards';
+  if (speechEl) speechEl.style.animation = 'hadesSpeechReveal 2s ease 0.6s forwards';
+
+  // Hellfire screen flash
+  let flashEl = document.getElementById('hadesHellfireFlash');
+  if (!flashEl) {
+    flashEl = document.createElement('div');
+    flashEl.id = 'hadesHellfireFlash';
+    document.body.appendChild(flashEl);
+  }
+  flashEl.style.animation = 'none';
+  flashEl.offsetHeight;
+  flashEl.style.animation = 'hadesHellfire 1.2s ease-out forwards';
+
+  // Award coin
+  if (typeof guestCoins !== 'undefined') {
+    guestCoins = (guestCoins || 0) + 1;
+    if (typeof saveGuestCoins === 'function') saveGuestCoins();
+    if (typeof updateHUD === 'function') updateHUD();
+  }
+
+  setTimeout(() => { el.remove(); }, 3600);
+};
+
+// ════════════════════════════════════════════════
+// MODE 5 — 10 MINUTE TIMER FOR HADES +1 COIN
+// ════════════════════════════════════════════════
+window._mode5Timer = null;
+window._mode5EnteredAt = null;
+window._mode5HadesRewarded = false;
+
+function startMode5Timer() {
+  if (window._mode5Timer) return;
+  window._mode5EnteredAt = Date.now();
+  window._mode5HadesRewarded = false;
+
+  window._mode5Timer = setInterval(() => {
+    if (window._mode5HadesRewarded) return;
+    const elapsed = (Date.now() - window._mode5EnteredAt) / 1000;
+    // Update progress bar
+    const fill = document.getElementById('hadesTimerFill');
+    if (fill) fill.style.width = Math.min(elapsed / 600 * 100, 100) + '%';
+    if (elapsed >= 600) { // 10 minutes
+      window._mode5HadesRewarded = true;
+      clearInterval(window._mode5Timer);
+      window._mode5Timer = null;
+      hadesFromBelow('+1 🪙', 'YOU ARE THE ONE!');
+    }
+  }, 5000);
+}
+
+function stopMode5Timer() {
+  if (window._mode5Timer) {
+    clearInterval(window._mode5Timer);
+    window._mode5Timer = null;
+  }
+}
+
+// Patch setMode to start/stop timer
+setTimeout(() => {
+  const _prevSetMode = window.setMode;
+  if (typeof _prevSetMode === 'function') {
+    window.setMode = function(m) {
+      _prevSetMode(m);
+      if (m === 5) {
+        startMode5Timer();
+      } else {
+        stopMode5Timer();
+      }
+    };
+  }
+}, 600);
+
+// ════════════════════════════════════════════════
+// MODE 5 — NEXT MESSAGE NAVIGATION
+// ════════════════════════════════════════════════
+window._hellCurrentMsgIndex = 0;
+
+function hellNextMessage() {
+  const cards = document.querySelectorAll('#hellMsgList .hell-msg-card');
+  if (cards.length === 0) return;
+  window._hellCurrentMsgIndex = (window._hellCurrentMsgIndex + 1) % cards.length;
+  const target = cards[window._hellCurrentMsgIndex];
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    target.style.transition = 'box-shadow 0.3s, border-color 0.3s';
+    target.style.boxShadow = '0 0 20px rgba(255,0,0,.6), inset 0 0 10px rgba(255,0,0,.2)';
+    target.style.borderColor = '#ff2222';
+    setTimeout(() => {
+      target.style.boxShadow = '';
+      target.style.borderColor = '';
+    }, 1500);
+  }
+}
+
+function hellPrevMessage() {
+  const cards = document.querySelectorAll('#hellMsgList .hell-msg-card');
+  if (cards.length === 0) return;
+  window._hellCurrentMsgIndex = (window._hellCurrentMsgIndex - 1 + cards.length) % cards.length;
+  const target = cards[window._hellCurrentMsgIndex];
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    target.style.transition = 'box-shadow 0.3s, border-color 0.3s';
+    target.style.boxShadow = '0 0 20px rgba(255,0,0,.6), inset 0 0 10px rgba(255,0,0,.2)';
+    target.style.borderColor = '#ff2222';
+    setTimeout(() => {
+      target.style.boxShadow = '';
+      target.style.borderColor = '';
+    }, 1500);
+  }
+}
+
 let djPopupShown = false;
 function showDjSuperNovaqPopup(){
   if(djPopupShown) return;
@@ -5613,5 +6008,6 @@ function closeDjPopup(){
   }, 500);
 }
 </script>
-</body>
-</html>
+
+
+</body></html>
