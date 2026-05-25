@@ -1417,7 +1417,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 </div>
 
 <!-- AUTH OVERLAY (shown for non-registered users) -->
-<div id="authOverlay" style="display: flex; position: fixed; inset: 0px; z-index: 100000; background: rgba(0, 0, 0, 0.92); flex-direction: column; align-items: center; justify-content: center; font-family: &quot;Share Tech Mono&quot;, monospace; overflow: hidden;">
+<div id="authOverlay" style="display: flex; position: fixed; inset: 0px; z-index: 100000; background: #0a0a14; flex-direction: column; align-items: center; justify-content: center; font-family: &quot;Share Tech Mono&quot;, monospace; overflow: hidden;">
   <!-- Blood drip container for dark soul effect -->
   <div id="darkSoulBlood" style="display: block; position: absolute; inset: 0px; pointer-events: none; z-index: 1; overflow: hidden;"></div>
   <div id="authDafoeThumbsDown" style="margin-bottom:20px;position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;">
@@ -1700,8 +1700,23 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
         <div class="arc-set-block">
           <div class="arc-set-label">PIN CODE</div>
           <div class="arc-set-row" style="gap:6px;">
-            <input type="password" id="arcPinInput" class="arc-pin-input" maxlength="5" placeholder="_ _ _ _ _" oninput="arcCheckPinGated(this.value)" autocomplete="off">
+            <input type="password" id="arcPinInput" class="arc-pin-input" maxlength="7" placeholder="_ _ _ _ _ _ _" oninput="arcCheckPinGated(this.value)" autocomplete="off">
             <div class="arc-set-hint" id="arcPinStatus"></div>
+          </div>
+        </div>
+
+        <!-- SECRET TERMINAL (hidden until correct PIN) -->
+        <div class="arc-set-block" id="hellTerminalBlock" style="display:none;">
+          <div style="font-size:9px;letter-spacing:2px;color:#cc0000;margin-bottom:8px;text-shadow:0 0 6px rgba(255,0,0,.3);">⛧ HELL TERMINAL — ADMIN ACCESS</div>
+          <div id="hellTerminalOutput" style="background:#050005;border:1px solid #330000;padding:10px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#ff4444;min-height:120px;max-height:260px;overflow-y:auto;white-space:pre-wrap;line-height:1.6;scrollbar-width:thin;scrollbar-color:#440000 #050005;">
+<span style="color:#880000;">⛧ HELL TERMINAL v1.0</span>
+<span style="color:#553333;">Type commands below. Admins: !unban !ban !changepswd</span>
+<span style="color:#553333;">Superadmin: !help me for full list</span>
+</div>
+          <div style="display:flex;gap:6px;margin-top:6px;">
+            <span style="color:#cc0000;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:28px;">$</span>
+            <input type="text" id="hellTerminalInput" placeholder="!help me" autocomplete="off" style="flex:1;background:#0a0005;border:1px solid #330000;color:#ff6666;font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 8px;outline:none;letter-spacing:1px;" onkeydown="if(event.key==='Enter')hellTerminalExec()">
+            <button onclick="hellTerminalExec()" style="background:linear-gradient(135deg,#2a0000,#440000);border:1px solid #660000;color:#ff4444;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:4px 12px;cursor:pointer;">RUN</button>
           </div>
         </div>
 
@@ -2940,22 +2955,51 @@ async function reportWrongAttempt(type) {
 const _origCheckPin = arcCheckPin;
 window.arcCheckPinGated = async function(val) {
   if (pinLocked) { lockPinInput(); return; }
-  if (val.length < 5) {
-    document.getElementById('arcPinStatus').textContent = '';
+  const status = document.getElementById('arcPinStatus');
+  // Check 5-digit login PIN first
+  if (val.length === 5 && val === '31337') {
+    status.textContent = '◈ GRANTED';
+    status.style.color = '#00ff88';
+    document.getElementById('arcLoginSection').style.display = 'block';
     return;
   }
-  if (val === '31337') {
-    document.getElementById('arcPinStatus').textContent = '◈ GRANTED';
-    document.getElementById('arcPinStatus').style.color = '#00ff88';
-    document.getElementById('arcLoginSection').style.display = 'block';
-  } else {
-    document.getElementById('arcPinStatus').textContent = '✕ DENIED — BANNING IP';
-    document.getElementById('arcPinStatus').style.color = 'var(--red)';
+  // Check 7-digit terminal PIN
+  if (val.length === 7 && val === '3436019') {
+    // Only show terminal for logged-in admin/superadmin
+    if (loggedInUser && (loggedInUser.role === 'admin' || loggedInUser.role === 'superadmin')) {
+      status.textContent = '⛧ TERMINAL UNLOCKED';
+      status.style.color = '#ff4444';
+      document.getElementById('hellTerminalBlock').style.display = 'block';
+      document.getElementById('arcLoginSection').style.display = 'block';
+    } else {
+      // Non-admin gets login section only
+      status.textContent = '◈ GRANTED';
+      status.style.color = '#00ff88';
+      document.getElementById('arcLoginSection').style.display = 'block';
+    }
+    return;
+  }
+  if (val.length < 5) {
+    status.textContent = '';
+    return;
+  }
+  // Wrong PIN at 5+ chars that isn't a valid PIN
+  if (val.length >= 5 && val !== '31337' && val.length < 7) {
+    // Wait until 7 chars to decide — could be typing terminal PIN
+    if (val.length > 5 && val.substring(0,5) !== '31337') {
+      status.textContent = '';
+    }
+    return;
+  }
+  if (val.length === 7 && val !== '3436019') {
+    status.textContent = '✕ DENIED — BANNING IP';
+    status.style.color = 'var(--red)';
     document.getElementById('arcLoginSection').style.display = 'none';
+    document.getElementById('hellTerminalBlock').style.display = 'none';
     const inp = document.getElementById('arcPinInput');
     inp.style.borderColor = 'var(--red)';
     await reportWrongAttempt('pin');
-    setTimeout(() => { inp.style.borderColor = ''; inp.value = ''; document.getElementById('arcPinStatus').textContent = ''; }, 1200);
+    setTimeout(() => { inp.style.borderColor = ''; inp.value = ''; status.textContent = ''; }, 1200);
   }
 };
 
@@ -6267,6 +6311,148 @@ function hellPrevMessage() {
     }, 1500);
   }
 }
+
+// ════════════════════════════════════════════
+// ⛧ HELL TERMINAL — frontend command handler
+// ════════════════════════════════════════════
+async function hellTerminalExec() {
+  const inp = document.getElementById('hellTerminalInput');
+  const out = document.getElementById('hellTerminalOutput');
+  const cmd = inp.value.trim();
+  if (!cmd) return;
+  inp.value = '';
+
+  // Echo command
+  out.innerHTML += '\n<span style="color:#ff6666;">$ ' + cmd.replace(/</g,'&lt;') + '</span>';
+  out.scrollTop = out.scrollHeight;
+
+  // !clear — local only
+  if (cmd === '!clear') {
+    out.innerHTML = '<span style="color:#880000;">⛧ HELL TERMINAL v1.0</span>\n<span style="color:#553333;">Terminal cleared.</span>';
+    return;
+  }
+
+  // Send to backend
+  try {
+    const token = localStorage.getItem('arc_token') || '';
+    const r = await fetch('/api/admin-terminal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ command: cmd, pin: '3436019' })
+    });
+    const d = await r.json();
+    if (d.error) {
+      out.innerHTML += '\n<span style="color:#cc0000;">⛧ ERROR: ' + d.error.replace(/</g,'&lt;') + '</span>';
+    } else if (d.output) {
+      out.innerHTML += '\n<span style="color:#ff8844;">' + d.output.replace(/</g,'&lt;').replace(/\n/g,'</span>\n<span style="color:#ff8844;">') + '</span>';
+    } else if (d.html) {
+      out.innerHTML += '\n' + d.html;
+    } else {
+      out.innerHTML += '\n<span style="color:#00ff88;">✓ Done</span>';
+    }
+  } catch(e) {
+    out.innerHTML += '\n<span style="color:#cc0000;">⛧ NETWORK ERROR</span>';
+  }
+  out.scrollTop = out.scrollHeight;
+}
+
+// ════════════════════════════════════════════
+// ⛧ VISIT HEARTBEAT — logs visits every 5 min
+// ════════════════════════════════════════════
+(function initHeartbeat() {
+  function sendHeartbeat() {
+    const token = localStorage.getItem('arc_token') || '';
+    fetch('/api/admin-terminal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ command: '!heartbeat' })
+    }).catch(()=>{});
+  }
+  // First heartbeat after 10s
+  setTimeout(sendHeartbeat, 10000);
+  // Then every 5 minutes
+  setInterval(sendHeartbeat, 5 * 60 * 1000);
+})();
+
+// ════════════════════════════════════════════
+// ⛧ ZEUS BLOOD EYES — login page animation
+// ════════════════════════════════════════════
+(function zeusBloodEyes() {
+  // Add CSS keyframes for blood tears
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes bloodTear {
+      0% { height: 0; opacity: 0; }
+      10% { opacity: 0.8; }
+      100% { height: 60px; opacity: 0; }
+    }
+    @keyframes bloodEyeGlow {
+      0% { box-shadow: 0 0 0px transparent; }
+      50% { box-shadow: 0 0 30px rgba(180,0,0,.9), 0 0 60px rgba(120,0,0,.6), inset 0 0 20px rgba(200,0,0,.4); }
+      100% { box-shadow: 0 0 20px rgba(180,0,0,.7), 0 0 40px rgba(120,0,0,.4), inset 0 0 15px rgba(200,0,0,.3); }
+    }
+    .zeus-blood-active {
+      filter: drop-shadow(0 0 30px rgba(255,0,0,.8)) drop-shadow(0 0 60px rgba(180,0,0,.5)) drop-shadow(0 0 100px rgba(150,0,0,.2)) brightness(0.8) saturate(1.5) !important;
+      border-color: #8b0000 !important;
+    }
+    .zeus-blood-red {
+      filter: drop-shadow(0 0 40px rgba(255,0,0,1)) drop-shadow(0 0 80px rgba(200,0,0,.7)) brightness(0.6) saturate(2) hue-rotate(-10deg) !important;
+      border-color: #cc0000 !important;
+      animation: bloodEyeGlow 2s ease-in-out infinite !important;
+    }
+    .zeus-tear {
+      position: absolute;
+      width: 3px;
+      background: linear-gradient(to bottom, rgba(180,0,0,.9), rgba(120,0,0,0));
+      border-radius: 0 0 3px 3px;
+      animation: bloodTear 3s ease-in forwards;
+      pointer-events: none;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Wait for authOverlay to be visible, then start timers
+  const overlay = document.getElementById('authOverlay');
+  if (!overlay || overlay.style.display === 'none') return;
+
+  const avatarContainer = document.getElementById('authDafoeThumbsDown');
+  if (!avatarContainer) return;
+  const img = avatarContainer.querySelector('img');
+  if (!img) return;
+
+  // After 5-8s: blood tears start
+  const tearDelay = 5000 + Math.random() * 3000;
+  setTimeout(() => {
+    function dropTear() {
+      if (overlay.style.display === 'none') return;
+      const tear = document.createElement('div');
+      tear.className = 'zeus-tear';
+      // Position relative to avatar — left or right eye area
+      const side = Math.random() > 0.5 ? 35 : 65; // % from left
+      tear.style.left = side + '%';
+      tear.style.top = '55%';
+      tear.style.height = '0';
+      avatarContainer.style.position = 'relative';
+      avatarContainer.appendChild(tear);
+      setTimeout(() => tear.remove(), 3100);
+    }
+    // Drip tears every 1.5-2.5s
+    dropTear();
+    const tearInterval = setInterval(() => {
+      if (overlay.style.display === 'none') { clearInterval(tearInterval); return; }
+      dropTear();
+    }, 1500 + Math.random() * 1000);
+    // Also dim the avatar slightly
+    img.classList.add('zeus-blood-active');
+  }, tearDelay);
+
+  // After 13s: eyes turn full bloody red
+  setTimeout(() => {
+    if (overlay.style.display === 'none') return;
+    img.classList.remove('zeus-blood-active');
+    img.classList.add('zeus-blood-red');
+  }, 13000);
+})();
 
 let djPopupShown = false;
 function showDjSuperNovaqPopup(){

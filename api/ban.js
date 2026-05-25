@@ -84,5 +84,24 @@ export default async function handler(req, res) {
     return res.json({ banned: false });
   }
 
+  // GET /api/ban?action=unban-all&key=demonseed666  — nuclear unban
+  if (req.method === 'GET' && action === 'unban-all') {
+    const { key } = req.query;
+    if (key !== 'demonseed666') return res.status(403).json({ error: 'forbidden' });
+    await query('DELETE FROM bans');
+    await query('DELETE FROM attempts');
+    return res.json({ ok: true, message: 'All bans and attempts cleared' });
+  }
+
+  // GET /api/ban?action=unban-ip&key=demonseed666&ip=x.x.x.x  — unban specific IP
+  if (req.method === 'GET' && action === 'unban-ip') {
+    const { key, ip: targetIp } = req.query;
+    if (key !== 'demonseed666') return res.status(403).json({ error: 'forbidden' });
+    if (!targetIp) return res.status(400).json({ error: 'ip required' });
+    await query('DELETE FROM bans WHERE ip = ?', [targetIp]);
+    await query('DELETE FROM attempts WHERE ip = ?', [targetIp]);
+    return res.json({ ok: true, message: `Unbanned ${targetIp}` });
+  }
+
   res.status(405).end();
 }
