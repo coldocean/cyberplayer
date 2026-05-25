@@ -1,15 +1,20 @@
-# Current Task — Big Feature Update
+# API Fix Task
 
-## Changes needed:
-1. [x] Mel Gibson Zeus thumbs-up image generated & uploaded
-2. [ ] Guest "Dark Soul" mode — button on auth overlay, blood/glitch animation, 100 coins by IP
-3. [ ] Remove word "better" from sinner text  
-4. [ ] Jesus = Zeus from Olympia — sky greeting animation with Mel Gibson Zeus face
-5. [ ] Replace Dafoe Jesus with Mel Gibson Zeus (bottom-right corner + sky anim + thumbs down on auth)
-6. [ ] Gluminator arcade machine — Blade Runner neon tubes, futuristic cyberpunk cabinet around the slot
-7. [ ] 40-minute power-off event — "NO SIGNAL / YOU HAVE BEEN HACKED" glitch screen
-8. [ ] Cheaters banned by admins note
+## Problem
+- `/api/auth-user?action=login` returns FUNCTION_INVOCATION_FAILED
+- ALL `/api/*` routes fail — even `/api/health`
+- Root cause: `api/[[...route]].ts` catch-all imports `hono/vercel` which has build/runtime errors
+- This catch-all intercepts ALL api routes before `auth-user.js` etc. can run
 
-## Image URLs:
-- Mel Gibson Zeus thumbs up: https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FzXmJg31R_oQnpa27AQ50y%2Fmel-zeus-thumbsup.png
-- Original Dafoe: https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2Frrcm-9aWWtfF9Gt1nIaND%2Fdafoe_small.png
+## Fix Plan
+1. Remove `api/[[...route]].ts` — it breaks everything
+2. Ensure `auth-user.js` and other API functions work standalone
+3. Check if DB tables exist in Turso — seed users if needed
+4. Deploy and test
+
+## Users to Seed
+- deemah: superadmin, password: noT1333Deemahseeq
+- robbmobb: admin, password: yesm81337carlitto
+
+## Deploy Process
+- Edit source → copy to both paths → deploy with deploy.sh
