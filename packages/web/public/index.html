@@ -742,12 +742,12 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
   position:relative;
   transform:translateZ(0);
   border-radius:6px;
-  background:rgba(8,0,16,.25);
-  box-shadow:inset 0 1px 3px rgba(0,0,0,.25);
+  background:rgba(0,0,0,.3);
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.6),inset 0 -1px 4px rgba(255,255,255,.02);
 }
 .slot-cell::before{
   content:'';position:absolute;inset:0;border-radius:6px;
-  background:linear-gradient(180deg,rgba(255,255,255,.02) 0%,transparent 50%,rgba(0,0,0,.05) 100%);
+  background:linear-gradient(180deg,rgba(255,255,255,.04) 0%,transparent 40%,rgba(0,0,0,.2) 100%);
   pointer-events:none;z-index:1;
 }
 .slot-mid{
@@ -758,7 +758,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 /* ── Win animations ── */
 .slot-win{animation:slotWinPop .5s ease-in-out infinite alternate;}
 @keyframes slotWinPop{
-  0%{transform:scale(1) translateZ(0);filter:brightness(1);box-shadow:inset 0 1px 3px rgba(0,0,0,.25);}
+  0%{transform:scale(1) translateZ(0);filter:brightness(1);box-shadow:inset 0 2px 8px rgba(0,0,0,.6);}
   100%{transform:scale(1.15) translateZ(20px);filter:brightness(1.8) saturate(1.5);box-shadow:0 0 20px currentColor,0 0 40px currentColor,inset 0 0 15px rgba(255,255,255,.15);}
 }
 .slot-win-jackpot{animation:slotJackpot .3s ease-in-out infinite alternate;}
@@ -5266,12 +5266,14 @@ window.submitPayment = function() {
         </div>
 
         <!-- Slot machine reels — 3D depth -->
-        <div class="gam-machine slot-machine-3d" style="padding:16px;position:relative;border-radius:8px;background:linear-gradient(180deg,#0a0218 0%,#050208 40%,#080015 100%);box-shadow:0 0 30px rgba(224,23,74,.3),inset 0 1px 0 rgba(255,255,255,.05);border-width:2px;border-style:solid;border-image:linear-gradient(180deg,#e0174a,#ff6600,#e0174a) 1;">
-          <!-- Glass reflection (subtle) -->
-          <div style="position:absolute;top:0;left:10%;right:10%;height:20%;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent);border-radius:8px 8px 0 0;pointer-events:none;z-index:1;"></div>
+        <div class="gam-machine slot-machine-3d" style="padding:16px;position:relative;border-radius:8px;background:linear-gradient(180deg,#0a0218 0%,#050208 40%,#080015 100%);box-shadow:0 0 30px rgba(224,23,74,.3),inset 0 1px 0 rgba(255,255,255,.05),inset 0 -2px 8px rgba(0,0,0,.8);border-width:2px;border-style:solid;border-image:linear-gradient(180deg,#e0174a,#ff6600,#e0174a) 1;">
+          <!-- 3D inner shadow overlay (reduced) -->
+          <div style="position:absolute;inset:0;border-radius:8px;box-shadow:inset 0 1px 4px rgba(0,0,0,.3);pointer-events:none;z-index:1;"></div>
+          <!-- Glass reflection -->
+          <div style="position:absolute;top:0;left:10%;right:10%;height:30%;background:linear-gradient(180deg,rgba(255,255,255,.03),transparent);border-radius:8px 8px 0 0;pointer-events:none;z-index:1;"></div>
           
           <!-- Reels grid with 3D perspective -->
-          <div class="slot-machine-inner" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;position:relative;z-index:2;padding:4px;background:rgba(0,0,0,.15);border-radius:6px;">
+          <div class="slot-machine-inner" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;position:relative;z-index:2;padding:4px;background:rgba(0,0,0,.4);border-radius:6px;box-shadow:inset 0 1px 4px rgba(0,0,0,.3);">
             <!-- Win line indicators (3 lines) -->
             <div style="position:absolute;left:-12px;top:16.6%;transform:translateY(-50%);width:8px;height:8px;background:#ffd700;border-radius:50%;box-shadow:0 0 8px #ffd700,0 0 16px rgba(255,215,0,.4);font-size:6px;color:#000;text-align:center;line-height:8px;font-weight:bold;">1</div>
             <div style="position:absolute;left:-12px;top:50%;transform:translateY(-50%);width:8px;height:8px;background:#ff2060;border-radius:50%;box-shadow:0 0 8px #ff2060,0 0 16px rgba(255,32,96,.4);font-size:6px;color:#000;text-align:center;line-height:8px;font-weight:bold;">2</div>
@@ -5281,17 +5283,17 @@ window.submitPayment = function() {
             <div style="position:absolute;right:-12px;top:83.3%;transform:translateY(-50%);width:8px;height:8px;background:#00e5ff;border-radius:50%;box-shadow:0 0 8px #00e5ff;font-size:6px;color:#000;text-align:center;line-height:8px;font-weight:bold;">3</div>
 
             <!-- 3 reels × 3 rows -->
-            <div id="reel0" class="gam-reel" style="border-radius:6px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.05);">
+            <div id="reel0" class="gam-reel" style="border-radius:6px;overflow:hidden;box-shadow:inset 0 2px 8px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.05);">
               <div id="slot_0_0" class="slot-cell">🃏</div>
               <div id="slot_0_1" class="slot-cell slot-mid">🃏</div>
               <div id="slot_0_2" class="slot-cell">🃏</div>
             </div>
-            <div id="reel1" class="gam-reel" style="border-radius:6px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.05);">
+            <div id="reel1" class="gam-reel" style="border-radius:6px;overflow:hidden;box-shadow:inset 0 2px 8px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.05);">
               <div id="slot_1_0" class="slot-cell">🃏</div>
               <div id="slot_1_1" class="slot-cell slot-mid">🃏</div>
               <div id="slot_1_2" class="slot-cell">🃏</div>
             </div>
-            <div id="reel2" class="gam-reel" style="border-radius:6px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.05);">
+            <div id="reel2" class="gam-reel" style="border-radius:6px;overflow:hidden;box-shadow:inset 0 2px 8px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.05);">
               <div id="slot_2_0" class="slot-cell">🃏</div>
               <div id="slot_2_1" class="slot-cell slot-mid">🃏</div>
               <div id="slot_2_2" class="slot-cell">🃏</div>
