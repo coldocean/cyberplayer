@@ -407,6 +407,188 @@ body.skin-5 #mode4 .slot-bet-btn.active-btn{background:#2a0020 !important;color:
 body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;background:rgba(255,215,0,.03) !important;}
 
 /* ════════════════════════════════════════
+   MODE 0 — YOUTUBE CLI PLAYER
+════════════════════════════════════════ */
+#mode0{
+  display:none;flex-direction:column;align-items:center;justify-content:flex-start;
+  min-height:100vh;width:100%;background:#080808;padding:48px 0 0 0;
+}
+.ytc-shell{
+  width:min(860px,100vw);min-height:calc(100vh - 48px);
+  background:#0a0a0a;border:1px solid #1a3300;
+  box-shadow:0 0 40px rgba(0,255,0,.06);
+  font-family:'Share Tech Mono',monospace;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.ytc-titlebar{
+  background:#0d0d0d;border-bottom:1px solid #1a3300;
+  padding:5px 12px;display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.ytc-title-left{display:flex;align-items:center;gap:8px;}
+.ytc-ham{font-size:10px;color:#33ff33;cursor:pointer;}
+.ytc-titlename{font-size:11px;color:#33ff33;letter-spacing:2px;text-shadow:0 0 6px rgba(0,255,0,.3);}
+.ytc-titlebtns{display:flex;gap:4px;}
+.ytc-tbtn{width:10px;height:10px;background:#1a3300;border-radius:50%;cursor:pointer;}
+.ytc-tbtn:hover{background:#33ff33;}
+
+/* 3-panel body */
+.ytc-body{
+  display:flex;flex:1;min-height:0;overflow:hidden;
+}
+/* left sidebar */
+.ytc-sidebar{
+  width:130px;flex-shrink:0;border-right:1px solid #1a3300;
+  background:#060806;overflow-y:auto;padding:6px 0;
+}
+.ytc-sidebar::-webkit-scrollbar{width:3px;}
+.ytc-sidebar::-webkit-scrollbar-thumb{background:#1a3300;}
+.ytc-sb-title{
+  font-size:8px;color:#336633;letter-spacing:2px;padding:4px 8px;
+  border-bottom:1px solid #0d1a00;margin-bottom:2px;
+}
+.ytc-sb-item{
+  font-size:9px;color:#44aa44;padding:4px 8px;cursor:pointer;
+  letter-spacing:.5px;transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.ytc-sb-item:hover{background:#0d1a00;color:#33ff33;}
+.ytc-sb-item.active{color:#33ff33;background:#0d1a00;border-left:2px solid #33ff33;}
+.ytc-sb-item .ytc-sb-count{color:#336633;font-size:8px;}
+.ytc-sb-add{
+  font-size:9px;color:#1a4400;padding:4px 8px;cursor:pointer;letter-spacing:.5px;
+}
+.ytc-sb-add:hover{color:#33ff33;}
+
+/* center panel */
+.ytc-center{
+  flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;
+}
+.ytc-center-hdr{
+  display:flex;align-items:center;gap:6px;padding:6px 10px;
+  border-bottom:1px solid #1a3300;font-size:9px;flex-shrink:0;
+}
+.ytc-tab{
+  color:#336633;cursor:pointer;padding:2px 6px;letter-spacing:1px;transition:all .15s;
+}
+.ytc-tab:hover{color:#33ff33;}
+.ytc-tab.active{color:#33ff33;border-bottom:1px solid #33ff33;}
+.ytc-results{
+  flex:1;overflow-y:auto;padding:4px 0;
+}
+.ytc-results::-webkit-scrollbar{width:3px;}
+.ytc-results::-webkit-scrollbar-thumb{background:#1a3300;}
+.ytc-row{
+  display:flex;align-items:center;gap:6px;padding:3px 10px;
+  font-size:9px;cursor:pointer;transition:background .1s;
+  border-bottom:1px solid #0a1200;
+}
+.ytc-row:hover{background:#0d1a00;}
+.ytc-row.playing{color:#ff3333;background:#1a0800;}
+.ytc-row.playing .ytc-row-idx{color:#ff3333;}
+.ytc-row-idx{color:#336633;width:18px;text-align:right;flex-shrink:0;font-size:8px;}
+.ytc-row-title{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#88cc88;}
+.ytc-row-artist{width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#557755;font-size:8px;flex-shrink:0;}
+.ytc-row-dur{color:#336633;font-size:8px;width:36px;text-align:right;flex-shrink:0;}
+.ytc-row-actions{display:flex;gap:4px;flex-shrink:0;}
+.ytc-row-btn{
+  font-size:8px;color:#336633;cursor:pointer;padding:1px 4px;
+  border:1px solid transparent;transition:all .15s;
+}
+.ytc-row-btn:hover{color:#33ff33;border-color:#1a3300;}
+.ytc-empty{
+  padding:30px 16px;text-align:center;color:#1a3300;font-size:9px;letter-spacing:2px;line-height:2;
+}
+
+/* right panel — now playing */
+.ytc-right{
+  width:180px;flex-shrink:0;border-left:1px solid #1a3300;
+  background:#060806;display:flex;flex-direction:column;padding:8px;
+}
+.ytc-np-label{font-size:7px;color:#336633;letter-spacing:2px;margin-bottom:6px;}
+.ytc-np-title{font-size:10px;color:#33ff33;margin-bottom:2px;word-wrap:break-word;text-shadow:0 0 8px rgba(0,255,0,.3);}
+.ytc-np-artist{font-size:8px;color:#557755;margin-bottom:10px;word-wrap:break-word;}
+.ytc-np-thumb{
+  width:100%;aspect-ratio:16/9;background:#000;border:1px solid #1a3300;
+  margin-bottom:8px;overflow:hidden;
+}
+.ytc-np-thumb img{width:100%;height:100%;object-fit:cover;opacity:.7;}
+.ytc-np-time{font-size:9px;color:#44aa44;margin-bottom:4px;display:flex;justify-content:space-between;}
+.ytc-np-bar{
+  width:100%;height:4px;background:#0d1a00;margin-bottom:8px;cursor:pointer;position:relative;
+}
+.ytc-np-fill{height:100%;background:#33ff33;width:0%;transition:width .3s linear;box-shadow:0 0 4px rgba(0,255,0,.4);}
+.ytc-np-controls{display:flex;gap:6px;justify-content:center;margin-bottom:8px;}
+.ytc-np-btn{
+  font-size:12px;color:#33ff33;cursor:pointer;padding:2px;
+  transition:all .15s;
+}
+.ytc-np-btn:hover{color:#ff3333;text-shadow:0 0 8px rgba(255,0,0,.5);}
+.ytc-np-btn.active{color:#ff3333;}
+.ytc-np-vol{display:flex;align-items:center;gap:4px;margin-bottom:6px;}
+.ytc-np-vol-label{font-size:7px;color:#336633;}
+.ytc-np-vol-bar{flex:1;height:3px;background:#0d1a00;cursor:pointer;position:relative;}
+.ytc-np-vol-fill{height:100%;background:#33ff33;width:80%;}
+.ytc-np-vol-val{font-size:7px;color:#336633;width:20px;text-align:right;}
+.ytc-np-queue{flex:1;overflow-y:auto;margin-top:6px;}
+.ytc-np-queue::-webkit-scrollbar{width:2px;}
+.ytc-np-queue::-webkit-scrollbar-thumb{background:#1a3300;}
+.ytc-np-qlabel{font-size:7px;color:#336633;letter-spacing:2px;margin-bottom:4px;}
+.ytc-np-qitem{font-size:8px;color:#44aa44;padding:2px 0;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ytc-np-qitem:hover{color:#33ff33;}
+.ytc-np-qitem.active{color:#ff3333;}
+
+/* bottom bar — status + command input */
+.ytc-bottom{
+  flex-shrink:0;border-top:1px solid #1a3300;background:#060806;
+}
+.ytc-status{
+  display:flex;align-items:center;gap:8px;padding:3px 10px;
+  font-size:8px;border-bottom:1px solid #0d1a00;
+}
+.ytc-status-play{color:#ff3333;text-shadow:0 0 6px rgba(255,0,0,.4);}
+.ytc-status-title{flex:1;color:#33ff33;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ytc-status-info{color:#336633;}
+.ytc-progress{
+  height:2px;background:#0d1a00;cursor:pointer;
+}
+.ytc-progress-fill{height:100%;background:linear-gradient(90deg,#33ff33,#00ff88);width:0%;transition:width .5s linear;}
+.ytc-cmd{
+  display:flex;align-items:center;padding:4px 10px;gap:4px;
+}
+.ytc-prompt{color:#33ff33;font-size:10px;text-shadow:0 0 4px rgba(0,255,0,.4);}
+.ytc-input{
+  flex:1;background:transparent;border:none;outline:none;
+  color:#33ff33;font-family:'Share Tech Mono',monospace;font-size:10px;
+  caret-color:#33ff33;letter-spacing:.5px;
+}
+.ytc-input::placeholder{color:#1a3300;}
+.ytc-help-line{
+  font-size:7px;color:#1a4400;padding:2px 10px;letter-spacing:.5px;
+}
+
+/* animations */
+@keyframes ytcBlink{0%,100%{opacity:1;}50%{opacity:0;}}
+.ytc-blink{animation:ytcBlink 1s step-end infinite;}
+@keyframes ytcScanline{0%{top:-100%;}100%{top:100%;}}
+.ytc-shell::after{
+  content:'';position:absolute;top:0;left:0;right:0;
+  height:2px;background:rgba(0,255,0,.03);
+  animation:ytcScanline 8s linear infinite;pointer-events:none;
+}
+.ytc-shell{position:relative;}
+
+/* mobile responsive */
+@media(max-width:600px){
+  .ytc-sidebar{width:90px;}
+  .ytc-right{width:140px;}
+  .ytc-row-artist{display:none;}
+}
+@media(max-width:420px){
+  .ytc-right{display:none;}
+  .ytc-sidebar{width:70px;}
+}
+
+/* ════════════════════════════════════════
    MODE 2 — ARCADE (existing)
 ════════════════════════════════════════ */
 #mode2{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;width:100%;}
@@ -1585,6 +1767,107 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 </div>
 
 <!-- ════════════════════════════════════
+     MODE 0 — YOUTUBE CLI PLAYER
+════════════════════════════════════ -->
+<div id="mode0">
+  <div class="ytc-shell">
+    <div class="ytc-titlebar">
+      <div class="ytc-title-left">
+        <span class="ytc-ham">≡</span>
+        <span class="ytc-titlename">yt@demonTube:~</span>
+      </div>
+      <div class="ytc-titlebtns">
+        <div class="ytc-tbtn"></div><div class="ytc-tbtn"></div><div class="ytc-tbtn"></div>
+      </div>
+    </div>
+    <div class="ytc-body">
+      <!-- SIDEBAR -->
+      <div class="ytc-sidebar">
+        <div class="ytc-sb-title">♫ PLAYLISTS</div>
+        <div class="ytc-sb-item active" onclick="ytcShowQueue()">▶ Queue <span class="ytc-sb-count" id="ytcQueueCount">(0)</span></div>
+        <div id="ytcPlaylists"></div>
+        <div class="ytc-sb-add" onclick="ytcNewPlaylist()">+ New Playlist</div>
+      </div>
+      <!-- CENTER -->
+      <div class="ytc-center">
+        <div class="ytc-center-hdr">
+          <span class="ytc-tab active" id="ytcTabSearch" onclick="ytcSwitchTab('search')">SEARCH</span>
+          <span class="ytc-tab" id="ytcTabLibrary" onclick="ytcSwitchTab('library')">LIBRARY</span>
+          <span class="ytc-tab" id="ytcTabQueue" onclick="ytcSwitchTab('queue')">QUEUE</span>
+          <span style="flex:1"></span>
+          <span style="font-size:8px;color:#1a3300;" id="ytcResultInfo"></span>
+        </div>
+        <div class="ytc-results" id="ytcResults">
+          <div class="ytc-empty">
+            ▒▒▒ DEMON TUBE ▒▒▒<br><br>
+            Search YouTube from the command line.<br>
+            Type a query below or use:<br><br>
+            /search &lt;query&gt; — find music<br>
+            /play &lt;n&gt; — play result #n<br>
+            /queue &lt;n&gt; — add to queue<br>
+            /import &lt;playlist-url&gt; — import YT playlist<br>
+            /vol &lt;0-100&gt; — set volume<br>
+            /help — all commands<br><br>
+            <span style="color:#33ff33;">▓</span> <span class="ytc-blink">_</span>
+          </div>
+        </div>
+      </div>
+      <!-- RIGHT — NOW PLAYING -->
+      <div class="ytc-right">
+        <div class="ytc-np-label">♪ NOW PLAYING</div>
+        <div class="ytc-np-title" id="ytcNpTitle">—</div>
+        <div class="ytc-np-artist" id="ytcNpArtist">No track loaded</div>
+        <div class="ytc-np-thumb" id="ytcNpThumb"></div>
+        <div class="ytc-np-time">
+          <span id="ytcTimeElapsed">0:00</span>
+          <span id="ytcTimeDuration">0:00</span>
+        </div>
+        <div class="ytc-np-bar" id="ytcNpBar" onclick="ytcSeek(event)">
+          <div class="ytc-np-fill" id="ytcNpFill"></div>
+        </div>
+        <div class="ytc-np-controls">
+          <span class="ytc-np-btn" onclick="ytcPrev()" title="Previous">⏮</span>
+          <span class="ytc-np-btn" id="ytcBtnPlayPause" onclick="ytcTogglePlay()" title="Play/Pause">▶</span>
+          <span class="ytc-np-btn" onclick="ytcNext()" title="Next">⏭</span>
+          <span class="ytc-np-btn" id="ytcBtnShuffle" onclick="ytcToggleShuffle()" title="Shuffle">🔀</span>
+          <span class="ytc-np-btn" id="ytcBtnRepeat" onclick="ytcToggleRepeat()" title="Repeat">🔂</span>
+        </div>
+        <div class="ytc-np-vol">
+          <span class="ytc-np-vol-label">VOL</span>
+          <div class="ytc-np-vol-bar" onclick="ytcSetVolClick(event)">
+            <div class="ytc-np-vol-fill" id="ytcVolFill" style="width:80%"></div>
+          </div>
+          <span class="ytc-np-vol-val" id="ytcVolVal">80</span>
+        </div>
+        <div class="ytc-np-qlabel">UP NEXT</div>
+        <div class="ytc-np-queue" id="ytcUpNext"></div>
+      </div>
+    </div>
+    <!-- BOTTOM -->
+    <div class="ytc-bottom">
+      <div class="ytc-status">
+        <span class="ytc-status-play" id="ytcStatusIcon">■</span>
+        <span class="ytc-status-title" id="ytcStatusTitle">DEMON TUBE — YouTube CLI</span>
+        <span class="ytc-status-info" id="ytcStatusInfo">🔊80%</span>
+      </div>
+      <div class="ytc-progress" onclick="ytcSeekBar(event)">
+        <div class="ytc-progress-fill" id="ytcProgressFill"></div>
+      </div>
+      <div class="ytc-cmd">
+        <span class="ytc-prompt">yt&gt;</span>
+        <input class="ytc-input" id="ytcInput" type="text" placeholder="search something or type /help..." autocomplete="off" spellcheck="false">
+      </div>
+      <div class="ytc-help-line" id="ytcHelpLine">[/] Search · [Space] Play/Pause · [n] Next · [p] Prev · [+/-] Vol · [Enter] Execute</div>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden YouTube Player -->
+<div id="ytPlayerWrap" style="position:fixed;width:1px;height:1px;overflow:hidden;top:-9999px;left:-9999px;opacity:0;pointer-events:none;">
+  <div id="ytPlayer"></div>
+</div>
+
+<!-- ════════════════════════════════════
      MODE 1 — WINAMP
 ════════════════════════════════════ -->
 <div id="mode1">
@@ -1738,9 +2021,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 <div id="mode2">
   <div class="arc-shell">
     <div class="arc-nav">
-      <div class="arc-trigger">ZL</div>
-      <div class="arc-nav-item">INTRO</div>
-      <div class="arc-nav-item" id="arcShuffleBtn" onclick="arcToggleShuffle(this)">SHUFFLE</div>
+      <div class="arc-nav-item" id="arcShuffleBtn" onclick="arcToggleShuffle(this)">🔀</div>
       <div class="arc-nav-item" id="arcRepeatBtn" onclick="arcToggleRepeat(this)">🔂</div>
       <div class="arc-nav-item" id="arcTotalBtn" style="cursor:default;letter-spacing:.5px;font-size:10px;">0 SONGS</div>
       <div class="arc-nav-item active" id="arcNavPlayer" onclick="arcShowPanel('player')">MUSIC PLAYER</div>
@@ -2362,9 +2643,10 @@ function arcShowUpload() {
 // ════════════════════════════════════════════════
 function setMode(m) {
   currentMode = m;
+  document.getElementById('mode0').style.display = m===0?'flex':'none';
   document.getElementById('mode1').style.display = m===1?'flex':'none';
   document.getElementById('mode2').style.display = m===2?'flex':'none';
-  document.getElementById('mode3').style.display = (m===3||m===0)?'flex':'none';
+  document.getElementById('mode3').style.display = m===3?'flex':'none';
   document.getElementById('mode4').style.display = m===4?'flex':'none';
   document.getElementById('mode5').style.display = m===5?'flex':'none';
   // M0 maps to index 0, M1-M5 map to index 1-5
@@ -2372,9 +2654,10 @@ function setMode(m) {
     const btnMode = i===0?0:i;
     b.classList.toggle('active', btnMode===m);
   });
+  if (m===0) setTimeout(()=>{ ytcOnShow(); },50);
   if (m===2) setTimeout(()=>{ arcRenderList(); arcDrawWave(currentAudio&&!currentAudio.paused); resizeArcCanvas(); },50);
   if (m===1) setTimeout(()=>{ wampRenderList(); wampDrawVu(currentAudio&&!currentAudio.paused); },50);
-  if (m===3||m===0) setTimeout(()=>{ cliRenderList(); cliInitSpectrum(); },50);
+  if (m===3) setTimeout(()=>{ cliRenderList(); cliInitSpectrum(); },50);
   if (m===4) setTimeout(()=>{ const el=document.getElementById('slotCoinCount'); if(el) el.textContent=loggedInUser?'∞':guestCoins; },50);
   if (m===5) { setTimeout(()=>{ if(!hellLoaded) hellLoadMessages(); else hellRenderMessages(); },50); }
 }
@@ -6660,6 +6943,756 @@ function closeDjPopup(){
     }
   }, 500);
 }
+
+// ════════════════════════════════════════════════
+// MODE 0 — YOUTUBE CLI PLAYER (DEMON TUBE)
+// ════════════════════════════════════════════════
+(function(){
+  // ── State ──
+  const YTC = {
+    player: null,
+    ready: false,
+    queue: [],         // [{id,title,artist,duration,thumb}]
+    queueIdx: -1,
+    playlists: {},     // name -> [{id,title,artist,duration,thumb}]
+    results: [],       // search results
+    currentTab: 'search',
+    currentView: 'queue', // sidebar view
+    shuffle: false,
+    repeat: false,
+    vol: 80,
+    interval: null,
+    pipedInstances: [
+      'https://pipedapi.kavin.rocks',
+      'https://pipedapi.adminforge.de',
+      'https://pipedapi.in.projectsegfau.lt',
+      'https://pipedapi.r4fo.com',
+      'https://api.piped.yt'
+    ],
+    workingInstance: null,
+    searchAbort: null
+  };
+
+  // Save/load from localStorage
+  function ytcSave(){
+    try{
+      localStorage.setItem('ytc_playlists', JSON.stringify(YTC.playlists));
+      localStorage.setItem('ytc_queue', JSON.stringify(YTC.queue));
+      localStorage.setItem('ytc_vol', YTC.vol);
+    }catch(e){}
+  }
+  function ytcLoad(){
+    try{
+      const p = localStorage.getItem('ytc_playlists');
+      if(p) YTC.playlists = JSON.parse(p);
+      const q = localStorage.getItem('ytc_queue');
+      if(q) YTC.queue = JSON.parse(q);
+      const v = localStorage.getItem('ytc_vol');
+      if(v) YTC.vol = parseInt(v);
+    }catch(e){}
+  }
+  ytcLoad();
+
+  // ── YouTube IFrame API ──
+  window.onYouTubeIframeAPIReady = function(){
+    YTC.player = new YT.Player('ytPlayer', {
+      height:'1', width:'1',
+      playerVars: {
+        autoplay:0, controls:0, disablekb:1, fs:0,
+        modestbranding:1, rel:0, showinfo:0, iv_load_policy:3
+      },
+      events: {
+        onReady: function(e){
+          YTC.ready = true;
+          YTC.player.setVolume(YTC.vol);
+          ytcLog('YouTube player ready.');
+        },
+        onStateChange: function(e){
+          const s = e.data;
+          if(s === YT.PlayerState.PLAYING){
+            document.getElementById('ytcBtnPlayPause').textContent = '⏸';
+            document.getElementById('ytcStatusIcon').textContent = '▶';
+            ytcStartTimer();
+          } else if(s === YT.PlayerState.PAUSED){
+            document.getElementById('ytcBtnPlayPause').textContent = '▶';
+            document.getElementById('ytcStatusIcon').textContent = '⏸';
+          } else if(s === YT.PlayerState.ENDED){
+            ytcOnEnded();
+          }
+        },
+        onError: function(e){
+          ytcLog('Error playing video. Trying next...');
+          setTimeout(()=>ytcNext(), 1500);
+        }
+      }
+    });
+  };
+
+  // Load YouTube IFrame API script
+  const ytTag = document.createElement('script');
+  ytTag.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(ytTag);
+
+  // ── Piped API Search ──
+  async function ytcSearch(query){
+    if(YTC.searchAbort) YTC.searchAbort.abort();
+    YTC.searchAbort = new AbortController();
+    ytcLog('Searching: ' + query + '...');
+    ytcRenderLoading();
+
+    // Try instances in order
+    const instances = YTC.workingInstance
+      ? [YTC.workingInstance, ...YTC.pipedInstances.filter(i=>i!==YTC.workingInstance)]
+      : [...YTC.pipedInstances];
+
+    for(const inst of instances){
+      try{
+        const url = inst + '/search?q=' + encodeURIComponent(query) + '&filter=music_songs';
+        const r = await fetch(url, {signal: YTC.searchAbort.signal, headers:{'Accept':'application/json'}});
+        if(!r.ok) continue;
+        const data = await r.json();
+        const items = (data.items || []).filter(i => i.url && i.type === 'stream');
+        if(items.length === 0){
+          // Try without filter
+          const url2 = inst + '/search?q=' + encodeURIComponent(query) + '&filter=videos';
+          const r2 = await fetch(url2, {signal: YTC.searchAbort.signal});
+          if(r2.ok){
+            const data2 = await r2.json();
+            const items2 = (data2.items || []).filter(i => i.url && i.type === 'stream');
+            if(items2.length > 0){
+              YTC.workingInstance = inst;
+              YTC.results = items2.map(mapPipedItem);
+              ytcRenderResults();
+              return;
+            }
+          }
+        }
+        if(items.length > 0){
+          YTC.workingInstance = inst;
+          YTC.results = items.map(mapPipedItem);
+          ytcRenderResults();
+          return;
+        }
+      }catch(e){
+        if(e.name === 'AbortError') return;
+        continue;
+      }
+    }
+    // All instances failed — try YouTube suggestion fallback
+    ytcLog('Piped instances unavailable. Trying fallback...');
+    try{
+      await ytcFallbackSearch(query);
+    }catch(e){
+      ytcLog('Search failed. Try again later.');
+      ytcRenderEmpty('Search failed — all API instances down.<br>Try again or paste a video URL directly.');
+    }
+  }
+
+  function mapPipedItem(i){
+    const id = (i.url || '').replace('/watch?v=','');
+    return {
+      id: id,
+      title: i.title || 'Unknown',
+      artist: i.uploaderName || i.uploader || '',
+      duration: i.duration || 0,
+      thumb: i.thumbnail || ''
+    };
+  }
+
+  // Fallback: use /suggestions for autocomplete, or direct video ID
+  async function ytcFallbackSearch(query){
+    // Try using YouTube's suggest API through a CORS-friendly approach
+    // If user pasted a URL, extract video ID
+    const vidMatch = query.match(/(?:v=|youtu\.be\/|\/shorts\/)([a-zA-Z0-9_-]{11})/);
+    if(vidMatch){
+      YTC.results = [{id:vidMatch[1], title:'Video: '+vidMatch[1], artist:'YouTube', duration:0, thumb:''}];
+      ytcRenderResults();
+      return;
+    }
+    // Try piped search one more time with a different approach
+    throw new Error('No fallback available');
+  }
+
+  // ── Import YouTube Playlist ──
+  async function ytcImportPlaylist(urlOrId){
+    ytcLog('Importing playlist...');
+    let plId = urlOrId;
+    const m = urlOrId.match(/[?&]list=([a-zA-Z0-9_-]+)/);
+    if(m) plId = m[1];
+
+    const instances = YTC.workingInstance
+      ? [YTC.workingInstance, ...YTC.pipedInstances.filter(i=>i!==YTC.workingInstance)]
+      : [...YTC.pipedInstances];
+
+    for(const inst of instances){
+      try{
+        const r = await fetch(inst + '/playlists/' + plId);
+        if(!r.ok) continue;
+        const data = await r.json();
+        const items = (data.relatedStreams || []).map(mapPipedItem);
+        if(items.length > 0){
+          YTC.workingInstance = inst;
+          const plName = data.name || 'Imported';
+          // Add to queue
+          items.forEach(it => YTC.queue.push(it));
+          ytcSave();
+          ytcLog('Imported ' + items.length + ' tracks from "' + plName + '"');
+          ytcRenderQueue();
+          ytcRenderSidebar();
+          return;
+        }
+      }catch(e){ continue; }
+    }
+    ytcLog('Failed to import playlist. Check URL.');
+  }
+
+  // ── Playback ──
+  function ytcPlay(idx){
+    if(idx < 0 || idx >= YTC.queue.length) return;
+    if(!YTC.ready){ytcLog('Player not ready yet...'); return;}
+    YTC.queueIdx = idx;
+    const track = YTC.queue[idx];
+    YTC.player.loadVideoById(track.id);
+    YTC.player.setVolume(YTC.vol);
+    ytcUpdateNowPlaying(track);
+    ytcLog('▶ ' + track.title);
+  }
+
+  function ytcPlayFromResults(idx){
+    if(idx < 0 || idx >= YTC.results.length) return;
+    const track = YTC.results[idx];
+    // Add to queue and play
+    YTC.queue.push(track);
+    YTC.queueIdx = YTC.queue.length - 1;
+    ytcSave();
+    if(!YTC.ready){ytcLog('Player not ready...'); return;}
+    YTC.player.loadVideoById(track.id);
+    YTC.player.setVolume(YTC.vol);
+    ytcUpdateNowPlaying(track);
+    ytcRenderSidebar();
+    ytcLog('▶ ' + track.title);
+  }
+
+  window.ytcTogglePlay = function(){
+    if(!YTC.ready || !YTC.player) return;
+    const state = YTC.player.getPlayerState();
+    if(state === YT.PlayerState.PLAYING) YTC.player.pauseVideo();
+    else YTC.player.playVideo();
+  };
+  window.ytcNext = function(){
+    if(YTC.queue.length === 0) return;
+    let next;
+    if(YTC.shuffle) next = Math.floor(Math.random()*YTC.queue.length);
+    else next = (YTC.queueIdx + 1) % YTC.queue.length;
+    ytcPlay(next);
+  };
+  window.ytcPrev = function(){
+    if(YTC.queue.length === 0) return;
+    let prev = YTC.queueIdx - 1;
+    if(prev < 0) prev = YTC.queue.length - 1;
+    ytcPlay(prev);
+  };
+  window.ytcToggleShuffle = function(){
+    YTC.shuffle = !YTC.shuffle;
+    document.getElementById('ytcBtnShuffle').classList.toggle('active', YTC.shuffle);
+    ytcLog('Shuffle: ' + (YTC.shuffle?'ON':'OFF'));
+  };
+  window.ytcToggleRepeat = function(){
+    YTC.repeat = !YTC.repeat;
+    document.getElementById('ytcBtnRepeat').classList.toggle('active', YTC.repeat);
+    ytcLog('Repeat: ' + (YTC.repeat?'ON':'OFF'));
+  };
+
+  function ytcOnEnded(){
+    if(YTC.repeat){
+      YTC.player.seekTo(0);
+      YTC.player.playVideo();
+    } else {
+      window.ytcNext();
+    }
+  }
+
+  // ── Timer ──
+  function ytcStartTimer(){
+    if(YTC.interval) clearInterval(YTC.interval);
+    YTC.interval = setInterval(ytcUpdateTime, 500);
+  }
+  function ytcUpdateTime(){
+    if(!YTC.player || !YTC.ready) return;
+    try{
+      const cur = YTC.player.getCurrentTime() || 0;
+      const dur = YTC.player.getDuration() || 0;
+      const pct = dur > 0 ? (cur/dur)*100 : 0;
+      document.getElementById('ytcTimeElapsed').textContent = fmtTime(cur);
+      document.getElementById('ytcTimeDuration').textContent = fmtTime(dur);
+      document.getElementById('ytcNpFill').style.width = pct + '%';
+      document.getElementById('ytcProgressFill').style.width = pct + '%';
+    }catch(e){}
+  }
+  function fmtTime(s){
+    s = Math.floor(s);
+    const m = Math.floor(s/60);
+    const sec = s%60;
+    return m + ':' + (sec<10?'0':'') + sec;
+  }
+
+  // ── Seek ──
+  window.ytcSeek = function(e){
+    if(!YTC.player || !YTC.ready) return;
+    const bar = document.getElementById('ytcNpBar');
+    const rect = bar.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    const dur = YTC.player.getDuration() || 0;
+    YTC.player.seekTo(pct * dur, true);
+  };
+  window.ytcSeekBar = function(e){
+    if(!YTC.player || !YTC.ready) return;
+    const bar = e.currentTarget;
+    const rect = bar.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    const dur = YTC.player.getDuration() || 0;
+    YTC.player.seekTo(pct * dur, true);
+  };
+
+  // ── Volume ──
+  window.ytcSetVolClick = function(e){
+    const bar = e.currentTarget;
+    const rect = bar.getBoundingClientRect();
+    YTC.vol = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+    YTC.vol = Math.max(0, Math.min(100, YTC.vol));
+    if(YTC.player && YTC.ready) YTC.player.setVolume(YTC.vol);
+    document.getElementById('ytcVolFill').style.width = YTC.vol + '%';
+    document.getElementById('ytcVolVal').textContent = YTC.vol;
+    document.getElementById('ytcStatusInfo').textContent = '🔊' + YTC.vol + '%';
+    ytcSave();
+  };
+
+  // ── UI Rendering ──
+  function ytcUpdateNowPlaying(track){
+    document.getElementById('ytcNpTitle').textContent = track.title;
+    document.getElementById('ytcNpArtist').textContent = track.artist;
+    document.getElementById('ytcStatusTitle').textContent = '▶ ' + track.title + ' — ' + track.artist;
+    const thumbEl = document.getElementById('ytcNpThumb');
+    if(track.thumb) thumbEl.innerHTML = '<img src="'+track.thumb+'" alt="">';
+    else if(track.id) thumbEl.innerHTML = '<img src="https://i.ytimg.com/vi/'+track.id+'/mqdefault.jpg" alt="">';
+    else thumbEl.innerHTML = '';
+    ytcRenderUpNext();
+    ytcRenderCurrentTab();
+  }
+
+  function ytcRenderResults(){
+    const el = document.getElementById('ytcResults');
+    if(YTC.results.length === 0){
+      ytcRenderEmpty('No results found.');
+      return;
+    }
+    document.getElementById('ytcResultInfo').textContent = YTC.results.length + ' results';
+    let html = '';
+    YTC.results.forEach((r, i) => {
+      const playing = (YTC.queue[YTC.queueIdx] && YTC.queue[YTC.queueIdx].id === r.id) ? ' playing' : '';
+      html += '<div class="ytc-row'+playing+'" ondblclick="ytcDblClickResult('+i+')">'
+        + '<span class="ytc-row-idx">'+(i+1)+'</span>'
+        + '<span class="ytc-row-title">'+esc(r.title)+'</span>'
+        + '<span class="ytc-row-artist">'+esc(r.artist)+'</span>'
+        + '<span class="ytc-row-dur">'+fmtTime(r.duration)+'</span>'
+        + '<span class="ytc-row-actions">'
+        + '<span class="ytc-row-btn" onclick="event.stopPropagation();ytcPlayResult('+i+')" title="Play">▶</span>'
+        + '<span class="ytc-row-btn" onclick="event.stopPropagation();ytcAddToQueue('+i+')" title="Add to queue">+Q</span>'
+        + '</span></div>';
+    });
+    el.innerHTML = html;
+  }
+
+  function ytcRenderQueue(){
+    const el = document.getElementById('ytcResults');
+    if(YTC.queue.length === 0){
+      ytcRenderEmpty('Queue is empty.<br>Search for music and add tracks.');
+      return;
+    }
+    document.getElementById('ytcResultInfo').textContent = YTC.queue.length + ' in queue';
+    let html = '';
+    YTC.queue.forEach((r, i) => {
+      const playing = (i === YTC.queueIdx) ? ' playing' : '';
+      html += '<div class="ytc-row'+playing+'" ondblclick="ytcPlayQueue('+i+')">'
+        + '<span class="ytc-row-idx">'+(i+1)+'</span>'
+        + '<span class="ytc-row-title">'+esc(r.title)+'</span>'
+        + '<span class="ytc-row-artist">'+esc(r.artist)+'</span>'
+        + '<span class="ytc-row-dur">'+fmtTime(r.duration)+'</span>'
+        + '<span class="ytc-row-actions">'
+        + '<span class="ytc-row-btn" onclick="event.stopPropagation();ytcPlayQueue('+i+')" title="Play">▶</span>'
+        + '<span class="ytc-row-btn" onclick="event.stopPropagation();ytcRemoveFromQueue('+i+')" title="Remove">✕</span>'
+        + '</span></div>';
+    });
+    el.innerHTML = html;
+  }
+
+  function ytcRenderPlaylist(name){
+    const el = document.getElementById('ytcResults');
+    const pl = YTC.playlists[name] || [];
+    if(pl.length === 0){
+      ytcRenderEmpty('Playlist "'+name+'" is empty.');
+      return;
+    }
+    document.getElementById('ytcResultInfo').textContent = pl.length + ' tracks';
+    let html = '';
+    pl.forEach((r, i) => {
+      const playing = (YTC.queue[YTC.queueIdx] && YTC.queue[YTC.queueIdx].id === r.id) ? ' playing' : '';
+      html += '<div class="ytc-row'+playing+'" ondblclick="ytcPlayFromPlaylist(\''+esc(name)+'\','+i+')">'
+        + '<span class="ytc-row-idx">'+(i+1)+'</span>'
+        + '<span class="ytc-row-title">'+esc(r.title)+'</span>'
+        + '<span class="ytc-row-artist">'+esc(r.artist)+'</span>'
+        + '<span class="ytc-row-dur">'+fmtTime(r.duration)+'</span>'
+        + '<span class="ytc-row-actions">'
+        + '<span class="ytc-row-btn" onclick="event.stopPropagation();ytcQueueFromPlaylist(\''+esc(name)+'\','+i+')" title="Queue">+Q</span>'
+        + '<span class="ytc-row-btn" onclick="event.stopPropagation();ytcRemoveFromPlaylist(\''+esc(name)+'\','+i+')" title="Remove">✕</span>'
+        + '</span></div>';
+    });
+    el.innerHTML = html;
+  }
+
+  function ytcRenderUpNext(){
+    const el = document.getElementById('ytcUpNext');
+    if(YTC.queue.length === 0){ el.innerHTML = '<div style="color:#1a3300;font-size:8px;">Empty</div>'; return; }
+    let html = '';
+    const start = YTC.queueIdx + 1;
+    for(let i = start; i < Math.min(start+8, YTC.queue.length); i++){
+      html += '<div class="ytc-np-qitem" onclick="ytcPlayQueue('+i+')">'+esc(YTC.queue[i].title)+'</div>';
+    }
+    if(html === '') html = '<div style="color:#1a3300;font-size:8px;">End of queue</div>';
+    el.innerHTML = html;
+  }
+
+  function ytcRenderSidebar(){
+    const el = document.getElementById('ytcPlaylists');
+    document.getElementById('ytcQueueCount').textContent = '('+YTC.queue.length+')';
+    let html = '';
+    Object.keys(YTC.playlists).forEach(name => {
+      const active = YTC.currentView === name ? ' active' : '';
+      const count = YTC.playlists[name].length;
+      html += '<div class="ytc-sb-item'+active+'" onclick="ytcShowPlaylist(\''+esc(name)+'\')">'
+        + esc(name)+' <span class="ytc-sb-count">('+count+')</span></div>';
+    });
+    el.innerHTML = html;
+  }
+
+  function ytcRenderLoading(){
+    document.getElementById('ytcResults').innerHTML = '<div class="ytc-empty" style="color:#33ff33;">Searching<span class="ytc-blink">...</span></div>';
+  }
+  function ytcRenderEmpty(msg){
+    document.getElementById('ytcResults').innerHTML = '<div class="ytc-empty">'+msg+'</div>';
+  }
+
+  function ytcRenderCurrentTab(){
+    if(YTC.currentTab === 'search') ytcRenderResults();
+    else if(YTC.currentTab === 'queue') ytcRenderQueue();
+    else if(YTC.currentTab === 'library') ytcRenderSidebar();
+  }
+
+  function ytcLog(msg){
+    document.getElementById('ytcHelpLine').textContent = msg;
+  }
+
+  function esc(s){
+    if(!s) return '';
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  // ── Tab switching ──
+  window.ytcSwitchTab = function(tab){
+    YTC.currentTab = tab;
+    document.querySelectorAll('.ytc-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('ytcTab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+    if(tab === 'search') ytcRenderResults();
+    else if(tab === 'queue') ytcRenderQueue();
+    else if(tab === 'library'){
+      const names = Object.keys(YTC.playlists);
+      if(names.length > 0) ytcRenderPlaylist(names[0]);
+      else ytcRenderEmpty('No playlists yet.<br>Use /new &lt;name&gt; to create one.');
+    }
+  };
+
+  // ── Sidebar clicks ──
+  window.ytcShowQueue = function(){
+    YTC.currentView = 'queue';
+    YTC.currentTab = 'queue';
+    document.querySelectorAll('.ytc-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('ytcTabQueue').classList.add('active');
+    document.querySelectorAll('.ytc-sb-item').forEach(i => i.classList.remove('active'));
+    document.querySelector('.ytc-sb-item').classList.add('active');
+    ytcRenderQueue();
+  };
+  window.ytcShowPlaylist = function(name){
+    YTC.currentView = name;
+    YTC.currentTab = 'library';
+    document.querySelectorAll('.ytc-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('ytcTabLibrary').classList.add('active');
+    ytcRenderSidebar();
+    ytcRenderPlaylist(name);
+  };
+  window.ytcNewPlaylist = function(){
+    const name = prompt('Playlist name:');
+    if(!name || !name.trim()) return;
+    YTC.playlists[name.trim()] = [];
+    ytcSave();
+    ytcRenderSidebar();
+    ytcLog('Created playlist: ' + name.trim());
+  };
+
+  // ── Actions ──
+  window.ytcPlayResult = function(i){ ytcPlayFromResults(i); };
+  window.ytcDblClickResult = function(i){ ytcPlayFromResults(i); };
+  window.ytcAddToQueue = function(i){
+    if(i < 0 || i >= YTC.results.length) return;
+    YTC.queue.push(YTC.results[i]);
+    ytcSave();
+    ytcRenderSidebar();
+    ytcLog('Queued: ' + YTC.results[i].title);
+  };
+  window.ytcPlayQueue = function(i){ ytcPlay(i); };
+  window.ytcRemoveFromQueue = function(i){
+    if(i < 0 || i >= YTC.queue.length) return;
+    const removed = YTC.queue.splice(i, 1)[0];
+    if(i < YTC.queueIdx) YTC.queueIdx--;
+    else if(i === YTC.queueIdx) YTC.queueIdx = -1;
+    ytcSave();
+    ytcRenderQueue();
+    ytcRenderSidebar();
+    ytcLog('Removed: ' + removed.title);
+  };
+  window.ytcPlayFromPlaylist = function(name, i){
+    const pl = YTC.playlists[name];
+    if(!pl || i < 0 || i >= pl.length) return;
+    YTC.queue.push(pl[i]);
+    YTC.queueIdx = YTC.queue.length - 1;
+    ytcSave();
+    ytcPlay(YTC.queueIdx);
+  };
+  window.ytcQueueFromPlaylist = function(name, i){
+    const pl = YTC.playlists[name];
+    if(!pl || i < 0 || i >= pl.length) return;
+    YTC.queue.push(pl[i]);
+    ytcSave();
+    ytcRenderSidebar();
+    ytcLog('Queued: ' + pl[i].title);
+  };
+  window.ytcRemoveFromPlaylist = function(name, i){
+    const pl = YTC.playlists[name];
+    if(!pl || i < 0 || i >= pl.length) return;
+    pl.splice(i, 1);
+    ytcSave();
+    ytcRenderPlaylist(name);
+    ytcRenderSidebar();
+  };
+
+  // ── Command Parser ──
+  function ytcExecCmd(raw){
+    const input = raw.trim();
+    if(!input) return;
+
+    // Direct URL detection
+    if(input.match(/youtube\.com\/watch|youtu\.be\//)){
+      const m = input.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      if(m){
+        const track = {id:m[1], title:'YouTube: '+m[1], artist:'', duration:0, thumb:''};
+        YTC.queue.push(track);
+        YTC.queueIdx = YTC.queue.length - 1;
+        ytcSave();
+        ytcPlay(YTC.queueIdx);
+        ytcRenderSidebar();
+        return;
+      }
+    }
+
+    // Playlist URL
+    if(input.match(/[?&]list=/)){
+      ytcImportPlaylist(input);
+      return;
+    }
+
+    // Slash commands
+    if(input.startsWith('/')){
+      const parts = input.slice(1).split(/\s+/);
+      const cmd = parts[0].toLowerCase();
+      const arg = parts.slice(1).join(' ');
+
+      switch(cmd){
+        case 'search': case 's':
+          if(arg) ytcSearch(arg);
+          else ytcLog('Usage: /search <query>');
+          break;
+        case 'play': case 'p':
+          if(!arg){ window.ytcTogglePlay(); break; }
+          const pn = parseInt(arg) - 1;
+          if(YTC.currentTab === 'search' || YTC.currentTab === 'library')
+            ytcPlayFromResults(pn);
+          else ytcPlay(pn);
+          break;
+        case 'queue': case 'q':
+          if(!arg){ ytcShowQueue(); break; }
+          // Support ranges like 1-5
+          if(arg === 'all'){
+            YTC.results.forEach(r => YTC.queue.push(r));
+            ytcSave();
+            ytcRenderSidebar();
+            ytcLog('Queued all ' + YTC.results.length + ' results.');
+          } else if(arg.includes('-')){
+            const [a,b] = arg.split('-').map(Number);
+            for(let i=a-1; i<b && i<YTC.results.length; i++){
+              if(i>=0) YTC.queue.push(YTC.results[i]);
+            }
+            ytcSave();
+            ytcRenderSidebar();
+            ytcLog('Queued tracks ' + a + '-' + b);
+          } else {
+            const qi = parseInt(arg) - 1;
+            ytcAddToQueue(qi);
+          }
+          break;
+        case 'import': case 'i':
+          if(arg) ytcImportPlaylist(arg);
+          else ytcLog('Usage: /import <playlist-url>');
+          break;
+        case 'vol': case 'v':
+          const vol = parseInt(arg);
+          if(!isNaN(vol)){
+            YTC.vol = Math.max(0, Math.min(100, vol));
+            if(YTC.player && YTC.ready) YTC.player.setVolume(YTC.vol);
+            document.getElementById('ytcVolFill').style.width = YTC.vol + '%';
+            document.getElementById('ytcVolVal').textContent = YTC.vol;
+            document.getElementById('ytcStatusInfo').textContent = '🔊' + YTC.vol + '%';
+            ytcSave();
+            ytcLog('Volume: ' + YTC.vol + '%');
+          }
+          break;
+        case 'next': case 'n': window.ytcNext(); break;
+        case 'prev': window.ytcPrev(); break;
+        case 'shuffle': window.ytcToggleShuffle(); break;
+        case 'repeat': window.ytcToggleRepeat(); break;
+        case 'clear':
+          YTC.queue = [];
+          YTC.queueIdx = -1;
+          ytcSave();
+          ytcRenderQueue();
+          ytcRenderSidebar();
+          ytcLog('Queue cleared.');
+          break;
+        case 'new':
+          if(arg){
+            YTC.playlists[arg] = [];
+            ytcSave();
+            ytcRenderSidebar();
+            ytcLog('Created playlist: ' + arg);
+          } else ytcLog('Usage: /new <playlist-name>');
+          break;
+        case 'save':
+          if(!arg){ ytcLog('Usage: /save <playlist-name>'); break; }
+          if(!YTC.playlists[arg]) YTC.playlists[arg] = [];
+          // Save current results or queue to playlist
+          const toSave = YTC.currentTab === 'search' ? YTC.results : YTC.queue;
+          toSave.forEach(r => YTC.playlists[arg].push(r));
+          ytcSave();
+          ytcRenderSidebar();
+          ytcLog('Saved ' + toSave.length + ' tracks to "' + arg + '"');
+          break;
+        case 'del': case 'delete':
+          if(arg && YTC.playlists[arg]){
+            delete YTC.playlists[arg];
+            ytcSave();
+            ytcRenderSidebar();
+            ytcLog('Deleted playlist: ' + arg);
+          } else ytcLog('Usage: /del <playlist-name>');
+          break;
+        case 'help': case 'h':
+          ytcRenderEmpty(
+            '<span style="color:#33ff33;">▒▒▒ DEMON TUBE HELP ▒▒▒</span><br><br>'
+            + '<b style="color:#33ff33;">/search</b> <i>&lt;query&gt;</i> — Search YouTube<br>'
+            + '<b style="color:#33ff33;">/play</b> <i>&lt;n&gt;</i> — Play result/queue item #n<br>'
+            + '<b style="color:#33ff33;">/queue</b> <i>&lt;n&gt;</i> — Add result #n to queue<br>'
+            + '<b style="color:#33ff33;">/queue</b> <i>1-5</i> — Add range to queue<br>'
+            + '<b style="color:#33ff33;">/queue all</b> — Queue all results<br>'
+            + '<b style="color:#33ff33;">/import</b> <i>&lt;url&gt;</i> — Import YouTube playlist<br>'
+            + '<b style="color:#33ff33;">/vol</b> <i>&lt;0-100&gt;</i> — Set volume<br>'
+            + '<b style="color:#33ff33;">/next /prev</b> — Skip tracks<br>'
+            + '<b style="color:#33ff33;">/shuffle /repeat</b> — Toggle modes<br>'
+            + '<b style="color:#33ff33;">/new</b> <i>&lt;name&gt;</i> — Create playlist<br>'
+            + '<b style="color:#33ff33;">/save</b> <i>&lt;name&gt;</i> — Save results to playlist<br>'
+            + '<b style="color:#33ff33;">/del</b> <i>&lt;name&gt;</i> — Delete playlist<br>'
+            + '<b style="color:#33ff33;">/clear</b> — Clear queue<br><br>'
+            + '<span style="color:#336633;">Paste a YouTube URL to play directly.</span><br>'
+            + '<span style="color:#336633;">Paste a playlist URL to import all tracks.</span><br><br>'
+            + '<span style="color:#1a3300;">Keyboard: Space=pause, n=next, p=prev, +/-=vol</span>'
+          );
+          break;
+        default:
+          // Treat unknown slash command as search
+          ytcSearch(input.slice(1));
+      }
+      return;
+    }
+
+    // No slash — treat as search
+    ytcSearch(input);
+  }
+
+  // ── Input handling ──
+  const ytcInputEl = document.getElementById('ytcInput');
+  ytcInputEl.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      ytcExecCmd(this.value);
+      this.value = '';
+    }
+  });
+
+  // Global keyboard shortcuts (only when M0 is active)
+  document.addEventListener('keydown', function(e){
+    if(currentMode !== 0) return;
+    if(document.activeElement === ytcInputEl) return; // don't intercept input
+    switch(e.key){
+      case ' ':
+        e.preventDefault();
+        window.ytcTogglePlay();
+        break;
+      case 'n':
+        window.ytcNext();
+        break;
+      case 'p':
+        window.ytcPrev();
+        break;
+      case '+': case '=':
+        YTC.vol = Math.min(100, YTC.vol + 5);
+        if(YTC.player && YTC.ready) YTC.player.setVolume(YTC.vol);
+        document.getElementById('ytcVolFill').style.width = YTC.vol + '%';
+        document.getElementById('ytcVolVal').textContent = YTC.vol;
+        document.getElementById('ytcStatusInfo').textContent = '🔊' + YTC.vol + '%';
+        ytcSave();
+        break;
+      case '-':
+        YTC.vol = Math.max(0, YTC.vol - 5);
+        if(YTC.player && YTC.ready) YTC.player.setVolume(YTC.vol);
+        document.getElementById('ytcVolFill').style.width = YTC.vol + '%';
+        document.getElementById('ytcVolVal').textContent = YTC.vol;
+        document.getElementById('ytcStatusInfo').textContent = '🔊' + YTC.vol + '%';
+        ytcSave();
+        break;
+      case '/':
+        e.preventDefault();
+        ytcInputEl.focus();
+        break;
+    }
+  });
+
+  // ── On show ──
+  window.ytcOnShow = function(){
+    ytcRenderSidebar();
+    if(YTC.currentTab === 'queue') ytcRenderQueue();
+    ytcInputEl.focus();
+  };
+
+  // Init sidebar on load
+  ytcRenderSidebar();
+})();
+
 </script>
 
 
