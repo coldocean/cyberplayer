@@ -3,6 +3,16 @@
   "outputDirectory": "packages/web/dist-static",
   "installCommand": "bun install",
   "framework": null,
+  "alias": [
+    "www.digitalslayer.com",
+    "demon.digitalslayer.com",
+    "deemah.digitalslayer.com",
+    "player.digitalslayer.com",
+    "robbmobb.digitalslayer.com",
+    "disappoint.digitalslayer.com",
+    "rastix.play.digitalslayer.com",
+    "digitalslayer.com"
+  ],
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/:path*" }
   ]
