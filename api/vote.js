@@ -13,6 +13,8 @@ export default async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  try {
+
   const { action } = req.query;
 
   // ── LIST tracks with votes ──
@@ -119,4 +121,9 @@ export default async function handler(req, res) {
   }
 
   res.status(405).end();
+
+  } catch (err) {
+    console.error('vote error:', err);
+    return res.status(500).json({ error: 'Internal server error', detail: String(err?.message || err) });
+  }
 }

@@ -44,6 +44,8 @@ function calcWin(reels, betRate) {
 export default async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  try {
   if (req.method !== 'POST') return res.status(405).end();
 
   const ip = getIp(req);
@@ -84,4 +86,9 @@ export default async function handler(req, res) {
     new_total: newTotal,
     is_admin: isAdmin
   });
+
+  } catch (err) {
+    console.error('spin error:', err);
+    return res.status(500).json({ error: 'Internal server error', detail: String(err?.message || err) });
+  }
 }

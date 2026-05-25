@@ -8,6 +8,8 @@ export default async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  try {
+
   const ip = getIp(req);
   let body = {};
   try { body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); } catch {}
@@ -63,4 +65,9 @@ export default async function handler(req, res) {
   }
 
   res.status(405).end();
+
+  } catch (err) {
+    console.error('coins error:', err);
+    return res.status(500).json({ error: 'Internal server error', detail: String(err?.message || err) });
+  }
 }

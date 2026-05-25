@@ -24,6 +24,8 @@ export default async function handler(req, res) {
   cors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  try {
+
   // Ensure visit_log and user IP tables exist
   await query(`CREATE TABLE IF NOT EXISTS visit_log (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -308,4 +310,9 @@ export default async function handler(req, res) {
   }
 
   return res.json({ output: `⚠ Unknown command: ${cmd}\nType !help me for available commands`, type: 'warn' });
+
+  } catch (err) {
+    console.error('admin-terminal error:', err);
+    return res.status(500).json({ error: 'Internal server error', detail: String(err?.message || err) });
+  }
 }
