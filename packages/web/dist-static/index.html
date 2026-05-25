@@ -1413,7 +1413,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
   <button class="modebtn" onclick="setMode(2)">M2</button>
   <button class="modebtn" onclick="setMode(3)">M3</button>
   <button class="modebtn" onclick="setMode(4)">M4</button>
-  <button class="modebtn" onclick="setMode(5)" style="position:relative;">M5<span style="position:absolute;top:-6px;right:-8px;background:#cc0000;color:#fff;font-size:6px;padding:1px 3px;border-radius:2px;letter-spacing:1px;">HELL</span></button>
+  <button class="modebtn" onclick="setMode(5)" style="position:relative;">M5<span style="position:absolute;top:-6px;right:-8px;background:#cc0000;color:#fff;font-size:6px;padding:1px 3px;border-radius:2px;letter-spacing:1px;">News from HELL</span></button>
 </div>
 
 <!-- AUTH OVERLAY (shown for non-registered users) -->
@@ -5379,7 +5379,7 @@ window.submitPayment = function() {
   <div style="width:92%;max-width:620px;margin:0 auto;padding:10px 0 80px 0;">
     <!-- Header -->
     <div style="text-align:center;margin-bottom:20px;">
-      <div style="font-size:clamp(22px,5vw,36px);letter-spacing:6px;color:#cc0000;text-shadow:0 0 20px #ff0000,0 0 40px rgba(255,0,0,.4),0 0 80px rgba(180,0,0,.2);font-family:'Creepster',cursive,'VT323',monospace;-webkit-text-stroke:1px #660000;">☠ MESSAGES FROM HELL ☠</div>
+      <div style="font-size:clamp(22px,5vw,36px);letter-spacing:6px;color:#cc0000;text-shadow:0 0 20px #ff0000,0 0 40px rgba(255,0,0,.4),0 0 80px rgba(180,0,0,.2);font-family:'Creepster',cursive,'VT323',monospace;-webkit-text-stroke:1px #660000;">☠ NEWS FROM HELL ☠</div>
       <div style="font-size:8px;letter-spacing:3px;color:#440000;margin-top:6px;">THE DAMNED SPEAK · SCROLL IF YOU DARE</div>
     </div>
 
@@ -5601,7 +5601,7 @@ function hellRenderMessages(){
 
   if(empty) empty.style.display = 'none';
 
-  const isSuperAdmin = loggedInUser && (loggedInUser === 'deemah' || window._userRole === 'superadmin');
+  const isSuperAdmin = loggedInUser && (window._userRole === 'superadmin' || (typeof authUser !== 'undefined' && authUser && authUser.role === 'superadmin'));
 
   // === PINNED FIRST MESSAGE FROM HELL — DJ SUPERNOVAQ ===
   const pinnedCard = document.createElement('div');
@@ -5669,6 +5669,14 @@ function hellRenderMessages(){
     meta.appendChild(time);
 
     if(isSuperAdmin){
+      const edit = document.createElement('span');
+      edit.className = 'hell-msg-del';
+      edit.style.color = '#8888ff';
+      edit.style.borderColor = '#4444aa';
+      edit.textContent = '✎ EDIT';
+      edit.onclick = () => hellEditMessage(msg.id, msg.text, msg.color, msg.author, card);
+      meta.appendChild(edit);
+
       const del = document.createElement('span');
       del.className = 'hell-msg-del';
       del.textContent = '✖ DELETE';
@@ -5685,11 +5693,11 @@ function hellRenderMessages(){
   const adminPanel = document.getElementById('hellAdminPanel');
   const superPanel = document.getElementById('hellSuperadminPanel');
   if(adminPanel){
-    const isAdmin = loggedInUser && (loggedInUser === 'deemah' || window._userRole === 'superadmin' || window._isHellAdmin);
+    const isAdmin = loggedInUser && (window._userRole === 'superadmin' || (typeof authUser !== 'undefined' && authUser && authUser.role === 'superadmin') || window._isHellAdmin);
     adminPanel.style.display = isAdmin ? '' : 'none';
   }
   if(superPanel){
-    const isSA = loggedInUser && (loggedInUser === 'deemah' || window._userRole === 'superadmin');
+    const isSA = loggedInUser && (window._userRole === 'superadmin' || (typeof authUser !== 'undefined' && authUser && authUser.role === 'superadmin'));
     superPanel.style.display = isSA ? '' : 'none';
     if(isSA) hellLoadAdmins();
   }
@@ -5743,6 +5751,79 @@ async function hellDeleteMessage(id){
     });
     hellLoadMessages();
   } catch(e){}
+}
+
+function hellEditMessage(id, text, color, author, card){
+  // Replace card content with inline edit form
+  card.innerHTML = '';
+  card.style.border = '1px solid #4444aa';
+  card.style.background = 'rgba(0,0,40,.4)';
+
+  const label = document.createElement('div');
+  label.style.cssText = 'font-size:8px;letter-spacing:2px;color:#8888ff;margin-bottom:6px;';
+  label.textContent = '✎ EDITING MESSAGE #' + id;
+
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.rows = 4;
+  ta.style.cssText = 'width:100%;background:#0a0020;border:1px solid #4444aa;color:#cc88ff;font-family:"Share Tech Mono",monospace;font-size:11px;padding:8px;box-sizing:border-box;resize:vertical;outline:none;';
+
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap;';
+
+  const clbl = document.createElement('label');
+  clbl.style.cssText = 'font-size:8px;color:#6666aa;letter-spacing:1px;';
+  clbl.textContent = 'COLOR:';
+  const cinp = document.createElement('input');
+  cinp.type = 'color';
+  cinp.value = color || '#ff4444';
+  cinp.style.cssText = 'width:32px;height:24px;border:1px solid #4444aa;background:#0a0020;cursor:pointer;';
+
+  const albl = document.createElement('label');
+  albl.style.cssText = 'font-size:8px;color:#6666aa;letter-spacing:1px;margin-left:8px;';
+  albl.textContent = 'AUTHOR:';
+  const ainp = document.createElement('input');
+  ainp.type = 'text';
+  ainp.value = author || 'SATAN';
+  ainp.style.cssText = 'flex:1;min-width:80px;background:#0a0020;border:1px solid #4444aa;color:#cc88ff;font-family:"Share Tech Mono",monospace;font-size:10px;padding:4px 8px;outline:none;';
+
+  const saveBtn = document.createElement('button');
+  saveBtn.textContent = '⛧ SAVE';
+  saveBtn.style.cssText = 'background:linear-gradient(135deg,#0a0030,#1a0060);border:1px solid #6666cc;color:#aaaaff;font-family:"Share Tech Mono",monospace;font-size:9px;letter-spacing:2px;padding:6px 14px;cursor:pointer;';
+  saveBtn.onclick = () => hellSaveEdit(id, ta.value, cinp.value, ainp.value);
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.textContent = '✖ CANCEL';
+  cancelBtn.style.cssText = 'background:linear-gradient(135deg,#2a0000,#440000);border:1px solid #880000;color:#ff4444;font-family:"Share Tech Mono",monospace;font-size:9px;letter-spacing:2px;padding:6px 14px;cursor:pointer;';
+  cancelBtn.onclick = () => hellLoadMessages();
+
+  row.appendChild(clbl);
+  row.appendChild(cinp);
+  row.appendChild(albl);
+  row.appendChild(ainp);
+  row.appendChild(saveBtn);
+  row.appendChild(cancelBtn);
+
+  card.appendChild(label);
+  card.appendChild(ta);
+  card.appendChild(row);
+}
+
+async function hellSaveEdit(id, text, color, author){
+  if(!text.trim()){ alert('Message cannot be empty'); return; }
+  try {
+    const r = await fetch('/api/hell-messages?action=edit', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
+      body:JSON.stringify({id, text: text.trim(), color, author})
+    });
+    const d = await r.json();
+    if(d.ok){
+      hellLoadMessages();
+    } else {
+      alert(d.error || 'Edit failed');
+    }
+  } catch(e){ alert('Network error'); }
 }
 
 async function hellAddAdmin(){

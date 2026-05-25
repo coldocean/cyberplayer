@@ -58,6 +58,23 @@ export default async function handler(req, res) {
     return res.json({ ok: true });
   }
 
+  // POST — edit message (superadmin only)
+  if (req.method === 'POST' && action === 'edit') {
+    const auth = req.headers.authorization?.replace('Bearer ', '');
+    if (!auth) return res.status(401).json({ error: 'Auth required' });
+    const users = await query('SELECT username, role FROM users WHERE token = ?', [auth]);
+    if (!users.length) return res.status(401).json({ error: 'Invalid token' });
+    const user = users[0];
+    if (user.role !== 'superadmin' && user.username !== 'deemah') return res.status(403).json({ error: 'Superadmin only' });
+
+    const { id, text, color, author } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    if (!id || !text) return res.status(400).json({ error: 'ID and text required' });
+    await query('UPDATE hell_messages SET text = ?, color = ?, author = ? WHERE id = ?', [
+      text, color || '#ff4444', author || 'SATAN', id
+    ]);
+    return res.json({ ok: true });
+  }
+
   // POST — delete message (superadmin only)
   if (req.method === 'POST' && action === 'delete') {
     const auth = req.headers.authorization?.replace('Bearer ', '');
