@@ -5577,6 +5577,9 @@ function triggerHacked() {
 // Start the 40-min timer on load
 document.addEventListener('DOMContentLoaded', startHackedTimer);
 
+// Check for invite link on page load
+document.addEventListener('DOMContentLoaded', () => { setTimeout(hellCheckInviteParam, 500); });
+
 // eclipse animation removed
 
 // DEV MODE: only clear state if ?dev in URL
@@ -6005,6 +6008,7 @@ window.submitPayment = function() {
     <button id="hellTabCompose" onclick="hellSwitchTab('compose')" style="flex:1;padding:10px;background:rgba(40,0,0,.6);border:none;border-bottom:2px solid #cc0000;color:#ff4444;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;">📝 COMPOSE</button>
     <button id="hellTabManage" onclick="hellSwitchTab('manage')" style="flex:1;padding:10px;background:rgba(20,0,0,.4);border:none;border-bottom:2px solid transparent;color:#884444;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;">📋 MANAGE</button>
     <button id="hellTabAdmins" onclick="hellSwitchTab('admins')" style="flex:1;padding:10px;background:rgba(20,0,0,.4);border:none;border-bottom:2px solid transparent;color:#884444;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;display:none;">👑 ADMINS</button>
+    <button id="hellTabPinned" onclick="hellSwitchTab('pinned')" style="flex:1;padding:10px;background:rgba(20,0,0,.4);border:none;border-bottom:2px solid transparent;color:#884444;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;display:none;">📌 PINNED</button>
   </div>
 
   <!-- Scrollable content area -->
@@ -6062,6 +6066,55 @@ window.submitPayment = function() {
       </div>
       <div style="font-size:8px;color:#880000;letter-spacing:2px;margin-bottom:6px;">CURRENT ADMINS</div>
       <div id="hellAdminList" style="display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto;"></div>
+
+      <!-- Invite link section (superadmin only) -->
+      <div style="margin-top:24px;padding-top:16px;border-top:1px solid #330000;">
+        <div style="font-size:8px;color:#880000;letter-spacing:2px;margin-bottom:8px;">🔗 CREATE ADMIN INVITE LINK</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;gap:8px;">
+            <input id="hellInviteName" type="text" placeholder="username for new admin" style="flex:1;background:#0f0000;border:1px solid #440000;color:#cc4444;font-family:'Share Tech Mono',monospace;font-size:10px;padding:6px 8px;outline:none;">
+          </div>
+          <div style="display:flex;gap:8px;">
+            <input id="hellInvitePassword" type="text" placeholder="password" style="flex:1;background:#0f0000;border:1px solid #440000;color:#cc4444;font-family:'Share Tech Mono',monospace;font-size:10px;padding:6px 8px;outline:none;">
+            <select id="hellInviteRole" style="background:#0f0000;border:1px solid #440000;color:#cc4444;font-family:'Share Tech Mono',monospace;font-size:10px;padding:6px 8px;outline:none;">
+              <option value="admin">ADMIN</option>
+              <option value="superadmin">SUPERADMIN</option>
+            </select>
+          </div>
+          <button onclick="hellCreateInvite()" style="background:linear-gradient(135deg,#1a0020,#3a0040);border:1px solid #8844aa;color:#cc88ff;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;padding:8px 14px;cursor:pointer;">🔗 GENERATE INVITE LINK</button>
+          <div id="hellInviteResult" style="font-size:9px;color:#aa4444;margin-top:4px;min-height:16px;word-break:break-all;"></div>
+          <input id="hellInviteLink" type="text" readonly style="display:none;background:#0a0000;border:1px solid #660044;color:#cc88ff;font-family:'Share Tech Mono',monospace;font-size:9px;padding:6px 8px;outline:none;cursor:pointer;" onclick="this.select();document.execCommand('copy');hellShowToast('Link copied!');">
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PINNED TAB (admin/superadmin) ══ -->
+    <div id="hellPanelPinned" style="display:none;max-width:600px;margin:0 auto;">
+      <div style="font-size:9px;letter-spacing:3px;color:#880000;margin-bottom:12px;">📌 EDIT PINNED MESSAGE</div>
+      <div style="font-size:8px;color:#660000;letter-spacing:1px;margin-bottom:6px;">This message appears at the top of NEWS FROM HELL for all visitors.</div>
+
+      <div style="margin-bottom:6px;font-size:8px;color:#660000;letter-spacing:1px;margin-top:12px;">TITLE:</div>
+      <input id="hellPinnedTitle" type="text" value="🦾 Dj SuperNovaq 🦾" style="width:100%;background:#0f0000;border:1px solid #440000;color:#ff6666;font-family:'Share Tech Mono',monospace;font-size:12px;padding:8px;box-sizing:border-box;outline:none;margin-bottom:10px;">
+
+      <div style="margin-bottom:6px;font-size:8px;color:#660000;letter-spacing:1px;">MESSAGE:</div>
+      <textarea id="hellPinnedText" rows="12" style="width:100%;background:#0f0000;border:1px solid #440000;color:#ff6666;font-family:'Share Tech Mono',monospace;font-size:11px;padding:8px;box-sizing:border-box;resize:vertical;outline:none;line-height:1.5;"></textarea>
+
+      <div style="margin-bottom:6px;font-size:8px;color:#660000;letter-spacing:1px;margin-top:10px;">AUTHOR:</div>
+      <input id="hellPinnedAuthor" type="text" value="⛧ DJ SUPERNOVAQ" style="width:100%;background:#0f0000;border:1px solid #440000;color:#cc4444;font-family:'Share Tech Mono',monospace;font-size:10px;padding:6px 8px;box-sizing:border-box;outline:none;margin-bottom:14px;">
+
+      <div style="display:flex;gap:10px;">
+        <button onclick="hellPreviewPinned()" style="flex:1;background:linear-gradient(135deg,#0a0020,#1a0040);border:1px solid #4444aa;color:#8888ff;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 14px;cursor:pointer;">👁 PREVIEW</button>
+        <button onclick="hellSavePinned()" style="flex:1;background:linear-gradient(135deg,#2a0000,#550000);border:1px solid #aa0000;color:#ff4444;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:10px 14px;cursor:pointer;">📌 SAVE PINNED</button>
+      </div>
+
+      <div id="hellPinnedPreview" style="display:none;margin-top:16px;border:1px dashed #660000;padding:14px;background:rgba(20,0,0,.5);">
+        <div style="font-size:8px;letter-spacing:2px;color:#660000;margin-bottom:8px;">👁 PREVIEW</div>
+        <div id="hellPinnedPreviewTitle" style="font-family:'Creepster',cursive;font-size:22px;color:#ff2222;text-shadow:0 0 15px rgba(255,0,0,.6);margin-bottom:8px;letter-spacing:2px;"></div>
+        <div id="hellPinnedPreviewContent" style="color:#ff4444;font-size:11px;line-height:1.5;white-space:pre-line;"></div>
+        <div id="hellPinnedPreviewMeta" style="display:flex;justify-content:space-between;margin-top:10px;font-size:8px;color:#550000;"></div>
+      </div>
+
+      <div id="hellPinnedResult" style="font-size:9px;color:#aa4444;margin-top:10px;min-height:16px;"></div>
     </div>
 
   </div>
@@ -6202,9 +6255,19 @@ var hellLoaded = false;
 
 async function hellLoadMessages(){
   try {
-    const r = await fetch('/api/hell-messages?action=list');
-    const d = await r.json();
-    if(d.ok) hellMessages = d.messages || [];
+    const [msgR, pinR] = await Promise.all([
+      fetch('/api/hell-messages?action=list'),
+      fetch('/api/hell-messages?action=get-pinned').catch(() => null)
+    ]);
+    const msgD = await msgR.json();
+    if(msgD.ok) hellMessages = msgD.messages || [];
+    if(pinR){
+      const pinD = await pinR.json();
+      if(pinD.ok && pinD.pinned){
+        _hellPinnedData = pinD.pinned;
+        localStorage.setItem('hell_pinned', JSON.stringify(pinD.pinned));
+      }
+    }
   } catch(e){ console.warn('Hell messages load failed:', e); }
   hellLoaded = true;
   hellRenderMessages();
@@ -6220,10 +6283,20 @@ function hellRenderMessages(){
 
   if(empty) empty.style.display = 'none';
 
-  const isSuperAdmin = loggedInUser && (window._userRole === 'superadmin' || (typeof authUser !== 'undefined' && authUser && authUser.role === 'superadmin'));
-  const isHellAdmin = isSuperAdmin || (loggedInUser && (window._userRole === 'admin' || window._isHellAdmin));
+  const isSuperAdmin = (typeof authUser !== 'undefined' && authUser && authUser.role === 'superadmin');
+  const isHellAdmin = isSuperAdmin || (typeof authUser !== 'undefined' && authUser && authUser.role === 'admin');
 
-  // === PINNED FIRST MESSAGE FROM HELL — DJ SUPERNOVAQ ===
+  // === PINNED FIRST MESSAGE FROM HELL — loads from DB or localStorage ===
+  const _defaultPinned = {
+    title: '🦾 Dj SuperNovaq 🦾',
+    text: 'SEREDINA feat LATENTNIY GOMOSEKSUALIST\n\nDJ NOVAQ - SEREDINA TRACKA feat RUNI, ZERKALO, JENYAVIY\nmix 2026 top on beatport in HELL\n\nshall you open your anus bigger?\nYou thought you were safe...\n\nYou was living under Riga.\nCrawling through the basements of Tornakalns.\nMixing shit up RIX to LIEPAJA\non the train of the damned.\n\nThe bass was so deep it cracked\nthe foundations of Jugla.\nEvery track a confession.\nEvery beat a sin.\n\n--> V ETOM DOME NIKTO NE SPIT.\n--> V ETOM DOME ZHARJAT V ZHOPU, DA BASSY DAJUT.\n--> V DOME STRASHNO DAZHE MASHE, MASHI RUKOI ODNOI DROCHI.\n--> YA TERJAJU KORNI.\n\nThe walls bleed frequencies.\nThe speakers scream in Latvian.\nNo one escapes the MIX.',
+    author: '⛧ DJ SUPERNOVAQ'
+  };
+  // Try cached pinned data: _hellPinnedData (from API), localStorage, or default
+  let _pd = _hellPinnedData;
+  if(!_pd){ try { _pd = JSON.parse(localStorage.getItem('hell_pinned')); } catch(e){} }
+  if(!_pd) _pd = _defaultPinned;
+
   const pinnedCard = document.createElement('div');
   pinnedCard.className = 'hell-msg-card';
   pinnedCard.style.borderColor = '#cc0000';
@@ -6236,7 +6309,7 @@ function hellRenderMessages(){
 
   const pinnedTitle = document.createElement('div');
   pinnedTitle.style.cssText = 'font-family:Creepster,cursive;font-size:22px;color:#ff2222;text-shadow:0 0 15px rgba(255,0,0,.6);margin-bottom:8px;letter-spacing:2px;';
-  pinnedTitle.textContent = '🦾 Dj SuperNovaq 🦾';
+  pinnedTitle.textContent = _pd.title || _defaultPinned.title;
 
   const pinnedText = document.createElement('div');
   pinnedText.className = 'hell-msg-text';
@@ -6245,13 +6318,13 @@ function hellRenderMessages(){
   pinnedText.style.whiteSpace = 'pre-line';
   pinnedText.style.fontSize = '11px';
   pinnedText.style.lineHeight = '1.5';
-  pinnedText.textContent = 'SEREDINA feat LATENTNIY GOMOSEKSUALIST\n\nDJ NOVAQ - SEREDINA TRACKA feat RUNI, ZERKALO, JENYAVIY\nmix 2026 top on beatport in HELL\n\nshall you open your anus bigger?\nYou thought you were safe...\n\nYou was living under Riga.\nCrawling through the basements of Tornakalns.\nMixing shit up RIX to LIEPAJA\non the train of the damned.\n\nThe bass was so deep it cracked\nthe foundations of Jugla.\nEvery track a confession.\nEvery beat a sin.\n\n--> V ETOM DOME NIKTO NE SPIT.\n--> V ETOM DOME ZHARJAT V ZHOPU, DA BASSY DAJUT.\n--> V DOME STRASHNO DAZHE MASHE, MASHI RUKOI ODNOI DROCHI.\n--> YA TERJAJU KORNI.\n\nThe walls bleed frequencies.\nThe speakers scream in Latvian.\nNo one escapes the MIX.';
+  pinnedText.textContent = _pd.text || _defaultPinned.text;
 
   const pinnedMeta = document.createElement('div');
   pinnedMeta.className = 'hell-msg-meta';
   const pinnedAuthor = document.createElement('span');
   pinnedAuthor.className = 'hell-msg-author';
-  pinnedAuthor.textContent = '⛧ DJ SUPERNOVAQ';
+  pinnedAuthor.textContent = _pd.author || _defaultPinned.author;
   pinnedMeta.appendChild(pinnedAuthor);
   const pinnedTime = document.createElement('span');
   pinnedTime.textContent = '∞ ETERNAL';
@@ -6312,7 +6385,7 @@ function hellRenderMessages(){
   // Show ADD/EDIT NEWS button for admins and superadmins
   const adminBtnWrap = document.getElementById('hellAdminBtnWrap');
   if(adminBtnWrap){
-    const isAdmin = loggedInUser && (window._userRole === 'superadmin' || (typeof authUser !== 'undefined' && authUser && authUser.role === 'superadmin') || window._userRole === 'admin' || window._isHellAdmin);
+    const isAdmin = (typeof authUser !== 'undefined' && authUser && (authUser.role === 'superadmin' || authUser.role === 'admin'));
     adminBtnWrap.style.display = isAdmin ? '' : 'none';
   }
 }
@@ -6325,8 +6398,12 @@ function hellOpenNewsEditor(){
   hellSwitchTab('compose');
   // Show admins tab only for superadmin
   const adminsTab = document.getElementById('hellTabAdmins');
-  const isSA = loggedInUser && (window._userRole === 'superadmin' || (typeof authUser !== 'undefined' && authUser && authUser.role === 'superadmin'));
+  const isSA = (typeof authUser !== 'undefined' && authUser && authUser.role === 'superadmin');
   if(adminsTab) adminsTab.style.display = isSA ? '' : 'none';
+  // Show pinned tab for admin+superadmin
+  const pinnedTab = document.getElementById('hellTabPinned');
+  const isPinnedAdmin = (typeof authUser !== 'undefined' && authUser && (authUser.role === 'superadmin' || authUser.role === 'admin'));
+  if(pinnedTab) pinnedTab.style.display = isPinnedAdmin ? '' : 'none';
 }
 function hellCloseNewsEditor(){
   const ed = document.getElementById('hellNewsEditor');
@@ -6334,8 +6411,8 @@ function hellCloseNewsEditor(){
   hellLoadMessages(); // refresh main view
 }
 function hellSwitchTab(tab){
-  const tabs = {compose:'hellPanelCompose',manage:'hellPanelManage',admins:'hellPanelAdmins'};
-  const btns = {compose:'hellTabCompose',manage:'hellTabManage',admins:'hellTabAdmins'};
+  const tabs = {compose:'hellPanelCompose',manage:'hellPanelManage',admins:'hellPanelAdmins',pinned:'hellPanelPinned'};
+  const btns = {compose:'hellTabCompose',manage:'hellTabManage',admins:'hellTabAdmins',pinned:'hellTabPinned'};
   Object.keys(tabs).forEach(k => {
     const p = document.getElementById(tabs[k]);
     const b = document.getElementById(btns[k]);
@@ -6348,6 +6425,7 @@ function hellSwitchTab(tab){
   });
   if(tab === 'manage') hellRenderManageList();
   if(tab === 'admins') hellLoadAdmins();
+  if(tab === 'pinned') hellLoadPinnedEditor();
 }
 function hellRenderManageList(){
   const list = document.getElementById('hellManageList');
@@ -6674,6 +6752,126 @@ async function hellRemoveAdmin(email){
     });
     hellLoadAdmins();
   } catch(e){}
+}
+
+// ═══ PINNED MESSAGE EDITOR ═══
+var _hellPinnedData = null;
+
+async function hellLoadPinnedEditor(){
+  try {
+    const r = await fetch('/api/hell-messages?action=get-pinned');
+    const d = await r.json();
+    if(d.ok && d.pinned){
+      _hellPinnedData = d.pinned;
+      const ti = document.getElementById('hellPinnedTitle');
+      const tx = document.getElementById('hellPinnedText');
+      const au = document.getElementById('hellPinnedAuthor');
+      if(ti) ti.value = d.pinned.title || '🦾 Dj SuperNovaq 🦾';
+      if(tx) tx.value = d.pinned.text || '';
+      if(au) au.value = d.pinned.author || '⛧ DJ SUPERNOVAQ';
+    }
+  } catch(e){ console.error('loadPinned err:', e); }
+}
+
+function hellPreviewPinned(){
+  const ti = document.getElementById('hellPinnedTitle')?.value || '';
+  const tx = document.getElementById('hellPinnedText')?.value || '';
+  const au = document.getElementById('hellPinnedAuthor')?.value || '';
+  const prev = document.getElementById('hellPinnedPreview');
+  if(!prev) return;
+  prev.style.display = '';
+  document.getElementById('hellPinnedPreviewTitle').textContent = ti;
+  document.getElementById('hellPinnedPreviewContent').textContent = tx;
+  document.getElementById('hellPinnedPreviewMeta').innerHTML = '<span style="color:#cc4444;">' + au + '</span><span>∞ ETERNAL</span>';
+}
+
+async function hellSavePinned(){
+  const ti = document.getElementById('hellPinnedTitle')?.value || '';
+  const tx = document.getElementById('hellPinnedText')?.value || '';
+  const au = document.getElementById('hellPinnedAuthor')?.value || '';
+  const res = document.getElementById('hellPinnedResult');
+  if(!tx.trim()){ if(res) res.textContent = '⚠ Message cannot be empty'; return; }
+  try {
+    if(res) res.textContent = 'Saving...';
+    const r = await fetch('/api/hell-messages?action=set-pinned', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
+      body:JSON.stringify({title:ti, text:tx, author:au})
+    });
+    const d = await r.json();
+    if(d.ok){
+      if(res) res.innerHTML = '<span style="color:#00aa44;">✓ PINNED MESSAGE SAVED</span>';
+      // Update local cache
+      _hellPinnedData = {title:ti, text:tx, author:au};
+      localStorage.setItem('hell_pinned', JSON.stringify(_hellPinnedData));
+      // Re-render messages to show updated pinned
+      hellRenderMessages();
+    } else {
+      if(res) res.textContent = '⚠ ' + (d.error || 'Failed to save');
+    }
+  } catch(e){ if(res) res.textContent = '⚠ Network error'; }
+}
+
+// ═══ ADMIN INVITE LINK SYSTEM ═══
+async function hellCreateInvite(){
+  const name = document.getElementById('hellInviteName')?.value?.trim();
+  const password = document.getElementById('hellInvitePassword')?.value?.trim();
+  const role = document.getElementById('hellInviteRole')?.value || 'admin';
+  const res = document.getElementById('hellInviteResult');
+  const linkEl = document.getElementById('hellInviteLink');
+  if(!name || !password){ if(res) res.textContent = '⚠ Username and password required'; return; }
+  if(password.length < 6){ if(res) res.textContent = '⚠ Password must be at least 6 chars'; return; }
+  try {
+    if(res) res.textContent = 'Creating invite...';
+    const r = await fetch('/api/auth-user?action=create-invite', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
+      body:JSON.stringify({name, password, role})
+    });
+    const d = await r.json();
+    if(d.ok && d.url){
+      if(res) res.innerHTML = '<span style="color:#cc88ff;">✓ Invite created! Expires in 30 min. Click link to copy:</span>';
+      if(linkEl){ linkEl.style.display = ''; linkEl.value = d.url; }
+    } else {
+      if(res) res.textContent = '⚠ ' + (d.error || 'Failed');
+      if(linkEl) linkEl.style.display = 'none';
+    }
+  } catch(e){ if(res) res.textContent = '⚠ Network error'; }
+}
+
+// Auto-redeem invite on page load
+async function hellCheckInviteParam(){
+  const params = new URLSearchParams(window.location.search);
+  const inviteToken = params.get('invite');
+  if(!inviteToken) return;
+  try {
+    const r = await fetch('/api/auth-user?action=redeem-invite', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({token:inviteToken})
+    });
+    const d = await r.json();
+    if(d.ok && d.token){
+      // Auto-login with the new account
+      authToken = d.token;
+      authUser = d.user;
+      localStorage.setItem('authToken', d.token);
+      localStorage.setItem('authUser', JSON.stringify(d.user));
+      // Clean URL
+      const url = new URL(window.location);
+      url.searchParams.delete('invite');
+      window.history.replaceState({}, '', url);
+      // Show welcome
+      alert('Welcome, ' + d.user.name + '! You are now ' + d.user.role.toUpperCase() + '.');
+      location.reload();
+    } else {
+      alert('Invite link error: ' + (d.error || 'Invalid or expired invite link'));
+      // Clean URL
+      const url = new URL(window.location);
+      url.searchParams.delete('invite');
+      window.history.replaceState({}, '', url);
+    }
+  } catch(e){ console.error('invite redeem error:', e); }
 }
 
 // Load hell messages when switching to M5

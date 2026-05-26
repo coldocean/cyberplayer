@@ -30,7 +30,16 @@ export default async function handler(req, res) {
       pinned INTEGER DEFAULT 0
     )`).catch(()=>{});
 
-    await query(`CREATE TABLE IF NOT EXISTS hell_admins (
+    await query(`CREATE TABLE IF NOT EXISTS hell_pinned (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT DEFAULT '',
+      text TEXT NOT NULL,
+      author TEXT DEFAULT '⛧ DJ SUPERNOVAQ',
+      updated_at TEXT DEFAULT (datetime('now')),
+      updated_by TEXT
+    )`).catch(()=>{});
+
+    await query(`CREATE TABLE IF NOT EXISTS hell_admins (`
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT NOT NULL UNIQUE,
       confirmed INTEGER DEFAULT 0,
@@ -54,7 +63,9 @@ export default async function handler(req, res) {
       if (!user) return { error: 'Auth required', status: 401 };
       const isSuperAdmin = user.role === 'superadmin' || user.name?.toLowerCase() === 'deemah';
       if (isSuperAdmin) return { user, isSuperAdmin: true };
-      // Check hell_admins table
+      // Check users table role
+      if (user.role === 'admin') return { user, isSuperAdmin: false };
+      // Check hell_admins table (legacy)
       const admins = await query('SELECT * FROM hell_admins WHERE email = ? AND confirmed = 1', [user.name]);
       if (admins.length) return { user, isSuperAdmin: false };
       return { error: 'Not admin', status: 403 };
@@ -154,6 +165,33 @@ export default async function handler(req, res) {
 
       const { email } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
       await query('DELETE FROM hell_admins WHERE email = ?', [email]);
+      return res.json({ ok: true });
+    }
+
+    // GET — get pinned message (public)
+    if (req.method === 'GET' && action === 'get-pinned') {
+      const rows = await query('SELECT title, text, author, updated_at FROM hell_pinned ORDER BY id DESC LIMIT 1');
+      if (rows.length) {
+        return res.json({ ok: true, pinned: rows[0] });
+      }
+      return res.json({ ok: true, pinned: null });
+    }
+
+    // POST — set pinned message (admin/superadmin)
+    if (req.method === 'POST' && action === 'set-pinned') {
+      const check = await requireAdmin();
+      if (check.error) return res.status(check.status).json({ error: check.error });
+      const { user } = check;
+
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      const { title, text, author } = body;
+      if (!text) return res.status(400).json({ error: 'Text required' });
+
+      // Upsert: delete all old, insert new
+      await query('DELETE FROM hell_pinned');
+      await query('INSERT INTO hell_pinned (title, text, author, updated_by) VALUES (?, ?, ?, ?)', [
+        title || '', text, author || '⛧ DJ SUPERNOVAQ', user.name
+      ]);
       return res.json({ ok: true });
     }
 

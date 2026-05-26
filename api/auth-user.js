@@ -205,6 +205,99 @@ export default async function handler(req, res) {
     return res.json({ ok: true });
   }
 
+  // ── CREATE INVITE (superadmin only) ──
+  if (req.method === 'POST' && action === 'create-invite') {
+    const auth = req.headers['authorization'];
+    if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ error: 'Not logged in' });
+    const token = auth.slice(7);
+    const sess = await query('SELECT u.id, u.name, u.role FROM sessions s JOIN users u ON s.user_id = u.id WHERE s.token = ? AND s.expires_at > ?', [token, NOW()]);
+    if (!sess.length) return res.status(401).json({ error: 'Session expired' });
+    const caller = sess[0];
+    if (caller.role !== 'superadmin') return res.status(403).json({ error: 'Superadmin only' });
+
+    const { name, password, role } = body;
+    if (!name || !password) return res.status(400).json({ error: 'name and password required' });
+    if (password.length < 6) return res.status(400).json({ error: 'Password min 6 chars' });
+    if (role && !['admin', 'superadmin'].includes(role)) return res.status(400).json({ error: 'Role must be admin or superadmin' });
+
+    // Check name not taken
+    const existingName = await query('SELECT id FROM users WHERE LOWER(name) = ?', [name.toLowerCase()]);
+    if (existingName.length) return res.status(409).json({ error: 'Username already taken' });
+
+    // Create invite table if needed
+    await query(`CREATE TABLE IF NOT EXISTS admin_invites (
+      id TEXT PRIMARY KEY,
+      token TEXT NOT NULL UNIQUE,
+      name TEXT NOT NULL,
+      password_hash TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'admin',
+      created_by TEXT,
+      expires_at INTEGER NOT NULL,
+      redeemed INTEGER DEFAULT 0
+    )`).catch(()=>{});
+
+    const inviteId = 'inv_' + crypto.randomBytes(8).toString('hex');
+    const inviteToken = crypto.randomBytes(32).toString('base64url');
+    const hash = hashPassword(password);
+    const expiresAt = NOW() + 30 * 60; // 30 minutes
+
+    await query('INSERT INTO admin_invites (id, token, name, password_hash, role, created_by, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [inviteId, inviteToken, name, hash, role || 'admin', caller.name, expiresAt]);
+
+    const siteUrl = process.env.SITE_URL || 'https://demon.digitalslayer.com';
+    const inviteUrl = `${siteUrl}?invite=${inviteToken}`;
+
+    return res.json({ ok: true, url: inviteUrl, expires_in: '30 minutes' });
+  }
+
+  // ── REDEEM INVITE ──
+  if (req.method === 'POST' && action === 'redeem-invite') {
+    const { token: invToken } = body;
+    if (!invToken) return res.status(400).json({ error: 'Token required' });
+
+    // Create invite table if needed
+    await query(`CREATE TABLE IF NOT EXISTS admin_invites (
+      id TEXT PRIMARY KEY,
+      token TEXT NOT NULL UNIQUE,
+      name TEXT NOT NULL,
+      password_hash TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'admin',
+      created_by TEXT,
+      expires_at INTEGER NOT NULL,
+      redeemed INTEGER DEFAULT 0
+    )`).catch(()=>{});
+
+    const rows = await query('SELECT * FROM admin_invites WHERE token = ? AND redeemed = 0 AND expires_at > ?', [invToken, NOW()]);
+    if (!rows.length) return res.status(400).json({ error: 'Invalid or expired invite link' });
+    const invite = rows[0];
+
+    // Check name not taken (edge case: someone registered same name after invite was created)
+    const existingName = await query('SELECT id FROM users WHERE LOWER(name) = ?', [invite.name.toLowerCase()]);
+    if (existingName.length) return res.status(409).json({ error: 'Username already taken (someone registered it after invite was created)' });
+
+    // Create user
+    const userId = genId();
+    await query('INSERT INTO users (id, name, email, password_hash, role, email_verified) VALUES (?, ?, ?, ?, ?, 1)',
+      [userId, invite.name, invite.name.toLowerCase() + '@invite.local', invite.password_hash, invite.role]);
+
+    // Mark invite as redeemed
+    await query('UPDATE admin_invites SET redeemed = 1 WHERE id = ?', [invite.id]);
+
+    // Create session
+    const sessionId = 'ses_' + crypto.randomBytes(16).toString('hex');
+    const sessionToken = genSessionToken();
+    const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || '0.0.0.0';
+    const ua = req.headers['user-agent'] || '';
+    await query('INSERT INTO sessions (id, user_id, token, expires_at, ip_address, user_agent) VALUES (?, ?, ?, ?, ?, ?)',
+      [sessionId, userId, sessionToken, NOW() + WEEK, ip, ua]);
+
+    return res.json({
+      ok: true,
+      token: sessionToken,
+      user: { id: userId, name: invite.name, email: invite.name.toLowerCase() + '@invite.local', role: invite.role, email_verified: true }
+    });
+  }
+
   res.status(405).end();
 
   } catch (err) {
