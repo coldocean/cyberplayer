@@ -1622,6 +1622,8 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
   animation:glumPopIn .3s ease-out;
 }
 @keyframes glumPopIn{0%{opacity:0;transform:scale(.9);}100%{opacity:1;transform:scale(1);}}
+@keyframes coinFloat{0%{opacity:1;transform:translateY(0) scale(1);}60%{opacity:1;transform:translateY(-22px) scale(1.1);}100%{opacity:0;transform:translateY(-38px) scale(.8);}}
+@keyframes coinPulse{0%{transform:scale(1);}50%{transform:scale(1.25);}100%{transform:scale(1);}}
 #glumInfoPopup .glum-card{
   background:linear-gradient(180deg,#0d0000 0%,#1a0505 100%);
   border:1px solid #440000;border-radius:8px;padding:16px 20px;
@@ -3755,6 +3757,8 @@ async function loadGuestCoins() {
   }
 }
 
+let _prevCoinCount = -1; // track previous coin value for change animation
+
 function updateCoinHud(d) {
   const hud = document.getElementById('coinHud');
   const nameEl = document.getElementById('coinHudName');
@@ -3782,7 +3786,57 @@ function updateCoinHud(d) {
     hud.style.borderColor = authUser.role === 'superadmin' ? '#ff2200' : '#ff6600';
   } else {
     guestCoins = Math.max(0, parseInt(guestCoins) || 0);
-    countEl.textContent = guestCoins;
+    const oldVal = _prevCoinCount;
+    const newVal = guestCoins;
+    countEl.textContent = newVal;
+
+    // Animate coin change if value actually changed
+    if (oldVal >= 0 && oldVal !== newVal) {
+      const diff = newVal - oldVal;
+      const isGain = diff > 0;
+
+      // Flash the HUD border + background
+      hud.style.transition = 'border-color .2s, background .2s, box-shadow .2s';
+      hud.style.borderColor = isGain ? '#00ff88' : '#e0174a';
+      hud.style.background = isGain ? 'rgba(0,255,136,.15)' : 'rgba(224,23,74,.15)';
+      hud.style.boxShadow = isGain ? '0 0 12px rgba(0,255,136,.4)' : '0 0 12px rgba(224,23,74,.4)';
+
+      // Animate the count text
+      countEl.style.transition = 'color .15s, transform .15s';
+      countEl.style.color = isGain ? '#00ff88' : '#e0174a';
+      countEl.style.transform = 'scale(1.4)';
+
+      // Floating +/- indicator
+      const floater = document.createElement('div');
+      floater.textContent = (isGain ? '+' : '') + diff + ' 🪙';
+      floater.style.cssText = 'position:absolute;top:-8px;right:-10px;font-size:11px;font-weight:bold;' +
+        'color:' + (isGain ? '#00ff88' : '#e0174a') + ';text-shadow:0 0 6px ' + (isGain ? 'rgba(0,255,136,.6)' : 'rgba(224,23,74,.6)') + ';' +
+        'pointer-events:none;z-index:10000;animation:coinFloat 1.6s ease-out forwards;white-space:nowrap;font-family:Share Tech Mono,monospace;';
+      hud.style.position = 'fixed'; // ensure relative positioning for floater
+      hud.appendChild(floater);
+
+      // Also flash the slot machine coin counter
+      const sc = document.getElementById('slotCoinCount');
+      if (sc) {
+        sc.style.transition = 'color .15s, transform .15s';
+        sc.style.color = isGain ? '#00ff88' : '#e0174a';
+        sc.style.transform = 'scale(1.3)';
+        sc.style.textShadow = '0 0 10px ' + (isGain ? 'rgba(0,255,136,.6)' : 'rgba(224,23,74,.6)');
+      }
+
+      // Reset after animation
+      setTimeout(() => {
+        hud.style.borderColor = '';
+        hud.style.background = 'rgb(10,10,20)';
+        hud.style.boxShadow = '';
+        countEl.style.color = '#ffd700';
+        countEl.style.transform = '';
+        if (sc) { sc.style.color = ''; sc.style.transform = ''; sc.style.textShadow = ''; }
+      }, 1500);
+      setTimeout(() => { if (floater.parentNode) floater.remove(); }, 1800);
+    }
+
+    _prevCoinCount = newVal;
   }
 
   // Slot machine coin display sync
@@ -4132,11 +4186,19 @@ async function doSpin() {
     } else {
       setTimeout(() => glumPlay('coins', 0.6), winLines.length * 200 + 100);
     }
-    msgEl.style.color = '#ffd700';
     const net = coinsWon - betCost;
     const multiLine = winLines.length > 1 ? '⚡ MULTI-LINE!' : '';
     const jackpotTag = isJackpot ? '🔥 JACKPOT! ' : '';
-    msgEl.textContent = `${jackpotTag}🪙 +${coinsWon} WIN! ${net > 0 ? '(NET +' + net + ')' : ''} ${multiLine}`;
+    if (net > 0) {
+      msgEl.style.color = '#00ff88';
+      msgEl.textContent = `${jackpotTag}🪙 +${net} PROFIT! ${multiLine}`;
+    } else if (net === 0) {
+      msgEl.style.color = '#d4c87a';
+      msgEl.textContent = `🪙 BREAK EVEN — BET RETURNED ${multiLine}`;
+    } else {
+      msgEl.style.color = '#ffd700';
+      msgEl.textContent = `${jackpotTag}🪙 +${coinsWon} WIN! (BET ${betCost}) ${multiLine}`;
+    }
     
     // Flash the machine border on win
     const machine = document.querySelector('.gam-machine');
