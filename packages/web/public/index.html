@@ -1677,18 +1677,39 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
   <div style="position:relative;z-index:2;text-align:center;padding:0 20px;">
     <div style="font-size:clamp(28px,8vw,52px);color:#cc0000;letter-spacing:8px;text-shadow:0 0 30px #ff0000,0 0 60px rgba(255,0,0,.4);font-family:'VT323',monospace;animation:hellGlitch 4s infinite;">HELL CAGE</div>
     <div style="font-size:11px;color:#660000;letter-spacing:4px;margin-top:8px;margin-bottom:32px;">WELCOME TO THE ABYSS</div>
-    <!-- Hand loading bar — hand slides into hell cage from left to right, dissolving as it enters -->
-    <div style="width:min(360px,85vw);position:relative;margin:0 auto 16px;">
-      <!-- The cage hole the hand enters -->
-      <div style="position:absolute;right:-10px;top:50%;transform:translateY(-50%);width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,#8b0000 0%,#440000 40%,#1a0000 70%,transparent 100%);box-shadow:0 0 30px #8b0000,0 0 60px rgba(139,0,0,.5);z-index:3;"></div>
-      <!-- Loading bar track -->
-      <div style="height:6px;background:#1a0000;border:1px solid #440000;overflow:hidden;position:relative;z-index:1;">
-        <div id="hellLoadBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, rgb(139, 0, 0), rgb(255, 34, 0), rgb(255, 68, 0)); box-shadow: rgb(255, 34, 0) 0px 0px 12px, rgba(255, 34, 0, 0.3) 0px 0px 24px; transition: width 0.1s linear;"></div>
+    <!-- Heart rate / pulse monitor loading -->
+    <div style="width:min(400px,90vw);position:relative;margin:0 auto 16px;">
+      <!-- BPM display -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="font-size:8px;color:#660000;letter-spacing:2px;">VITAL SIGNS</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div id="hellBpmDot" style="width:6px;height:6px;border-radius:50%;background:#ff0000;box-shadow:0 0 6px #ff0000;animation:hellBpmBlink 0.8s ease-in-out infinite;"></div>
+          <div id="hellBpmNum" style="font-size:14px;color:#cc0000;font-family:'VT323',monospace;letter-spacing:2px;text-shadow:0 0 8px rgba(255,0,0,.5);">66 BPM</div>
+        </div>
       </div>
-      <!-- The severed hand — moves right as progress increases, dissolves near the cage hole -->
-      <div id="hellHand" style="position: absolute; top: 50%; transform: translateY(-50%); left: 0%; font-size: 42px; z-index: 2; filter: drop-shadow(0 0 8px rgba(255,0,0,0.6)); transition: left 0.1s linear, opacity 0.3s, filter 0.3s; opacity: 1;">🖐️</div>
-      <!-- Blood trail behind hand -->
-      <div id="hellBloodTrail" style="position: absolute; top: 50%; transform: translateY(-50%); left: 0px; height: 8px; width: 0%; background: linear-gradient(90deg, transparent, rgba(139, 0, 0, 0.3), rgba(180, 0, 0, 0.5)); z-index: 0; transition: width 0.1s linear; border-radius: 2px;"></div>
+      <!-- ECG SVG canvas -->
+      <div style="position:relative;height:80px;background:rgba(10,0,0,.6);border:1px solid #330000;overflow:hidden;">
+        <!-- Grid lines -->
+        <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:.15;" preserveAspectRatio="none">
+          <defs><pattern id="ecgGrid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="#8b0000" stroke-width="0.5"/></pattern></defs>
+          <rect width="100%" height="100%" fill="url(#ecgGrid)"/>
+        </svg>
+        <!-- The ECG line -->
+        <svg id="hellEcgSvg" style="position:absolute;inset:0;width:100%;height:100%;" preserveAspectRatio="none" viewBox="0 0 400 80">
+          <polyline id="hellEcgLine" fill="none" stroke="#ff0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="" filter="url(#ecgGlow)"/>
+          <defs><filter id="ecgGlow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+          <!-- Scanning dot -->
+          <circle id="hellEcgDot" cx="0" cy="40" r="3" fill="#ff3300" opacity="0.9">
+            <animate attributeName="opacity" values="1;0.4;1" dur="0.3s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+        <!-- Fade overlay on right edge -->
+        <div style="position:absolute;right:0;top:0;bottom:0;width:40px;background:linear-gradient(90deg,transparent,rgba(10,0,0,.6));z-index:1;"></div>
+      </div>
+      <!-- Progress bar underneath -->
+      <div style="height:3px;background:#0a0000;border:1px solid #220000;margin-top:4px;overflow:hidden;">
+        <div id="hellLoadBar" style="height:100%;width:0%;background:linear-gradient(90deg,#8b0000,#ff2200,#ff4400);box-shadow:0 0 8px #ff2200;transition:width 0.1s linear;"></div>
+      </div>
     </div>
     <div id="hellLoadTxt" style="font-size:9px;color:#440000;letter-spacing:3px;">LOADING SOUL DATA...</div>
   </div>
@@ -1697,6 +1718,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 <style>
 @keyframes hellFlicker{0%{opacity:.7;}100%{opacity:1;}}
 @keyframes hellGlitch{0%,95%{text-shadow:0 0 30px #ff0000,0 0 60px rgba(255,0,0,.4);}96%{text-shadow:-2px 0 #ff2200,2px 0 #ff0000;transform:translateX(-2px);}97%{text-shadow:2px 0 #ff0000,-2px 0 #ff2200;transform:translateX(2px);}98%,100%{text-shadow:0 0 30px #ff0000;transform:none;}}
+@keyframes hellBpmBlink{0%,100%{opacity:.3;transform:scale(1);}50%{opacity:1;transform:scale(1.4);}}
 </style>
 
 <!-- ════════════════════════════════════
@@ -6177,47 +6199,113 @@ if(window.location.search.includes('dev')){
   try { localStorage.clear(); sessionStorage.clear(); } catch(e){}
 }
 
-// ── HELL CAGE LOADING SCREEN ──
+// ── HELL CAGE LOADING SCREEN — PULSE MONITOR ──
 (function hellCageInit(){
   const screen = document.getElementById('hellCageScreen');
   if(!screen) return;
   const bar = document.getElementById('hellLoadBar');
   const txt = document.getElementById('hellLoadTxt');
-  const hand = document.getElementById('hellHand');
-  const trail = document.getElementById('hellBloodTrail');
-  const msgs = ['LOADING SOUL DATA...','OPENING THE GATES...','SEVERING THE HAND...','DRAGGING INTO HELL...','WELCOME TO HELL CAGE...'];
+  const ecgLine = document.getElementById('hellEcgLine');
+  const ecgDot = document.getElementById('hellEcgDot');
+  const bpmNum = document.getElementById('hellBpmNum');
+  const msgs = ['SCANNING VITALS...','DETECTING PULSE...','SOUL FREQUENCY LOCKED...','SYNCING HEARTBEAT...','PULSE CONFIRMED...'];
+
+  // ECG waveform pattern — one heartbeat cycle (P-QRS-T)
+  // y=40 is baseline (center), lower y = up on screen
+  const beatPattern = [
+    // flat baseline
+    40,40,40,40,40,40,40,40,
+    // P wave (small bump)
+    40,38,35,33,32,33,35,38,40,
+    // flat
+    40,40,40,
+    // QRS complex (sharp spike)
+    40,42,45, // small dip (Q)
+    38,25,12,5, // sharp rise (R)
+    18,35,50,58,55, // sharp fall through baseline (S)
+    48,43,40, // return to baseline
+    // flat
+    40,40,40,40,
+    // T wave (broad bump)
+    40,38,35,33,31,30,30,31,33,35,38,40,
+    // flat tail
+    40,40,40,40,40,40,40,40,40,40,40,40,40,40
+  ];
+
+  const totalWidth = 400;
+  const ecgPoints = [];
+  let ecgX = 0;
+  let beatIdx = 0;
   let progress = 0;
+  let beepCtx = null;
+
+  // Beep sound on each heartbeat spike
+  function playBeep(){
+    try {
+      if(!beepCtx) beepCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = beepCtx.createOscillator();
+      const gain = beepCtx.createGain();
+      osc.connect(gain);
+      gain.connect(beepCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.08, beepCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, beepCtx.currentTime + 0.15);
+      osc.start(beepCtx.currentTime);
+      osc.stop(beepCtx.currentTime + 0.15);
+    } catch(e){}
+  }
+
   const interval = setInterval(() => {
-    progress += Math.random() * 12 + 5;
+    progress += Math.random() * 3.5 + 1.5;
     if(progress > 100) progress = 100;
     if(bar) bar.style.width = progress + '%';
-    // Move hand across — it slides from left toward the red cage hole on the right
-    if(hand){
-      const handPos = Math.min(progress * 0.85, 85); // max 85% so it reaches the hole
-      hand.style.left = handPos + '%';
-      // As hand gets closer to cage hole (past 60%), start dissolving
-      if(progress > 60){
-        const dissolve = (progress - 60) / 40; // 0 to 1
-        hand.style.opacity = Math.max(0, 1 - dissolve * 1.2);
-        hand.style.filter = `drop-shadow(0 0 ${8 + dissolve * 30}px rgba(255,0,0,${0.6 + dissolve * 0.4})) blur(${dissolve * 3}px)`;
-        hand.style.transform = `translateY(-50%) scale(${1 - dissolve * 0.4}) rotate(${dissolve * 25}deg)`;
+
+    // Draw ECG — add several points per tick
+    const pointsPerTick = 4;
+    for(let i = 0; i < pointsPerTick; i++){
+      const y = beatPattern[beatIdx % beatPattern.length];
+      ecgPoints.push({ x: ecgX, y: y });
+      // Beep on the R-wave peak (y < 15)
+      if(y < 15 && (beatIdx % beatPattern.length) === Math.floor(beatPattern.indexOf(5))) playBeep();
+      beatIdx++;
+      ecgX += 2.5;
+      // Wrap around — scrolling effect
+      if(ecgX > totalWidth){
+        ecgX = 0;
+        ecgPoints.length = 0;
       }
     }
-    // Blood trail follows hand
-    if(trail) trail.style.width = Math.min(progress * 0.85, 85) + '%';
+
+    // Render polyline
+    if(ecgLine && ecgPoints.length > 1){
+      ecgLine.setAttribute('points', ecgPoints.map(p => p.x+','+p.y).join(' '));
+    }
+    // Move dot to latest point
+    if(ecgDot && ecgPoints.length > 0){
+      const last = ecgPoints[ecgPoints.length - 1];
+      ecgDot.setAttribute('cx', last.x);
+      ecgDot.setAttribute('cy', last.y);
+    }
+
+    // BPM increases as loading progresses (from 66 to 120)
+    const bpm = Math.floor(66 + (progress / 100) * 54);
+    if(bpmNum) bpmNum.textContent = bpm + ' BPM';
+
     const msgIdx = Math.floor(progress / 21);
     if(txt && msgs[Math.min(msgIdx, msgs.length-1)]) txt.textContent = msgs[Math.min(msgIdx, msgs.length-1)];
+
     if(progress >= 100){
       clearInterval(interval);
-      if(txt) txt.textContent = 'ENTER THE CAGE...';
-      if(hand){ hand.style.opacity = '0'; hand.style.transform = 'translateY(-50%) scale(0) rotate(90deg)'; }
+      if(txt) txt.textContent = 'PULSE LOCKED — ENTERING CAGE...';
+      if(bpmNum){ bpmNum.style.color = '#ff0000'; bpmNum.style.textShadow = '0 0 15px #ff0000'; }
       setTimeout(() => {
         screen.style.transition = 'opacity .8s ease';
         screen.style.opacity = '0';
-        setTimeout(() => { screen.style.display = 'none'; }, 800);
-      }, 600);
+        setTimeout(() => { screen.style.display = 'none'; if(beepCtx) beepCtx.close(); }, 800);
+      }, 800);
     }
-  }, 140);
+  }, 60);
 })();
 
 // ── GLUMINATOR CONFIRM ──
