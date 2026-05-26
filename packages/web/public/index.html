@@ -1479,7 +1479,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 <!-- ════════════════════════════════════
      HELL CAGE — LOADING SCREEN
 ════════════════════════════════════ -->
-<div id="hellCageScreen" style="display: none; position: fixed; inset: 0px; z-index: 999999; background: rgb(0, 0, 0); flex-direction: column; align-items: center; justify-content: center; font-family: &quot;Share Tech Mono&quot;, monospace; overflow: hidden; transition: opacity 0.8s; opacity: 0;">
+<div id="hellCageScreen" style="display: flex; position: fixed; inset: 0px; z-index: 999999; background: rgb(0, 0, 0); flex-direction: column; align-items: center; justify-content: center; font-family: &quot;Share Tech Mono&quot;, monospace; overflow: hidden; transition: opacity 0.8s; opacity: 1;">
   <!-- Cage bars -->
   <div style="position:absolute;inset:0;pointer-events:none;z-index:1;">
     <div style="position:absolute;left:8%;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#330000,#8b0000,#330000);box-shadow:0 0 10px #8b0000;opacity:.7;"></div>
@@ -1505,14 +1505,14 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
       <div style="position:absolute;right:-10px;top:50%;transform:translateY(-50%);width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,#8b0000 0%,#440000 40%,#1a0000 70%,transparent 100%);box-shadow:0 0 30px #8b0000,0 0 60px rgba(139,0,0,.5);z-index:3;"></div>
       <!-- Loading bar track -->
       <div style="height:6px;background:#1a0000;border:1px solid #440000;overflow:hidden;position:relative;z-index:1;">
-        <div id="hellLoadBar" style="height: 100%; width: 100%; background: linear-gradient(90deg, rgb(139, 0, 0), rgb(255, 34, 0), rgb(255, 68, 0)); box-shadow: rgb(255, 34, 0) 0px 0px 12px, rgba(255, 34, 0, 0.3) 0px 0px 24px; transition: width 0.1s linear;"></div>
+        <div id="hellLoadBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, rgb(139, 0, 0), rgb(255, 34, 0), rgb(255, 68, 0)); box-shadow: rgb(255, 34, 0) 0px 0px 12px, rgba(255, 34, 0, 0.3) 0px 0px 24px; transition: width 0.1s linear;"></div>
       </div>
       <!-- The severed hand — moves right as progress increases, dissolves near the cage hole -->
-      <div id="hellHand" style="position: absolute; top: 50%; transform: translateY(-50%) scale(0) rotate(90deg); left: 85%; font-size: 42px; z-index: 2; filter: drop-shadow(rgb(255, 0, 0) 0px 0px 38px) blur(3px); transition: left 0.1s linear, opacity 0.3s, filter 0.3s; opacity: 0;">🖐️</div>
+      <div id="hellHand" style="position: absolute; top: 50%; transform: translateY(-50%); left: 0%; font-size: 42px; z-index: 2; filter: drop-shadow(0 0 8px rgba(255,0,0,0.6)); transition: left 0.1s linear, opacity 0.3s, filter 0.3s; opacity: 1;">🖐️</div>
       <!-- Blood trail behind hand -->
-      <div id="hellBloodTrail" style="position: absolute; top: 50%; transform: translateY(-50%); left: 0px; height: 8px; width: 85%; background: linear-gradient(90deg, transparent, rgba(139, 0, 0, 0.3), rgba(180, 0, 0, 0.5)); z-index: 0; transition: width 0.1s linear; border-radius: 2px;"></div>
+      <div id="hellBloodTrail" style="position: absolute; top: 50%; transform: translateY(-50%); left: 0px; height: 8px; width: 0%; background: linear-gradient(90deg, transparent, rgba(139, 0, 0, 0.3), rgba(180, 0, 0, 0.5)); z-index: 0; transition: width 0.1s linear; border-radius: 2px;"></div>
     </div>
-    <div id="hellLoadTxt" style="font-size:9px;color:#440000;letter-spacing:3px;">ENTER THE CAGE...</div>
+    <div id="hellLoadTxt" style="font-size:9px;color:#440000;letter-spacing:3px;">LOADING SOUL DATA...</div>
   </div>
 </div>
 
