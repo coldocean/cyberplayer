@@ -5954,6 +5954,35 @@ window.submitPayment = function() {
         <span style="position:relative;z-index:1;">🔥 ADD / EDIT NEWS 🔥</span>
       </button>
     </div>
+
+    <!-- Dark Souls counter (admin/superadmin only) -->
+    <div id="hellVisitorStats" style="display:none;margin-top:24px;text-align:center;border:1px solid #330000;background:rgba(15,0,0,.7);padding:12px 16px;border-radius:2px;">
+      <div style="font-size:8px;letter-spacing:3px;color:#660000;margin-bottom:8px;">👁 SOULS IN THE ABYSS 👁</div>
+      <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;">
+        <div style="text-align:center;">
+          <div id="statsActiveTotal" style="font-size:clamp(18px,4vw,28px);color:#ff4400;font-family:'Creepster',cursive;text-shadow:0 0 12px rgba(255,68,0,.6);">0</div>
+          <div style="font-size:7px;letter-spacing:2px;color:#550000;">ONLINE NOW</div>
+        </div>
+        <div style="text-align:center;">
+          <div id="statsActiveGuests" style="font-size:clamp(14px,3vw,20px);color:#cc4400;font-family:'VT323',monospace;">0</div>
+          <div style="font-size:7px;letter-spacing:2px;color:#440000;">💀 DARK SOULS</div>
+        </div>
+        <div style="text-align:center;">
+          <div id="statsActiveSinners" style="font-size:clamp(14px,3vw,20px);color:#cc6600;font-family:'VT323',monospace;">0</div>
+          <div style="font-size:7px;letter-spacing:2px;color:#440000;">◈ SINNERS</div>
+        </div>
+      </div>
+      <div style="margin-top:8px;border-top:1px solid #220000;padding-top:8px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap;">
+        <div style="text-align:center;">
+          <span style="font-size:10px;color:#882200;font-family:'VT323',monospace;" id="statsDailyTotal">0</span>
+          <span style="font-size:7px;color:#440000;letter-spacing:1px;"> TODAY</span>
+        </div>
+        <div style="text-align:center;">
+          <span style="font-size:10px;color:#882200;font-family:'VT323',monospace;" id="statsAllTime">0</span>
+          <span style="font-size:7px;color:#440000;letter-spacing:1px;"> ALL TIME</span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -6772,6 +6801,46 @@ setTimeout(() => {
 }, 600);
 
 // ════════════════════════════════════════════════
+// ════════════════════════════════════════════════
+// 👁 VISITOR TRACKING — ping server + show stats to admins
+// ════════════════════════════════════════════════
+(function() {
+  function doPing() {
+    const isReg = !!(typeof authUser !== 'undefined' && authUser);
+    fetch('/api/stats?action=ping', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ registered: isReg })
+    }).catch(() => {});
+  }
+
+  function loadStats() {
+    const isAdmin = typeof authUser !== 'undefined' && authUser && (authUser.role === 'superadmin' || authUser.role === 'admin');
+    const panel = document.getElementById('hellVisitorStats');
+    if (!isAdmin || !panel) { if (panel) panel.style.display = 'none'; return; }
+
+    panel.style.display = 'block';
+    fetch('/api/stats').then(r => r.json()).then(d => {
+      document.getElementById('statsActiveTotal').textContent = d.active?.total || 0;
+      document.getElementById('statsActiveGuests').textContent = d.active?.dark_souls || 0;
+      document.getElementById('statsActiveSinners').textContent = d.active?.sinners || 0;
+      document.getElementById('statsDailyTotal').textContent = d.daily?.total || 0;
+      document.getElementById('statsAllTime').textContent = d.all_time || 0;
+    }).catch(() => {});
+  }
+
+  // Initial ping + stats load
+  if (document.readyState === 'complete') { doPing(); setTimeout(loadStats, 1000); }
+  else window.addEventListener('load', () => { doPing(); setTimeout(loadStats, 1000); });
+
+  // Ping every 60s, refresh stats every 30s
+  setInterval(doPing, 60000);
+  setInterval(loadStats, 30000);
+
+  // Expose for manual refresh
+  window._refreshHellStats = loadStats;
+})();
+
 // ════════════════════════════════════════════════
 // 🔥 HADES LOYALTY REWARD — +1 coin every 5 minutes
 // Runs globally on ALL modes, for guests AND logged-in users
