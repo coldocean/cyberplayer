@@ -6677,11 +6677,16 @@ window.hadesFromBelow = function(coinText, speechText) {
   flashEl.offsetHeight;
   flashEl.style.animation = 'hadesHellfire 1.2s ease-out forwards';
 
-  // Award coin
+  // Award coin — update all HUDs and persist to server
   if (typeof guestCoins !== 'undefined') {
     guestCoins = (guestCoins || 0) + 1;
-    if (typeof saveGuestCoins === 'function') saveGuestCoins();
-    if (typeof updateHUD === 'function') updateHUD();
+    if (typeof updateCoinHud === 'function') updateCoinHud(null);
+    const cc = document.getElementById('coinCount');
+    if (cc) cc.textContent = guestCoins;
+    const sc = document.getElementById('slotCoinCount');
+    if (sc) sc.textContent = (typeof loggedInUser !== 'undefined' && loggedInUser) ? '∞' : guestCoins;
+    // Persist to server
+    fetch('/api/coins?action=add', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({amount: 1}) }).catch(()=>{});
   }
 
   setTimeout(() => { el.remove(); }, 3600);
@@ -6737,6 +6742,58 @@ setTimeout(() => {
 }, 600);
 
 // ════════════════════════════════════════════════
+// ════════════════════════════════════════════════
+// 🔥 HADES LOYALTY REWARD — +1 coin every 5 minutes
+// Runs globally on ALL modes, for guests AND logged-in users
+// Timer is real-time (counts even if tab hidden)
+// ════════════════════════════════════════════════
+(function() {
+  const HADES_INTERVAL = 5 * 60 * 1000; // 5 minutes in ms
+  const HADES_SPEECHES = [
+    'YOUR LOYALTY FEEDS THE FLAMES!',
+    'STAY LONGER... I HUNGER FOR SOULS!',
+    'ANOTHER 5 MINUTES IN MY DOMAIN...',
+    'YOU CANNOT LEAVE NOW, SINNER!',
+    'THE DARKNESS REWARDS THE PATIENT!',
+    'YOUR SOUL GROWS DARKER... GOOD.',
+    'HADES SEES YOUR DEVOTION!',
+    'EVEN DEMONS RESPECT PERSISTENCE!',
+    'THE UNDERWORLD APPROVES!',
+    'YOU BELONG HERE NOW...',
+    'TIME MEANS NOTHING IN HELL!',
+    'YOUR SUFFERING PLEASES ME!',
+    'EVERY MINUTE BRINGS YOU CLOSER!',
+    'THE FIRE BURNS BRIGHTER FOR YOU!',
+    'HELL HAS A SPECIAL PLACE FOR YOU!',
+  ];
+
+  let _hadesLoyaltyTimer = null;
+
+  function randomHadesSpeech() {
+    return HADES_SPEECHES[Math.floor(Math.random() * HADES_SPEECHES.length)];
+  }
+
+  function startHadesLoyaltyTimer() {
+    if (_hadesLoyaltyTimer) return; // already running
+    _hadesLoyaltyTimer = setInterval(() => {
+      // Fire HADES animation + coin reward
+      if (typeof hadesFromBelow === 'function') {
+        hadesFromBelow('+1 🪙', randomHadesSpeech());
+      }
+    }, HADES_INTERVAL);
+  }
+
+  // Start the loyalty timer once the page is loaded and ready
+  if (document.readyState === 'complete') {
+    startHadesLoyaltyTimer();
+  } else {
+    window.addEventListener('load', startHadesLoyaltyTimer);
+  }
+
+  // Expose for debugging
+  window._hadesLoyaltyTimer = { start: startHadesLoyaltyTimer };
+})();
+
 // MODE 5 — NEXT MESSAGE NAVIGATION
 // ════════════════════════════════════════════════
 window._hellCurrentMsgIndex = 0;
