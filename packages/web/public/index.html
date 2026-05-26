@@ -3690,7 +3690,16 @@ async function doSpin() {
       spinBtn.style.background = '';
       return;
     }
-    serverData = d;
+    if (d && d.reels) {
+      serverData = d;
+    } else {
+      // Server returned error or no reels — use client fallback
+      useClientFallback = true;
+      if (!loggedInUser) {
+        guestCoins = Math.max(0, guestCoins - slotBetRate);
+        updateCoinHud(null);
+      }
+    }
   } catch(e) {
     // Fallback to client-side spin
     useClientFallback = true;
