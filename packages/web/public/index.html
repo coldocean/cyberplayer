@@ -2938,15 +2938,7 @@ function routeFromHash() {
 
 window.addEventListener('hashchange', routeFromHash);
 
-// On first load — run after loading screen is done (check every 200ms)
-(function _waitForBoot(){
-  const screen = document.getElementById('hellCageScreen');
-  if (screen && screen.style.display !== 'none' && screen.style.opacity !== '0') {
-    setTimeout(_waitForBoot, 200);
-    return;
-  }
-  routeFromHash();
-})();
+// routeFromHash() is called once loading screen completes (see loading screen callback)
 
 // ════════════════════════════════════════════════
 // MODE SWITCH
@@ -6355,7 +6347,7 @@ if(window.location.search.includes('dev')){
       setTimeout(() => {
         screen.style.transition = 'opacity .8s ease';
         screen.style.opacity = '0';
-        setTimeout(() => { screen.style.display = 'none'; if(beepCtx) beepCtx.close(); }, 800);
+        setTimeout(() => { screen.style.display = 'none'; if(beepCtx) beepCtx.close(); routeFromHash(); }, 800);
       }, 800);
     }
   }, 60);
@@ -6645,7 +6637,7 @@ window.submitPayment = function() {
 <!-- ════════════════════════════════════
      MODE 5 — VOTING
 ════════════════════════════════════ -->
-<div id="mode5" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:48px;font-family:'Share Tech Mono',monospace;background:linear-gradient(180deg,#0a0000,#1a0000,#0a0000);position:relative;overflow:hidden;">
+<div id="mode5" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:48px;font-family:'Share Tech Mono',monospace;background:linear-gradient(180deg,#0a0000,#1a0000,#0a0000);position:relative;overflow-x:hidden;overflow-y:auto;">
   <!-- Hell ambient effects -->
   <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(180,0,0,.08),transparent 60%);pointer-events:none;"></div>
   <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(100,0,0,.03) 3px,rgba(100,0,0,.03) 4px);pointer-events:none;"></div>
