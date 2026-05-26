@@ -1635,7 +1635,8 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 </div>
 
 <!-- COIN HUD (guests only) -->
-<div id="coinHud" style="display: block; position: fixed; top: 10px; left: 10px; z-index: 9998; font-family: &quot;Share Tech Mono&quot;, monospace; font-size: 11px; color: rgb(255, 215, 0); letter-spacing: 1px; background: rgb(10, 10, 20); border: 1px solid rgb(68, 51, 0); padding: 4px 10px; border-radius: 2px;">
+<div id="coinHud" onclick="if(typeof authShowProfile==='function' && authUser) authShowProfile();" style="display: block; position: fixed; top: 10px; left: 10px; z-index: 9998; font-family: &quot;Share Tech Mono&quot;, monospace; font-size: 11px; color: rgb(255, 215, 0); letter-spacing: 1px; background: rgb(10, 10, 20); border: 1px solid rgb(68, 51, 0); padding: 4px 10px; border-radius: 2px; cursor: pointer;">
+  <div id="coinHudName" style="font-size:9px;color:#00ff88;letter-spacing:2px;margin-bottom:2px;display:none;"></div>
   🪙 <span id="coinCount">0</span> <span id="coinDailyMsg" style="font-size:9px;color:#888;"></span>
 </div>
 
@@ -2400,7 +2401,7 @@ async function loadTrack(idx, autoPlay) {
       });
       const d = await r.json();
       if (!d.ok) { showNoCoinsMsg(); return; }
-      guestCoins = d.coins;
+      guestCoins = parseInt(d.coins) || 0;
       if (typeof updateCoinHud === 'function') updateCoinHud(null);
     } catch(e) { /* API down — allow play */ }
   }
@@ -2718,7 +2719,7 @@ function setMode(m) {
   if (m===2) setTimeout(()=>{ arcRenderList(); arcDrawWave(currentAudio&&!currentAudio.paused); resizeArcCanvas(); },50);
   if (m===1) setTimeout(()=>{ wampRenderList(); wampDrawVu(currentAudio&&!currentAudio.paused); },50);
   if (m===3) setTimeout(()=>{ cliRenderList(); cliInitSpectrum(); },50);
-  if (m===4) setTimeout(()=>{ const el=document.getElementById('slotCoinCount'); if(el) el.textContent=loggedInUser?'∞':guestCoins; },50);
+  if (m===4) setTimeout(()=>{ const el=document.getElementById('slotCoinCount'); if(el) el.textContent=(authUser&&(authUser.role==='superadmin'||authUser.role==='admin'))?'∞':guestCoins; },50);
   if (m===5) { setTimeout(()=>{ if(!hellLoaded) hellLoadMessages(); else hellRenderMessages(); },50); }
 }
 
@@ -3333,8 +3334,8 @@ async function initBanAndCoins() {
       pinRetryAfter = d.pin_retry_after;
       lockPinInput();
     }
-    // Load coins for guests
-    if (!loggedInUser) loadGuestCoins();
+    // Load coins for all users (guests, registered, admins)
+    loadGuestCoins();
   } catch(e) {
     // API unreachable — allow play (fail open)
     console.warn('Ban API unreachable:', e);
@@ -3463,24 +3464,80 @@ document.getElementById('arcPinInput').setAttribute('oninput', 'arcCheckPinGated
 // ── arcDoLogin now uses the API directly — no patching needed ──
 // (Legacy patch removed — arcDoLogin handles API auth + wrong attempt reporting internally)
 
-// ── Guest coins ──
+// ── Coin loading for ALL user types ──
 async function loadGuestCoins() {
+  const isAdmin = authUser && (authUser.role === 'superadmin' || authUser.role === 'admin');
+  const isRegistered = !!authUser;
+
+  // Admins/superadmins = infinite, just update HUD
+  if (isAdmin) {
+    guestCoins = Infinity;
+    updateCoinHud({ added: 0 });
+    return;
+  }
+
   try {
-    const r = await fetch('/api/coins');
+    // Try to get dark-soul bonus (+100 for guests, or +400 for registered users)
+    const bonusAmount = isRegistered ? 400 : 100;
+    const r = await fetch('/api/coins?action=dark-soul', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: bonusAmount })
+    });
     const d = await r.json();
-    guestCoins = d.coins;
+    guestCoins = parseInt(d.coins) || 0;
     updateCoinHud(d);
+
+    // If bonus was awarded, show Zeus animation
+    if (d.added > 0) {
+      setTimeout(() => {
+        if (typeof jesusFromSky === 'function') {
+          jesusFromSky(`⚡ +${d.added} 🪙 ${isRegistered ? 'SINNER BONUS!' : 'DARK SOUL BONUS!'}`);
+        }
+      }, 2000);
+    }
   } catch(e) {
-    guestCoins = 999; // fail open
+    guestCoins = 100; // fail open with default
+    updateCoinHud(null);
   }
 }
 
 function updateCoinHud(d) {
-  if (loggedInUser) { document.getElementById('coinHud').style.display = 'none'; return; }
-  document.getElementById('coinHud').style.display = 'block';
-  document.getElementById('coinCount').textContent = guestCoins;
+  const hud = document.getElementById('coinHud');
+  const nameEl = document.getElementById('coinHudName');
+  const countEl = document.getElementById('coinCount');
+  const isAdmin = authUser && (authUser.role === 'superadmin' || authUser.role === 'admin');
+  const isRegistered = !!authUser;
+
+  // Always show the HUD for everyone
+  hud.style.display = 'block';
+
+  // Show username for registered users
+  if (isRegistered && nameEl) {
+    const roleTag = authUser.role === 'superadmin' ? '👑' : authUser.role === 'admin' ? '⚡' : '◈';
+    nameEl.textContent = roleTag + ' ' + authUser.name.toUpperCase();
+    nameEl.style.display = 'block';
+  } else if (nameEl) {
+    nameEl.textContent = '💀 DARK SOUL';
+    nameEl.style.color = '#aa4444';
+    nameEl.style.display = 'block';
+  }
+
+  // Admins/superadmins get infinite coins
+  if (isAdmin) {
+    countEl.textContent = '∞';
+    hud.style.borderColor = authUser.role === 'superadmin' ? '#ff2200' : '#ff6600';
+  } else {
+    guestCoins = Math.max(0, parseInt(guestCoins) || 0);
+    countEl.textContent = guestCoins;
+  }
+
+  // Slot machine coin display sync
+  const sc = document.getElementById('slotCoinCount');
+  if (sc) sc.textContent = isAdmin ? '∞' : guestCoins;
+
   if (d && d.added > 0) {
-    document.getElementById('coinDailyMsg').textContent = `+${d.added} daily`;
+    document.getElementById('coinDailyMsg').textContent = `+${d.added} bonus`;
     setTimeout(() => document.getElementById('coinDailyMsg').textContent = '', 4000);
   }
 }
@@ -3502,7 +3559,7 @@ const _origArcDoLoginWrapped = window.arcDoLogin;
 const _origSyncAllUIs = syncAllUIs;
 window.syncAllUIs = function() {
   _origSyncAllUIs();
-  if (loggedInUser) document.getElementById('coinHud').style.display = 'none';
+  // Coin HUD is always visible now — updateCoinHud handles display for all user types
   cliSyncUploadLabel();
 };
 
@@ -3679,7 +3736,7 @@ async function doSpin() {
     if (d.error === 'insufficient') {
       clearInterval(spinInterval);
       document.querySelectorAll('.gam-reel').forEach(r => r.classList.remove('reel-spinning'));
-      guestCoins = d.coins;
+      guestCoins = parseInt(d.coins) || 0;
       updateCoinHud(null);
       document.getElementById('slotCoinCount').textContent = guestCoins;
       msgEl.style.color = '#e0174a';
@@ -3748,17 +3805,17 @@ async function doSpin() {
     coinsWon = clientCalcWin(slotReels.map((r,ri) => finalReels[ri]), slotBetRate);
     betCost = slotBetRate;
     if (coinsWon > 0 && !loggedInUser) {
-      guestCoins += coinsWon;
+      guestCoins = (parseInt(guestCoins) || 0) + (parseInt(coinsWon) || 0);
     }
     updateCoinHud(null);
-    document.getElementById('slotCoinCount').textContent = loggedInUser ? '∞' : guestCoins;
+    document.getElementById('slotCoinCount').textContent = (authUser&&(authUser.role==='superadmin'||authUser.role==='admin')) ? '∞' : guestCoins;
   } else {
     coinsWon = serverData.coins_won;
     betCost = serverData.bet_cost || slotBetRate;
     if (serverData.new_total !== null && serverData.new_total !== undefined) {
-      guestCoins = serverData.new_total;
+      guestCoins = parseInt(serverData.new_total) || 0;
       updateCoinHud(null);
-      document.getElementById('slotCoinCount').textContent = loggedInUser ? '∞' : guestCoins;
+      document.getElementById('slotCoinCount').textContent = (authUser&&(authUser.role==='superadmin'||authUser.role==='admin')) ? '∞' : guestCoins;
     }
   }
 
@@ -3860,7 +3917,7 @@ function doDoubleUp(multiplier) {
     guestCoins = (guestCoins || 0) + profit;
     document.getElementById('coinCount').textContent = guestCoins;
     if (typeof updateCoinHud === 'function') updateCoinHud(null);
-    if (document.getElementById('slotCoinCount')) document.getElementById('slotCoinCount').textContent = loggedInUser ? '∞' : guestCoins;
+    if (document.getElementById('slotCoinCount')) document.getElementById('slotCoinCount').textContent = (authUser&&(authUser.role==='superadmin'||authUser.role==='admin')) ? '∞' : guestCoins;
     fetch('/api/coins?action=add', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({amount: profit}) }).catch(()=>{});
     _pendingWin = newWin;
     msg.style.color = '#00ff88';
@@ -3872,7 +3929,7 @@ function doDoubleUp(multiplier) {
     guestCoins = Math.max(0, (guestCoins || 0) - _pendingWin);
     document.getElementById('coinCount').textContent = guestCoins;
     if (typeof updateCoinHud === 'function') updateCoinHud(null);
-    if (document.getElementById('slotCoinCount')) document.getElementById('slotCoinCount').textContent = loggedInUser ? '∞' : guestCoins;
+    if (document.getElementById('slotCoinCount')) document.getElementById('slotCoinCount').textContent = (authUser&&(authUser.role==='superadmin'||authUser.role==='admin')) ? '∞' : guestCoins;
     fetch('/api/coins?action=spend', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({amount: _pendingWin}) }).catch(()=>{});
     msg.style.color = '#ff2020';
     msg.textContent = `💀 LOST IT ALL — ${_pendingWin} 🪙 GONE`;
@@ -3884,8 +3941,7 @@ function doDoubleUp(multiplier) {
 
 // Init on page load
 document.addEventListener('DOMContentLoaded', () => {
-  // Auto-wipe coins on every page load — guest testing always starts fresh
-  fetch('/api/reset-coins', { method: 'GET' }).catch(() => {});
+  // Coins persist across sessions now — no more auto-wipe
   initBanAndCoins();
   initSlotDisplay();
 });
@@ -3994,7 +4050,7 @@ function pickChest(idx) {
   // Deliver coins
   guestCoins = (guestCoins || 0) + reward;
   if (typeof updateCoinHud === 'function') updateCoinHud(null);
-  if (document.getElementById('slotCoinCount')) document.getElementById('slotCoinCount').textContent = loggedInUser ? '∞' : guestCoins;
+  if (document.getElementById('slotCoinCount')) document.getElementById('slotCoinCount').textContent = (authUser&&(authUser.role==='superadmin'||authUser.role==='admin')) ? '∞' : guestCoins;
   if (document.getElementById('coinCount')) document.getElementById('coinCount').textContent = guestCoins;
   
   // Also save to server (best effort)
@@ -5085,18 +5141,14 @@ function authUpdateUI() {
   const nameEl = document.getElementById('userStatusName');
   const wampTag = document.getElementById('wampUserTag');
   if (authUser) {
-    bar.style.display = 'block';
+    bar.style.display = 'none'; // Name now shown in coinHud instead
     const roleTag = authUser.role === 'superadmin' ? '👑' : authUser.role === 'admin' ? '⚡' : '◈';
     nameEl.textContent = roleTag + ' ' + authUser.name.toUpperCase();
     // Dynamic user tag in title bar
     const uname = (authUser.name || 'user').toLowerCase().replace(/\s+/g, '');
     if (wampTag) wampTag.textContent = uname + '@delightfullPlayer';
-    // Hide coin HUD for admins
-    if (authUser.role === 'superadmin' || authUser.role === 'admin') {
-      document.getElementById('coinHud').style.display = 'none';
-    }
-    // Registered users get daily +100 coins via server
-    loadRegisteredUserCoins();
+    // Load coins for all user types (admins get ∞, registered get 400 bonus, etc.)
+    loadGuestCoins();
     // Show admin-only playlist tabs (DEEMAH/RASTIX/ROBBMOBB)
     if (authUser.role === 'superadmin' || authUser.role === 'admin') {
       const b1 = document.getElementById('arcPlBtn1');
@@ -5123,26 +5175,7 @@ function authUpdateUI() {
   loadServerTracks();
 }
 
-async function loadRegisteredUserCoins() {
-  // Registered/admin users get +100 daily bonus tracked by user account
-  if (!authUser) return;
-  try {
-    const storageKey = 'cp_daily_' + authUser.id;
-    const lastDaily = parseInt(localStorage.getItem(storageKey) || '0');
-    const now = Math.floor(Date.now() / 1000);
-    if (now - lastDaily >= 86400) {
-      localStorage.setItem(storageKey, now.toString());
-      // Show +100 daily bonus notification briefly
-      const coinHud = document.getElementById('coinHud');
-      if (coinHud) {
-        coinHud.style.display = 'block';
-        document.getElementById('coinCount').textContent = '∞';
-        const msg = document.getElementById('coinDailyMsg');
-        if (msg) { msg.textContent = '+100 daily'; setTimeout(() => { msg.textContent = ''; coinHud.style.display = 'none'; }, 4000); }
-      }
-    }
-  } catch(e) {}
-}
+// loadRegisteredUserCoins — now handled by loadGuestCoins() which covers all user types
 
 function authShowProfile() {
   if (!authUser) return;
@@ -5214,7 +5247,7 @@ window.jesusFromSky = function(coinText) {
     fetch('/api/coins?action=spend', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: 1 }) })
       .then(r => r.json()).then(d => {
         if (d.ok || d.coins !== undefined) {
-          guestCoins = d.coins !== undefined ? d.coins : guestCoins;
+          guestCoins = d.coins !== undefined ? (parseInt(d.coins) || 0) : guestCoins;
           document.getElementById('coinCount').textContent = guestCoins;
           if (typeof updateCoinHud === 'function') updateCoinHud(null);
         }
@@ -5419,7 +5452,7 @@ window.joinAsDarkSoul = async function() {
   try {
     const r = await fetch('/api/coins?action=dark-soul', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
     const d = await r.json();
-    if (d.coins !== undefined) { guestCoins = d.coins; updateCoinHud(d); }
+    if (d.coins !== undefined) { guestCoins = parseInt(d.coins) || 0; updateCoinHud(d); }
   } catch(e) { guestCoins = 100; }
   
   isDarkSoul = true;
@@ -6678,16 +6711,13 @@ window.hadesFromBelow = function(coinText, speechText) {
   flashEl.style.animation = 'hadesHellfire 1.2s ease-out forwards';
 
   // Award coin — update all HUDs and persist to server
-  if (typeof guestCoins !== 'undefined') {
-    guestCoins = (guestCoins || 0) + 1;
-    if (typeof updateCoinHud === 'function') updateCoinHud(null);
-    const cc = document.getElementById('coinCount');
-    if (cc) cc.textContent = guestCoins;
-    const sc = document.getElementById('slotCoinCount');
-    if (sc) sc.textContent = (typeof loggedInUser !== 'undefined' && loggedInUser) ? '∞' : guestCoins;
+  const _isAdminUser = typeof authUser !== 'undefined' && authUser && (authUser.role === 'superadmin' || authUser.role === 'admin');
+  if (!_isAdminUser && typeof guestCoins !== 'undefined') {
+    guestCoins = (parseInt(guestCoins) || 0) + 1;
     // Persist to server
     fetch('/api/coins?action=add', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({amount: 1}) }).catch(()=>{});
   }
+  if (typeof updateCoinHud === 'function') updateCoinHud(null);
 
   setTimeout(() => { el.remove(); }, 3600);
 };
