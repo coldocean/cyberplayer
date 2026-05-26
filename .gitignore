@@ -5,3 +5,7 @@ dist-electron
 *.log
 .env
 .vercel
+
+.env.turso
+.env.vercel
+.env
