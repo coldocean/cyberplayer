@@ -1372,37 +1372,206 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 .vote-btn.voted-down{border-color:#ff4444;color:#ff4444;background:rgba(255,0,0,.1);}
 .vote-admin-btn{background:transparent;border:1px solid #ff4444;color:#ff4444;padding:4px 8px;font-family:'Share Tech Mono',monospace;font-size:8px;cursor:pointer;letter-spacing:1px;}
 /* ── Track info bar ── */
-#trackInfoBar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:99997;background:rgba(10,10,20,.95);border-top:1px solid #222;padding:6px 16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#888;letter-spacing:1px;backdrop-filter:blur(4px);cursor:pointer;transition:border-color .3s;}
-#trackInfoBar:hover{border-top-color:#8b0000;}
-#trackInfoBar .ti-name{color:var(--green,#00ff88);font-size:11px;}
+#trackInfoBar{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:99997;
+  background:linear-gradient(90deg,rgba(12,4,4,.96),rgba(10,10,20,.96),rgba(12,4,4,.96));
+  border-top:1px solid rgba(139,0,0,.4);
+  padding:8px 16px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#888;
+  letter-spacing:1px;backdrop-filter:blur(8px);cursor:pointer;
+  transition:all .3s;
+  box-shadow:0 -2px 20px rgba(139,0,0,.15);
+}
+#trackInfoBar:hover{border-top-color:#cc0000;box-shadow:0 -4px 30px rgba(139,0,0,.25);}
+#trackInfoBar .ti-name{color:#ff4444;font-size:12px;letter-spacing:2px;text-shadow:0 0 8px rgba(200,0,0,.3);}
 #trackInfoBar .ti-dur{color:#555;margin-left:auto;}
-/* ── Radio Mini Player ── */
-#radioMiniPlayer{display:none;position:fixed;bottom:32px;left:50%;transform:translateX(-50%);z-index:99998;width:340px;background:rgba(8,6,16,.97);border:1px solid #8b0000;border-radius:4px;font-family:'Share Tech Mono',monospace;backdrop-filter:blur(10px);box-shadow:0 0 30px rgba(139,0,0,.3),0 -4px 20px rgba(0,0,0,.8),inset 0 0 40px rgba(139,0,0,.05);animation:miniPlayerIn .25s ease-out;}
-@keyframes miniPlayerIn{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
-#radioMiniPlayer.closing{animation:miniPlayerOut .2s ease-in forwards;}
-@keyframes miniPlayerOut{to{opacity:0;transform:translateX(-50%) translateY(10px);}}
-.rmp-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px 4px;border-bottom:1px solid rgba(139,0,0,.3);}
-.rmp-title{font-size:8px;letter-spacing:3px;color:#8b0000;text-transform:uppercase;}
-.rmp-close{background:none;border:none;color:#555;font-size:14px;cursor:pointer;padding:0 4px;font-family:inherit;}
-.rmp-close:hover{color:#e0174a;}
-.rmp-body{padding:10px 12px;}
-.rmp-station{font-size:13px;color:#cc0000;letter-spacing:1px;text-shadow:0 0 8px rgba(200,0,0,.3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
-.rmp-genre{font-size:8px;color:#555;letter-spacing:2px;margin-bottom:2px;}
-.rmp-desc{font-size:9px;color:#444;margin-bottom:8px;}
-.rmp-status{font-size:8px;letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-.rmp-status-dot{width:6px;height:6px;border-radius:50%;background:#8b0000;animation:rmpPulse 1.5s infinite;}
-.rmp-status.live .rmp-status-dot{background:#00ff88;animation:rmpPulse 1s infinite;}
-@keyframes rmpPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
-.rmp-status-text{color:#666;}
+#trackInfoBar::before{
+  content:'☠';position:absolute;left:8px;top:50%;transform:translateY(-50%);
+  font-size:12px;opacity:.3;
+}
+/* ── Radio Mini Player — DARKSIDERS EDITION ── */
+#radioMiniPlayer{
+  display:none;position:fixed;bottom:36px;left:50%;transform:translateX(-50%) scale(.92);
+  z-index:99998;width:420px;max-width:96vw;
+  background:linear-gradient(160deg,rgba(12,4,4,.98) 0%,rgba(20,8,8,.98) 40%,rgba(8,4,18,.98) 100%);
+  border:1px solid rgba(139,0,0,.6);border-radius:16px;
+  font-family:'Share Tech Mono',monospace;
+  backdrop-filter:blur(16px);
+  box-shadow:
+    0 0 60px rgba(139,0,0,.4),
+    0 0 120px rgba(100,0,0,.15),
+    0 -6px 30px rgba(0,0,0,.9),
+    inset 0 1px 0 rgba(255,60,60,.08),
+    inset 0 0 80px rgba(139,0,0,.04);
+  opacity:0;overflow:hidden;
+  transition:none;
+}
+#radioMiniPlayer.rmp-opening{
+  animation:rmpDarksidersOpen .5s cubic-bezier(.16,1.2,.3,1) forwards;
+}
+#radioMiniPlayer.closing{
+  animation:rmpDarksidersClose .35s cubic-bezier(.55,.05,.68,.53) forwards;
+}
+@keyframes rmpDarksidersOpen{
+  0%{opacity:0;transform:translateX(-50%) scale(.6) translateY(40px);filter:brightness(3) saturate(2);}
+  30%{opacity:1;filter:brightness(1.8) saturate(1.5);}
+  100%{opacity:1;transform:translateX(-50%) scale(1) translateY(0);filter:brightness(1) saturate(1);}
+}
+@keyframes rmpDarksidersClose{
+  0%{opacity:1;transform:translateX(-50%) scale(1) translateY(0);filter:brightness(1);}
+  40%{filter:brightness(1.6) saturate(1.5);}
+  100%{opacity:0;transform:translateX(-50%) scale(.7) translateY(50px);filter:brightness(2.5) saturate(0);}
+}
+/* Ember canvas overlay */
+#rmpEmberCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;border-radius:16px;opacity:.7;}
+/* Glow pulse border */
+#radioMiniPlayer::before{
+  content:'';position:absolute;inset:-1px;border-radius:16px;
+  background:linear-gradient(45deg,transparent 30%,rgba(200,20,20,.25) 50%,transparent 70%);
+  background-size:300% 300%;animation:rmpBorderGlow 4s ease infinite;z-index:0;pointer-events:none;
+}
+@keyframes rmpBorderGlow{
+  0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}
+}
+/* Inner content wrapper */
+.rmp-inner{position:relative;z-index:1;}
+/* Header */
+.rmp-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px 8px;
+}
+.rmp-title{
+  font-size:9px;letter-spacing:4px;color:#8b0000;text-transform:uppercase;
+  text-shadow:0 0 12px rgba(139,0,0,.6);
+  display:flex;align-items:center;gap:6px;
+}
+.rmp-title-icon{font-size:14px;filter:drop-shadow(0 0 6px rgba(200,0,0,.5));}
+.rmp-close{
+  background:none;border:1px solid rgba(139,0,0,.3);color:#666;font-size:16px;
+  cursor:pointer;padding:2px 8px;font-family:inherit;border-radius:6px;
+  transition:all .2s;
+}
+.rmp-close:hover{color:#ff3333;border-color:#cc0000;box-shadow:0 0 12px rgba(200,0,0,.4);background:rgba(139,0,0,.15);}
+/* Visualizer bar */
+#rmpVisualizer{
+  display:flex;align-items:flex-end;justify-content:center;gap:2px;
+  height:32px;padding:0 16px;margin-bottom:4px;
+}
+.rmp-viz-bar{
+  width:4px;min-height:2px;border-radius:2px 2px 0 0;
+  background:linear-gradient(to top,#8b0000,#ff3333);
+  transition:height .1s ease;opacity:.8;
+  box-shadow:0 0 4px rgba(200,0,0,.3);
+}
+/* Body */
+.rmp-body{padding:4px 16px 14px;}
+/* Station name — big and bold */
+.rmp-station{
+  font-size:18px;color:#e8e8e8;letter-spacing:2px;
+  text-shadow:0 0 16px rgba(200,0,0,.25);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  margin-bottom:3px;font-weight:bold;
+}
+.rmp-genre{
+  font-size:9px;color:#8b0000;letter-spacing:3px;margin-bottom:2px;
+  text-shadow:0 0 6px rgba(139,0,0,.3);
+}
+.rmp-desc{font-size:9px;color:#555;margin-bottom:10px;letter-spacing:1px;}
+/* Status */
+.rmp-status{
+  font-size:8px;letter-spacing:3px;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.rmp-status-dot{
+  width:8px;height:8px;border-radius:50%;background:#8b0000;
+  box-shadow:0 0 8px rgba(139,0,0,.5);
+  animation:rmpPulse 2s infinite;
+}
+.rmp-status.live .rmp-status-dot{
+  background:#00ff88;
+  box-shadow:0 0 12px rgba(0,255,136,.5),0 0 24px rgba(0,255,136,.2);
+  animation:rmpPulse 1s infinite;
+}
+@keyframes rmpPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(.8);}}
+.rmp-status-text{color:#666;text-transform:uppercase;}
 .rmp-status.live .rmp-status-text{color:#00ff88;}
-.rmp-controls{display:flex;align-items:center;justify-content:center;gap:6px;}
-.rmp-btn{background:none;border:1px solid #333;color:#888;font-size:14px;width:36px;height:30px;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;border-radius:2px;}
-.rmp-btn:hover{border-color:#8b0000;color:#e0174a;box-shadow:0 0 8px rgba(139,0,0,.3);}
-.rmp-btn.active{border-color:#00ff88;color:#00ff88;box-shadow:0 0 10px rgba(0,255,136,.15);}
-.rmp-btn.rmp-play{width:44px;height:34px;font-size:16px;}
-.rmp-vol{display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(139,0,0,.15);}
-.rmp-vol label{font-size:7px;color:#555;letter-spacing:2px;}
-.rmp-vol input[type=range]{flex:1;height:3px;accent-color:#8b0000;}
+/* Controls — Darksiders big buttons */
+.rmp-controls{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin-bottom:6px;
+}
+.rmp-btn{
+  background:rgba(20,8,8,.6);border:1px solid rgba(139,0,0,.35);
+  color:#999;font-size:18px;width:48px;height:42px;cursor:pointer;
+  font-family:inherit;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:10px;position:relative;overflow:hidden;
+}
+.rmp-btn::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at center,rgba(139,0,0,.1) 0%,transparent 70%);
+  opacity:0;transition:opacity .2s;
+}
+.rmp-btn:hover{
+  border-color:#cc0000;color:#ff4444;
+  box-shadow:0 0 16px rgba(200,0,0,.3),inset 0 0 12px rgba(139,0,0,.1);
+  transform:scale(1.05);
+}
+.rmp-btn:hover::after{opacity:1;}
+.rmp-btn:active{transform:scale(.95);}
+.rmp-btn.active{
+  border-color:#00ff88;color:#00ff88;
+  box-shadow:0 0 16px rgba(0,255,136,.2),inset 0 0 12px rgba(0,255,136,.05);
+}
+.rmp-btn.rmp-play{
+  width:60px;height:50px;font-size:22px;
+  border:2px solid rgba(139,0,0,.5);
+  background:linear-gradient(135deg,rgba(30,8,8,.8),rgba(15,4,4,.9));
+  box-shadow:0 0 20px rgba(139,0,0,.2),inset 0 1px 0 rgba(255,60,60,.1);
+}
+.rmp-btn.rmp-play:hover{
+  border-color:#ff3333;
+  box-shadow:0 0 30px rgba(200,0,0,.4),inset 0 0 16px rgba(139,0,0,.15);
+}
+.rmp-btn.rmp-play.active{
+  border-color:#00ff88;
+  background:linear-gradient(135deg,rgba(0,40,20,.6),rgba(0,20,10,.8));
+  box-shadow:0 0 24px rgba(0,255,136,.25),inset 0 0 12px rgba(0,255,136,.08);
+}
+/* Volume — blood/lava slider */
+.rmp-vol{
+  display:flex;align-items:center;gap:10px;
+  margin-top:8px;padding-top:10px;
+  border-top:1px solid rgba(139,0,0,.15);
+}
+.rmp-vol label{font-size:8px;color:#8b0000;letter-spacing:3px;text-shadow:0 0 6px rgba(139,0,0,.3);}
+.rmp-vol input[type=range]{
+  flex:1;height:6px;border-radius:3px;
+  -webkit-appearance:none;appearance:none;
+  background:linear-gradient(90deg,rgba(139,0,0,.3),rgba(139,0,0,.15));
+  outline:none;
+}
+.rmp-vol input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,#ff4444,#8b0000);
+  border:2px solid rgba(255,60,60,.4);cursor:pointer;
+  box-shadow:0 0 10px rgba(200,0,0,.5),0 0 20px rgba(139,0,0,.2);
+  transition:box-shadow .2s;
+}
+.rmp-vol input[type=range]::-webkit-slider-thumb:hover{
+  box-shadow:0 0 16px rgba(200,0,0,.7),0 0 30px rgba(139,0,0,.3);
+}
+.rmp-vol input[type=range]::-moz-range-thumb{
+  width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,60,60,.4);
+  background:radial-gradient(circle at 40% 35%,#ff4444,#8b0000);cursor:pointer;
+  box-shadow:0 0 10px rgba(200,0,0,.5);
+}
+/* Decorative chain corners */
+.rmp-chain{
+  position:absolute;font-size:10px;opacity:.15;pointer-events:none;z-index:0;
+  filter:grayscale(.5);
+}
+.rmp-chain.tl{top:4px;left:6px;}.rmp-chain.tr{top:4px;right:6px;transform:scaleX(-1);}
+.rmp-chain.bl{bottom:4px;left:6px;}.rmp-chain.br{bottom:4px;right:6px;transform:scaleX(-1);}
 /* ── User status bar ── */
 #userStatusBar{display:none;position:fixed;top:10px;left:10px;z-index:99998;font-family:'Share Tech Mono',monospace;font-size:9px;color:#00ff88;letter-spacing:2px;background:#0a0a14;border:1px solid #222;padding:4px 10px;border-radius:2px;cursor:pointer;}
 #dafoeJesusWrap{display:none!important;}
@@ -1655,29 +1824,35 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
   <span class="ti-dur" id="tiDur">0:00 / 0:00</span>
 </div>
 
-<!-- RADIO MINI PLAYER -->
+<!-- RADIO MINI PLAYER — DARKSIDERS EDITION -->
 <div id="radioMiniPlayer">
-  <div class="rmp-header">
-    <span class="rmp-title">📻 DARK SOULS RADIO</span>
-    <button class="rmp-close" onclick="closeRadioMiniPlayer()">×</button>
-  </div>
-  <div class="rmp-body">
-    <div class="rmp-station" id="rmpStation">NO STATION</div>
-    <div class="rmp-genre" id="rmpGenre"></div>
-    <div class="rmp-desc" id="rmpDesc"></div>
-    <div class="rmp-status" id="rmpStatus">
-      <span class="rmp-status-dot"></span>
-      <span class="rmp-status-text" id="rmpStatusText">IDLE</span>
+  <canvas id="rmpEmberCanvas"></canvas>
+  <span class="rmp-chain tl">⛓</span><span class="rmp-chain tr">⛓</span>
+  <span class="rmp-chain bl">⛓</span><span class="rmp-chain br">⛓</span>
+  <div class="rmp-inner">
+    <div class="rmp-header">
+      <span class="rmp-title"><span class="rmp-title-icon">☠</span> DARK SOULS RADIO</span>
+      <button class="rmp-close" onclick="closeRadioMiniPlayer()">✕</button>
     </div>
-    <div class="rmp-controls">
-      <button class="rmp-btn" onclick="rmpPrev()" title="Previous Station">⏮</button>
-      <button class="rmp-btn rmp-play" id="rmpPlayBtn" onclick="rmpTogglePlay()" title="Play/Pause">▶</button>
-      <button class="rmp-btn" id="rmpStopBtn" onclick="rmpStop()" title="Stop">■</button>
-      <button class="rmp-btn" onclick="rmpNext()" title="Next Station">⏭</button>
-    </div>
-    <div class="rmp-vol">
-      <label>VOL</label>
-      <input type="range" min="0" max="100" value="80" id="rmpVol" oninput="rmpSetVol(this.value)">
+    <div id="rmpVisualizer"></div>
+    <div class="rmp-body">
+      <div class="rmp-station" id="rmpStation">NO STATION</div>
+      <div class="rmp-genre" id="rmpGenre"></div>
+      <div class="rmp-desc" id="rmpDesc"></div>
+      <div class="rmp-status" id="rmpStatus">
+        <span class="rmp-status-dot"></span>
+        <span class="rmp-status-text" id="rmpStatusText">IDLE</span>
+      </div>
+      <div class="rmp-controls">
+        <button class="rmp-btn" onclick="rmpPrev()" title="Previous Station">⏮</button>
+        <button class="rmp-btn rmp-play" id="rmpPlayBtn" onclick="rmpTogglePlay()" title="Play/Pause">▶</button>
+        <button class="rmp-btn" id="rmpStopBtn" onclick="rmpStop()" title="Stop">■</button>
+        <button class="rmp-btn" onclick="rmpNext()" title="Next Station">⏭</button>
+      </div>
+      <div class="rmp-vol">
+        <label>VOL</label>
+        <input type="range" min="0" max="100" value="80" id="rmpVol" oninput="rmpSetVol(this.value)">
+      </div>
     </div>
   </div>
 </div>
@@ -4901,24 +5076,136 @@ var rmpFlatStations = [];
 var rmpOpen = false;
 var rmpUpdateInterval = null;
 
+/* ── Ember particle system for mini player ── */
+var rmpEmberParticles = [];
+var rmpEmberAF = null;
+function rmpInitEmbers(){
+  var c = document.getElementById('rmpEmberCanvas');
+  if(!c) return;
+  var ctx = c.getContext('2d');
+  function resize(){ c.width = c.offsetWidth; c.height = c.offsetHeight; }
+  resize();
+  rmpEmberParticles = [];
+  for(var i=0;i<28;i++){
+    rmpEmberParticles.push({
+      x:Math.random()*c.width, y:c.height+Math.random()*20,
+      vx:(Math.random()-.5)*.4, vy:-(Math.random()*1.2+.3),
+      r:Math.random()*2.5+1, life:Math.random()*100+60,
+      maxLife:100+Math.random()*60,
+      color:Math.random()>.5?'rgba(200,30,30,':'rgba(255,80,20,'
+    });
+  }
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    for(var i=0;i<rmpEmberParticles.length;i++){
+      var p=rmpEmberParticles[i];
+      p.x+=p.vx; p.y+=p.vy; p.life--;
+      if(p.life<=0||p.y<-10){
+        p.x=Math.random()*c.width; p.y=c.height+5;
+        p.life=p.maxLife; p.vx=(Math.random()-.5)*.4;
+      }
+      var alpha=Math.min(1,p.life/30)*.6;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color+alpha+')';
+      ctx.fill();
+      // glow
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r*3,0,Math.PI*2);
+      ctx.fillStyle=p.color+(alpha*.15)+')';
+      ctx.fill();
+    }
+    rmpEmberAF=requestAnimationFrame(draw);
+  }
+  draw();
+}
+function rmpStopEmbers(){
+  if(rmpEmberAF){cancelAnimationFrame(rmpEmberAF);rmpEmberAF=null;}
+}
+
+/* ── Audio Visualizer for mini player ── */
+var rmpAudioCtx=null, rmpAnalyser=null, rmpSource=null, rmpVizAF=null;
+var rmpVizBars=32;
+function rmpInitVisualizer(){
+  var container=document.getElementById('rmpVisualizer');
+  if(!container) return;
+  container.innerHTML='';
+  for(var i=0;i<rmpVizBars;i++){
+    var bar=document.createElement('div');
+    bar.className='rmp-viz-bar';
+    bar.style.height='2px';
+    container.appendChild(bar);
+  }
+  // Connect audio if playing
+  if(radAudio && radPlaying){
+    try{
+      if(!rmpAudioCtx) rmpAudioCtx=new (window.AudioContext||window.webkitAudioContext)();
+      if(rmpSource){try{rmpSource.disconnect();}catch(e){}}
+      rmpAnalyser=rmpAudioCtx.createAnalyser();
+      rmpAnalyser.fftSize=64;
+      rmpSource=rmpAudioCtx.createMediaElementSource(radAudio);
+      rmpSource.connect(rmpAnalyser);
+      rmpAnalyser.connect(rmpAudioCtx.destination);
+    }catch(e){
+      // CORS or already connected — fake visualizer
+      rmpAnalyser=null;
+    }
+  }
+  rmpDrawViz();
+}
+function rmpDrawViz(){
+  var container=document.getElementById('rmpVisualizer');
+  if(!container||!rmpOpen){rmpVizAF=null;return;}
+  var bars=container.children;
+  if(rmpAnalyser){
+    var data=new Uint8Array(rmpAnalyser.frequencyBinCount);
+    rmpAnalyser.getByteFrequencyData(data);
+    for(var i=0;i<bars.length&&i<data.length;i++){
+      var h=Math.max(2,(data[i]/255)*30);
+      bars[i].style.height=h+'px';
+    }
+  } else if(radPlaying && radAudio && !radAudio.paused){
+    // Fake visualizer when can't connect (CORS)
+    for(var i=0;i<bars.length;i++){
+      var h=2+Math.random()*22*Math.sin(Date.now()/300+i*.5)*.5+Math.random()*8;
+      bars[i].style.height=Math.max(2,h)+'px';
+    }
+  } else {
+    for(var i=0;i<bars.length;i++) bars[i].style.height='2px';
+  }
+  rmpVizAF=requestAnimationFrame(rmpDrawViz);
+}
+function rmpStopViz(){
+  if(rmpVizAF){cancelAnimationFrame(rmpVizAF);rmpVizAF=null;}
+}
+
 window.toggleRadioMiniPlayer = function(){
-  if(!radPlaying && !radCurrentStation) return; // nothing to show
+  if(!radPlaying && !radCurrentStation) return;
   var mp = document.getElementById('radioMiniPlayer');
   if(rmpOpen){ closeRadioMiniPlayer(); return; }
   rmpOpen = true;
   mp.classList.remove('closing');
+  mp.classList.remove('rmp-opening');
   mp.style.display = 'block';
+  // Force reflow before adding animation class
+  void mp.offsetWidth;
+  mp.classList.add('rmp-opening');
+  rmpInitEmbers();
+  rmpInitVisualizer();
   rmpSyncUI();
   if(rmpUpdateInterval) clearInterval(rmpUpdateInterval);
-  rmpUpdateInterval = setInterval(rmpSyncUI, 500);
+  rmpUpdateInterval = setInterval(function(){ rmpSyncUI(); }, 500);
 };
 
 window.closeRadioMiniPlayer = function(){
   var mp = document.getElementById('radioMiniPlayer');
+  mp.classList.remove('rmp-opening');
   mp.classList.add('closing');
   rmpOpen = false;
+  rmpStopEmbers();
+  rmpStopViz();
   if(rmpUpdateInterval){ clearInterval(rmpUpdateInterval); rmpUpdateInterval = null; }
-  setTimeout(function(){ if(!rmpOpen) mp.style.display = 'none'; }, 200);
+  setTimeout(function(){ if(!rmpOpen){ mp.style.display = 'none'; mp.classList.remove('closing'); }}, 350);
 };
 
 function rmpSyncUI(){
