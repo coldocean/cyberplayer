@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       updated_by TEXT
     )`).catch(()=>{});
 
-    await query(`CREATE TABLE IF NOT EXISTS hell_admins (`
+    await query(`CREATE TABLE IF NOT EXISTS hell_admins (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       email TEXT NOT NULL UNIQUE,
       confirmed INTEGER DEFAULT 0,
