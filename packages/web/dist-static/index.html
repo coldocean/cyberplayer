@@ -67,7 +67,7 @@ body{
 /* ════════════════════════════════════════
    MODE 1 — WINAMP
 ════════════════════════════════════════ */
-#mode1{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:48px;}
+#mode1{display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:48px;}
 
 /* SKIN SWITCHER */
 .skin-bar{
@@ -623,7 +623,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 /* ════════════════════════════════════════
    MODE 2 — ARCADE (existing)
 ════════════════════════════════════════ */
-#mode2{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;width:100%;}
+#mode2{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;width:100%;}
 
 .arc-shell{
   width:min(900px,98vw);
@@ -1866,8 +1866,8 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
 <!-- MODE SWITCHER -->
 <div id="modeBtns">
   <button class="modebtn" onclick="setMode(0)">M0</button>
-  <button class="modebtn active" onclick="setMode(1)">M1</button>
-  <button class="modebtn" onclick="setMode(2)">M2</button>
+  <button class="modebtn" onclick="setMode(1)">M1</button>
+  <button class="modebtn active" onclick="setMode(2)">M2</button>
   <button class="modebtn" onclick="setMode(3)">M3</button>
   <button class="modebtn" onclick="setMode(4)">M4</button>
   <button class="modebtn" onclick="setMode(5)" style="position:relative;">M5<span style="position:absolute;top:-6px;right:-8px;background:#cc0000;color:#fff;font-size:6px;padding:1px 3px;border-radius:2px;letter-spacing:1px;">News from HELL</span></button>
@@ -2269,14 +2269,14 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
       <div class="arc-nav-item" id="arcShuffleBtn" onclick="arcToggleShuffle(this)">🔀</div>
       <div class="arc-nav-item" id="arcRepeatBtn" onclick="arcToggleRepeat(this)">🔂</div>
       <div class="arc-nav-item" id="arcTotalBtn" style="cursor:default;letter-spacing:.5px;font-size:10px;">0 SONGS</div>
-      <div class="arc-nav-item active" id="arcNavPlayer" onclick="arcShowPanel('player')">MUSIC PLAYER</div>
-      <div class="arc-nav-item" id="arcNavRadio" onclick="arcShowPanel('radio')">📡 RADIO</div>
+      <div class="arc-nav-item" id="arcNavPlayer" onclick="arcShowPanel('player')">MUSIC PLAYER</div>
+      <div class="arc-nav-item active" id="arcNavRadio" onclick="arcShowPanel('radio')">📡 RADIO</div>
       <div class="arc-nav-item" id="arcNavSettings" onclick="arcShowPanel('settings')">SETTINGS</div>
       <div class="arc-trigger" style="margin-left:auto">ZR</div>
     </div>
 
     <!-- PLAYER BODY -->
-    <div class="arc-body" id="arcBodyPlayer">
+    <div class="arc-body" id="arcBodyPlayer" style="display:none;">
       <div class="arc-tracklist" id="arcTracklist"><div style="padding:16px 8px;font-size:8px;color:#333;letter-spacing:1px;text-align:center;">NO TRACKS<br>UPLOAD IN SETTINGS</div></div>
       <div class="arc-right">
         <div class="arc-title" id="arcTitle">NO TRACK</div>
@@ -2386,7 +2386,7 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
     </div>
 
     <!-- RADIO BODY — full scrollable list view -->
-    <div class="arc-body" id="arcBodyRadio" style="display:none;min-height:340px;padding:0;">
+    <div class="arc-body" id="arcBodyRadio" style="display:flex;min-height:340px;padding:0;">
       <!-- Bordered container matching PLAYLIST style -->
       <div style="display:flex;flex-direction:column;width:100%;height:100%;min-height:340px;border:1px solid #2a2a00;background:#000;box-sizing:border-box;">
         <!-- PLAY LIST-style header: yellow bold title + count -->
@@ -2569,7 +2569,7 @@ Object.defineProperty(window, 'tracks', {
 
 let currentAudio = null; // HTML5 Audio element
 let currentTrackIdx = -1;
-let currentMode = 1;
+let currentMode = 2;
 
 // ── SHARED: load a track by index into HTML5 Audio ──
 async function loadTrack(idx, autoPlay) {
@@ -2900,7 +2900,7 @@ function setMode(m) {
     b.classList.toggle('active', btnMode===m);
   });
   if (m===0) setTimeout(()=>{ ytcOnShow(); },50);
-  if (m===2) setTimeout(()=>{ arcRenderList(); arcDrawWave(currentAudio&&!currentAudio.paused); resizeArcCanvas(); },50);
+  if (m===2) setTimeout(()=>{ if(arcCurrentPanel==='radio'){radRenderArcRadio();}else{arcRenderList(); arcDrawWave(currentAudio&&!currentAudio.paused); resizeArcCanvas();} },50);
   if (m===1) setTimeout(()=>{ wampRenderList(); wampDrawVu(currentAudio&&!currentAudio.paused); },50);
   if (m===3) setTimeout(()=>{ cliRenderList(); cliInitSpectrum(); },50);
   if (m===4) setTimeout(()=>{ const el=document.getElementById('slotCoinCount'); if(el) el.textContent=(authUser&&(authUser.role==='superadmin'||authUser.role==='admin'))?'∞':guestCoins; },50);
@@ -3241,7 +3241,7 @@ function arcToggleShuffle(el){arcShuffle=!arcShuffle;el.classList.toggle('active
 function arcToggleRepeat(el){arcRepeat=!arcRepeat;el.classList.toggle('active',arcRepeat);}
 
 // Panel switch
-let arcCurrentPanel='player';
+let arcCurrentPanel='radio';
 function arcShowPanel(panel){
   arcCurrentPanel=panel;
   const bp=document.getElementById('arcBodyPlayer');
@@ -3325,6 +3325,8 @@ window.addEventListener('resize',()=>{if(currentMode===2)arcDrawWave(currentAudi
 // init
 arcRenderList();
 arcDrawWave(false);
+// Default to radio tab on Mode 2
+setTimeout(()=>{ if(arcCurrentPanel==='radio') radRenderArcRadio(); },100);
 
 
 // ════════════════════════════════════════════════
