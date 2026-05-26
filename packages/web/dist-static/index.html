@@ -5162,6 +5162,11 @@ function authUpdateUI() {
     if (authUser.role === 'superadmin') {
       document.getElementById('voteAdminPanel').style.display = 'block';
     }
+    // Update hell admin button visibility
+    const hellBtn = document.getElementById('hellAdminBtnWrap');
+    if (hellBtn && (authUser.role === 'superadmin' || authUser.role === 'admin')) {
+      hellBtn.style.display = '';
+    }
   } else {
     // Guest
     if (wampTag) wampTag.textContent = 'darksoul@darksidePlayers';
@@ -5170,6 +5175,9 @@ function authUpdateUI() {
     ['arcPlBtn1','arcPlBtn2','arcPlBtn3'].forEach(id => {
       const b = document.getElementById(id); if (b) b.style.display = 'none';
     });
+    // Hide hell admin button
+    const hellBtn = document.getElementById('hellAdminBtnWrap');
+    if (hellBtn) hellBtn.style.display = 'none';
   }
   // Load server tracks whenever auth state updates
   loadServerTracks();
@@ -6855,7 +6863,7 @@ async function hellCheckInviteParam(){
       // Auto-login with the new account
       authToken = d.token;
       authUser = d.user;
-      localStorage.setItem('authToken', d.token);
+      localStorage.setItem('cp_token', d.token);
       localStorage.setItem('authUser', JSON.stringify(d.user));
       // Clean URL
       const url = new URL(window.location);
