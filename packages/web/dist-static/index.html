@@ -2906,6 +2906,49 @@ function arcShowUpload() {
 }
 
 // ════════════════════════════════════════════════
+// URL ROUTING (hash-based)
+// ════════════════════════════════════════════════
+// Route map: hash → { mode, panel?, subAction? }
+const ROUTE_MAP = {
+  'video':    { mode: 0 },
+  'winamp':   { mode: 1 },
+  'player':   { mode: 2, panel: 'player' },
+  'radio':    { mode: 2, panel: 'radio' },
+  'settings': { mode: 2, panel: 'settings' },
+  'terminal': { mode: 3 },
+  'casino':   { mode: 4 },
+  'hell':     { mode: 5 },
+  'hell/admin': { mode: 5, sub: 'admin' },
+};
+// Reverse: mode → hash
+const MODE_HASH = { 0:'video', 1:'winamp', 2:'radio', 3:'terminal', 4:'casino', 5:'hell' };
+
+let _routerSilent = false; // prevent circular hash↔setMode updates
+
+function routeFromHash() {
+  const raw = (location.hash || '').replace(/^#\/?/, '').toLowerCase().replace(/\/+$/, '');
+  const route = ROUTE_MAP[raw];
+  if (!route) { _routerSilent = true; setMode(2); _routerSilent = false; return; }
+  _routerSilent = true;
+  setMode(route.mode);
+  if (route.panel && typeof arcShowPanel === 'function') arcShowPanel(route.panel);
+  if (route.sub === 'admin' && route.mode === 5) setTimeout(() => { if(typeof hellOpenNewsEditor === 'function') hellOpenNewsEditor(); }, 200);
+  _routerSilent = false;
+}
+
+window.addEventListener('hashchange', routeFromHash);
+
+// On first load — run after loading screen is done (check every 200ms)
+(function _waitForBoot(){
+  const screen = document.getElementById('hellCageScreen');
+  if (screen && screen.style.display !== 'none' && screen.style.opacity !== '0') {
+    setTimeout(_waitForBoot, 200);
+    return;
+  }
+  routeFromHash();
+})();
+
+// ════════════════════════════════════════════════
 // MODE SWITCH
 // ════════════════════════════════════════════════
 function setMode(m) {
@@ -2921,6 +2964,11 @@ function setMode(m) {
     const btnMode = i===0?0:i;
     b.classList.toggle('active', btnMode===m);
   });
+  // Update URL hash (unless router is already handling it)
+  if (!_routerSilent) {
+    const h = MODE_HASH[m] || 'radio';
+    if (location.hash !== '#/' + h) history.replaceState(null, '', '#/' + h);
+  }
   if (m===0) setTimeout(()=>{ ytcOnShow(); },50);
   if (m===2) setTimeout(()=>{ if(arcCurrentPanel==='radio'){radRenderArcRadio();}else{arcRenderList(); arcDrawWave(currentAudio&&!currentAudio.paused); resizeArcCanvas();} },50);
   if (m===1) setTimeout(()=>{ wampRenderList(); wampDrawVu(currentAudio&&!currentAudio.paused); },50);
@@ -3286,6 +3334,11 @@ function arcShowPanel(panel){
       arcRenderList();
       arcDrawWave(currentAudio&&!currentAudio.paused);resizeArcCanvas();
     },50);
+  }
+  // Update URL hash for mode2 sub-panels
+  if (!_routerSilent && currentMode === 2) {
+    const h = panel === 'settings' ? 'settings' : panel === 'player' ? 'player' : 'radio';
+    if (location.hash !== '#/' + h) history.replaceState(null, '', '#/' + h);
   }
 }
 
@@ -7082,9 +7135,11 @@ function hellOpenNewsEditor(){
   const pinnedTab = document.getElementById('hellTabPinned');
   const isPinnedAdmin = (typeof authUser !== 'undefined' && authUser && (authUser.role === 'superadmin' || authUser.role === 'admin'));
   if(pinnedTab) pinnedTab.style.display = isPinnedAdmin ? '' : 'none';
+  if (!_routerSilent) history.replaceState(null, '', '#/hell/admin');
 }
 function hellCloseNewsEditor(){
   const ed = document.getElementById('hellNewsEditor');
+  if (!_routerSilent) history.replaceState(null, '', '#/hell');
   if(ed) ed.style.display = 'none';
   hellLoadMessages(); // refresh main view
 }

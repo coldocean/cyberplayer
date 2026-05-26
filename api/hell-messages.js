@@ -20,34 +20,10 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    // Ensure tables exist
-    await query(`CREATE TABLE IF NOT EXISTS hell_messages (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      text TEXT NOT NULL,
-      color TEXT DEFAULT '#ff4444',
-      author TEXT DEFAULT 'SATAN',
-      created_at TEXT DEFAULT (datetime('now')),
-      pinned INTEGER DEFAULT 0
-    )`).catch(()=>{});
-
-    await query(`CREATE TABLE IF NOT EXISTS hell_pinned (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT DEFAULT '',
-      text TEXT NOT NULL,
-      author TEXT DEFAULT '⛧ DJ SUPERNOVAQ',
-      updated_at TEXT DEFAULT (datetime('now')),
-      updated_by TEXT
-    )`).catch(()=>{});
-
-    await query(`CREATE TABLE IF NOT EXISTS hell_admins (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      email TEXT NOT NULL UNIQUE,
-      confirmed INTEGER DEFAULT 0,
-      confirm_token TEXT,
-      confirm_expires TEXT,
-      added_by TEXT,
-      created_at TEXT DEFAULT (datetime('now'))
-    )`).catch(()=>{});
+    // Ensure tables exist (each in its own try/catch so one failure doesn't block the rest)
+    try { await query("CREATE TABLE IF NOT EXISTS hell_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, text TEXT NOT NULL, color TEXT DEFAULT '#ff4444', author TEXT DEFAULT 'SATAN', created_at TEXT DEFAULT (datetime('now')), pinned INTEGER DEFAULT 0)"); } catch(e) { console.warn('hell_messages table:', e.message); }
+    try { await query("CREATE TABLE IF NOT EXISTS hell_pinned (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT DEFAULT '', text TEXT NOT NULL, author TEXT DEFAULT '⛧ DJ SUPERNOVAQ', updated_at TEXT DEFAULT (datetime('now')), updated_by TEXT)"); } catch(e) { console.warn('hell_pinned table:', e.message); }
+    try { await query("CREATE TABLE IF NOT EXISTS hell_admins (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT NOT NULL UNIQUE, confirmed INTEGER DEFAULT 0, confirm_token TEXT, confirm_expires TEXT, added_by TEXT, created_at TEXT DEFAULT (datetime('now')))"); } catch(e) { console.warn('hell_admins table:', e.message); }
 
     const action = req.query.action || 'list';
 
