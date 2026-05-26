@@ -3980,8 +3980,9 @@ async function doSpin() {
   const spinBtn = document.getElementById('slotSpinBtn');
   const msgEl = document.getElementById('slotMsg');
 
-  // Guests must have enough coins to cover the bet
-  if (!loggedInUser && guestCoins < slotBetRate) {
+  // Non-admin users must have enough coins to cover the bet
+  const isSpinAdmin = !!(authUser && (authUser.role === 'superadmin' || authUser.role === 'admin'));
+  if (!isSpinAdmin && guestCoins < slotBetRate) {
     msgEl.style.color = '#ff4060';
     msgEl.textContent = '🪙 NOT ENOUGH COINS';
     shakeElement(spinBtn);
@@ -4019,7 +4020,7 @@ async function doSpin() {
     const r = await fetch('/api/spin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ is_admin: !!loggedInUser, bet_rate: slotBetRate })
+      body: JSON.stringify({ is_admin: !!(authUser && (authUser.role === 'superadmin' || authUser.role === 'admin')), bet_rate: slotBetRate })
     });
     const d = await r.json();
 
@@ -4043,7 +4044,7 @@ async function doSpin() {
     } else {
       // Server returned error or no reels — use client fallback
       useClientFallback = true;
-      if (!loggedInUser) {
+      if (!isSpinAdmin) {
         guestCoins = Math.max(0, guestCoins - slotBetRate);
         updateCoinHud(null);
       }
@@ -4051,7 +4052,7 @@ async function doSpin() {
   } catch(e) {
     // Fallback to client-side spin
     useClientFallback = true;
-    if (!loggedInUser) {
+    if (!isSpinAdmin) {
       guestCoins = Math.max(0, guestCoins - slotBetRate);
       updateCoinHud(null);
     }
@@ -4096,19 +4097,20 @@ async function doSpin() {
   if (useClientFallback) {
     coinsWon = clientCalcWin(slotReels.map((r,ri) => finalReels[ri]), slotBetRate);
     betCost = slotBetRate;
-    if (coinsWon > 0 && !loggedInUser) {
+    if (coinsWon > 0 && !isSpinAdmin) {
       guestCoins = (parseInt(guestCoins) || 0) + (parseInt(coinsWon) || 0);
     }
     updateCoinHud(null);
-    document.getElementById('slotCoinCount').textContent = (authUser&&(authUser.role==='superadmin'||authUser.role==='admin')) ? '∞' : guestCoins;
+    document.getElementById('slotCoinCount').textContent = isSpinAdmin ? '∞' : guestCoins;
   } else {
     coinsWon = serverData.coins_won;
     betCost = serverData.bet_cost || slotBetRate;
     if (serverData.new_total !== null && serverData.new_total !== undefined) {
       guestCoins = parseInt(serverData.new_total) || 0;
-      updateCoinHud(null);
-      document.getElementById('slotCoinCount').textContent = (authUser&&(authUser.role==='superadmin'||authUser.role==='admin')) ? '∞' : guestCoins;
     }
+    // Always update HUD after server spin (even if new_total is null for admins)
+    updateCoinHud(null);
+    document.getElementById('slotCoinCount').textContent = isSpinAdmin ? '∞' : guestCoins;
   }
 
   // Find winning lines
