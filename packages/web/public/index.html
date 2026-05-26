@@ -4281,6 +4281,7 @@ const RADIO_DIR = {
         {name:'Record Deep', url:'https://radiorecord.hostingradio.ru/deep96.aacp', desc:'Deep house vibes'},
         {name:'Record Phonk', url:'https://radiorecord.hostingradio.ru/phonk96.aacp', desc:'Russian phonk & drift music'},
         {name:'Record На Хайпе', url:'https://radiorecord.hostingradio.ru/hype96.aacp', desc:'Trending & hyped tracks'},
+        {name:'Record Big Hits', url:'https://radiorecord.hostingradio.ru/bighits96.aacp', desc:'Biggest hits on Record'},
       ],
       'Russian Retro & Gold': [
         {name:'Record 80-х', url:'https://radiorecord.hostingradio.ru/198096.aacp', desc:'Best of Soviet/Russian 80s'},
@@ -4290,16 +4291,20 @@ const RADIO_DIR = {
         {name:'Russian Gold', url:'https://radiorecord.hostingradio.ru/russiangold96.aacp', desc:'Golden era Russian music'},
         {name:'Record Gold', url:'https://radiorecord.hostingradio.ru/gold96.aacp', desc:'All-time dance classics'},
         {name:'Руки Вверх!', url:'https://radiorecord.hostingradio.ru/rv96.aacp', desc:'Legendary Russian pop/dance'},
+        {name:'Record 70s Dance', url:'https://radiorecord.hostingradio.ru/197096.aacp', desc:'70s dance classics'},
       ],
       'Russian Rock & Alternative': [
         {name:'Nashe Radio SPb', url:'https://nashe1.hostingradio.ru/nashespb128.mp3', desc:'Russian rock legends'},
         {name:'ROCK FM 95.2', url:'https://nashe1.hostingradio.ru/rock-128.mp3', desc:'Hard rock & metal Moscow'},
         {name:'Record Rock', url:'https://radiorecord.hostingradio.ru/rock96.aacp', desc:'Rock hits from Record'},
+        {name:'Record Dream Pop', url:'https://radiorecord.hostingradio.ru/dreampop96.aacp', desc:'Dreamy alt-pop from Record'},
       ],
       'Russian Chill & Lo-Fi': [
         {name:'Record Chill-Out', url:'https://radiorecord.hostingradio.ru/chil96.aacp', desc:'Chill & relaxation'},
         {name:'Record Lo-Fi', url:'https://radiorecord.hostingradio.ru/lofi96.aacp', desc:'Lo-fi beats & chill'},
         {name:'Record Organic', url:'https://radiorecord.hostingradio.ru/organic96.aacp', desc:'Organic & melodic house'},
+        {name:'Record Chill House', url:'https://radiorecord.hostingradio.ru/chillhouse96.aacp', desc:'Chill house vibes'},
+        {name:'Record Ambient', url:'https://radiorecord.hostingradio.ru/ambient96.aacp', desc:'Ambient soundscapes'},
         {name:'Anima Amoris New Age', url:'https://amoris.sknt.ru/newage.mp3', desc:'Russian new age & ambient'},
       ],
       'Russian Trance & DnB': [
@@ -4307,15 +4312,28 @@ const RADIO_DIR = {
         {name:'Trance Classics', url:'https://radiorecord.hostingradio.ru/trancehits96.aacp', desc:'Classic trance anthems'},
         {name:'Pirate Station', url:'https://radiorecord.hostingradio.ru/ps96.aacp', desc:'DnB & bass from Record'},
         {name:'Anima Amoris Trance', url:'https://amoris.sknt.ru/trance.mp3', desc:'Russian trance radio'},
+        {name:'Record Neurofunk', url:'https://radiorecord.hostingradio.ru/neurofunk96.aacp', desc:'Heavy neurofunk rollers'},
+        {name:'Record Liquid Funk', url:'https://radiorecord.hostingradio.ru/liquidfunk96.aacp', desc:'Smooth liquid DnB'},
+        {name:'Record Jungle', url:'https://radiorecord.hostingradio.ru/jungle96.aacp', desc:'Jungle beats from Record'},
       ],
       'Russian Rap & Hip-Hop': [
         {name:'Record Rap Hits', url:'https://radiorecord.hostingradio.ru/rap96.aacp', desc:'Russian & international rap'},
         {name:'Record Black Rap', url:'https://radiorecord.hostingradio.ru/yo96.aacp', desc:'US hip-hop & rap'},
+        {name:'Record Rap Classics', url:'https://radiorecord.hostingradio.ru/rapclassics96.aacp', desc:'Classic rap anthems'},
         {name:'Record Remix', url:'https://radiorecord.hostingradio.ru/rmx96.aacp', desc:'Remixes of everything'},
+        {name:'Record Trap', url:'https://radiorecord.hostingradio.ru/trap96.aacp', desc:'Trap bangers'},
       ],
       'Russian Talk & Jazz': [
         {name:'Radio Mayak', url:'https://icecast-vgtrk.cdnvideo.ru/mayakfm_aac_64kbps', desc:'Classic Russian talk radio'},
         {name:'Jazz FM 89.1 Moscow', url:'https://nashe1.hostingradio.ru/jazz-128.mp3', desc:'Jazz from Moscow'},
+      ],
+      'Record Specials': [
+        {name:'Record Tiësto', url:'https://radiorecord.hostingradio.ru/tiesto96.aacp', desc:'Tiësto channel'},
+        {name:'Record David Guetta', url:'https://radiorecord.hostingradio.ru/guetta96.aacp', desc:'David Guetta channel'},
+        {name:'Record Armin van Buuren', url:'https://radiorecord.hostingradio.ru/armin96.aacp', desc:'Armin van Buuren channel'},
+        {name:'Record Workout', url:'https://radiorecord.hostingradio.ru/workout96.aacp', desc:'Workout energy mix'},
+        {name:'Record Midtempo', url:'https://radiorecord.hostingradio.ru/mt96.aacp', desc:'Midtempo bass music'},
+        {name:'Record Darkside', url:'https://radiorecord.hostingradio.ru/darkside96.aacp', desc:'Dark & heavy beats'},
       ],
     }
   },
@@ -4325,27 +4343,36 @@ const RADIO_DIR = {
       'Lounge': [
         {name:'Illinois Street Lounge', url:'https://ice6.somafm.com/illstreet-128-mp3', desc:'Classic bachelor pad & exotica'},
         {name:'Secret Agent', url:'https://ice6.somafm.com/secretagent-128-mp3', desc:'Bond soundtracks & lounge'},
-        {name:'ABC Lounge Radio', url:'https://eu1.fastcast4u.com/proxy/kpmxz?mp=/1', desc:'Smooth jazz & bossa nova'},
+        {name:'LuxuriaMusic', url:'http://ice10.securenetsystems.net/LUXOMP3', desc:'Surf, bossa nova & space-age lounge'},
+        {name:'Tiki Time', url:'https://ice6.somafm.com/tikitime-128-mp3', desc:'Exotica & tiki lounge'},
       ],
       'Trip-Hop': [
         {name:'Bristol Sound Radio', url:'https://thebristolsoundwebradio.stream.laut.fm/thebristolsoundwebradio', desc:'Massive Attack, Portishead vibes'},
         {name:'Ethereal Radio', url:'https://s5.radio.co/saac615442/listen', desc:'Trip-hop, downtempo, ethereal'},
         {name:'plusFM Trip-Hop', url:'https://listen.radioking.com/radio/291734/stream/339498', desc:'Electro pop & trip-hop mix'},
+        {name:'Stereoscenic Trip-Hop', url:'https://radio.stereoscenic.com/asp-h', desc:'24/7 trip-hop radio'},
       ],
       'Ambient': [
         {name:'Drone Zone', url:'https://ice6.somafm.com/dronezone-128-mp3', desc:'Atmospheric textures & drones'},
         {name:'Deep Space One', url:'https://ice6.somafm.com/deepspaceone-128-mp3', desc:'Deep ambient space music'},
         {name:'Dark Zone', url:'https://ice6.somafm.com/darkzone-128-mp3', desc:'Dark ambient & cinematic'},
         {name:'n5MD Radio', url:'https://ice1.somafm.com/n5md-128-mp3', desc:'Ambient & post-rock label'},
+        {name:'Ambient Sleeping Pill', url:'http://radio.stereoscenic.com/asp-h', desc:'Beat-free ambient for sleep'},
+        {name:'Dark Ambient Radio', url:'http://s3.viastreaming.net:8835/', desc:'Deep dark ambient textures'},
       ],
       'Chillout': [
         {name:'Groove Salad', url:'https://ice5.somafm.com/groovesalad-128-mp3', desc:'Ambient downtempo beats'},
         {name:'Groove Salad Classic', url:'https://ice6.somafm.com/gsclassic-128-mp3', desc:'Original GS flavors'},
         {name:'Radio Schizoid Chill', url:'http://94.130.113.214:8000/chill', desc:'Psychill & ambient'},
+        {name:'freeCodeCamp Radio', url:'https://coderadio-admin-v2.freecodecamp.org/listen/coderadio/radio.mp3', desc:'24/7 code-friendly instrumentals'},
       ],
       'Downtempo': [
         {name:'Beat Blender', url:'https://ice6.somafm.com/beatblender-128-mp3', desc:'Deep house & downtempo'},
         {name:'Suburbs of Goa', url:'https://ice6.somafm.com/suburbsofgoa-128-mp3', desc:'World-influenced downtempo'},
+      ],
+      'Nature & Meditation': [
+        {name:'Nature Radio Rain', url:'https://maggie.torontocast.com:2020/stream/natureradiorain', desc:'Soothing rain sounds 24/7'},
+        {name:'Mission Control', url:'https://ice6.somafm.com/missioncontrol-128-mp3', desc:'NASA mission audio + ambient'},
       ],
     }
   },
@@ -4354,37 +4381,76 @@ const RADIO_DIR = {
     subs: {
       'Tech House': [
         {name:'Sunshine Live Tech House', url:'http://stream.sunshine-live.de/sp4/mp3-192/stream.sunshine-live.de/', desc:'German tech house stream'},
-        {name:'Technolovers Deep House', url:'https://stream.technolovers.fm/deep-house?ref=radiobrowser', desc:'Deep & tech house 24/7'},
+        {name:'Record Tech House', url:'https://radiorecord.hostingradio.ru/techouse96.aacp', desc:'Tech house from Record'},
+        {name:'1.FM Deep Techno', url:'http://strm112.1.fm/deeptech_mobile_mp3', desc:'Deep techno & deep house'},
         {name:'ElectroDance World', url:'http://stream.zeno.fm/s70bvdgqks8uv', desc:'EDM & tech house'},
       ],
       'Progressive House': [
         {name:'Frisky Radio', url:'http://stream2.friskyradio.com/frisky_mp3_hi', desc:'Progressive & deep house'},
         {name:'Dance Wave!', url:'https://dancewave.online/dance.mp3', desc:'House & progressive'},
-        {name:'Deep House Lounge', url:'http://198.15.94.34:8006/stream', desc:'Deep & progressive house'},
+        {name:'Record Progressive', url:'https://radiorecord.hostingradio.ru/progr96.aacp', desc:'Progressive house from Record'},
+        {name:'Record Dream Dance', url:'https://radiorecord.hostingradio.ru/dream96.aacp', desc:'Dream dance & trance'},
       ],
       'Dubstep & Bass': [
         {name:'Dub Step Beyond', url:'https://ice6.somafm.com/dubstep-128-mp3', desc:'SomaFM dubstep & bass'},
-        {name:'PulseEDM', url:'http://pulseedm.cdnstream1.com:8124/1373_128', desc:'EDM & dubstep radio'},
+        {name:'Record Dubstep', url:'https://radiorecord.hostingradio.ru/dub96.aacp', desc:'Dubstep from Record'},
         {name:'Record Bass House', url:'https://radiorecord.hostingradio.ru/jackin96.aacp', desc:'Bass house & jackin'},
+        {name:'Record Breaks', url:'https://radiorecord.hostingradio.ru/brks96.aacp', desc:'Breaks & breakbeat'},
       ],
       'Trance': [
-        {name:'TranceBase FM', url:'http://listen.trancebase.fm/tunein-aac-hd-pls', desc:'Non-stop trance'},
+        {name:'1.FM Amsterdam Trance', url:'http://strm112.1.fm/atr_mobile_mp3', desc:'Non-stop trance from Amsterdam'},
         {name:'The Trip', url:'https://ice6.somafm.com/thetrip-128-mp3', desc:'Progressive trance journey'},
         {name:'Space Station Soma', url:'https://ice6.somafm.com/spacestation-128-mp3', desc:'Spaced-out electronic'},
+        {name:'Record Future Rave', url:'https://radiorecord.hostingradio.ru/futurerave96.aacp', desc:'Future rave energy'},
+      ],
+      'Techno': [
+        {name:'Record Techno', url:'https://radiorecord.hostingradio.ru/techno96.aacp', desc:'Techno from Record'},
+        {name:'Record Minimal', url:'https://radiorecord.hostingradio.ru/mini96.aacp', desc:'Minimal & tech'},
+        {name:'Record Electro', url:'https://radiorecord.hostingradio.ru/elect96.aacp', desc:'Electro from Record'},
+        {name:'Record Hypnotic', url:'https://radiorecord.hostingradio.ru/hypno96.aacp', desc:'Hypnotic techno'},
+      ],
+      'House': [
+        {name:'Record House Hits', url:'https://radiorecord.hostingradio.ru/househits96.aacp', desc:'House hits from Record'},
+        {name:'Record VIP House', url:'https://radiorecord.hostingradio.ru/vip96.aacp', desc:'VIP house selection'},
+        {name:'Record Future House', url:'https://radiorecord.hostingradio.ru/fut96.aacp', desc:'Future house from Record'},
+        {name:'Record House Classics', url:'https://radiorecord.hostingradio.ru/houseclss96.aacp', desc:'Classic house anthems'},
+        {name:'Record UK Garage', url:'https://radiorecord.hostingradio.ru/ukgarage96.aacp', desc:'UK garage from Record'},
+        {name:'1.FM Deep House', url:'http://strm112.1.fm/deephouse_mobile_mp3', desc:'Deep house 24/7'},
       ],
       'IDM / Glitch': [
         {name:'cliqhop idm', url:'https://ice6.somafm.com/cliqhop-128-mp3', desc:'Intelligent dance music'},
         {name:'DEF CON Radio', url:'https://ice6.somafm.com/defcon-128-mp3', desc:'Hacker conference radio'},
       ],
-      'Synthwave': [
-        {name:'Nightwave Plaza', url:'http://radio.plaza.one/mp3', desc:'Vaporwave & synthwave'},
+      'Synthwave & Retrowave': [
+        {name:'Nightwave Plaza', url:'https://radio.plaza.one/mp3', desc:'Vaporwave & future funk'},
         {name:'Vaporwaves', url:'https://ice5.somafm.com/vaporwaves-128-mp3', desc:'SomaFM vaporwave'},
         {name:'Synphaera Radio', url:'https://ice6.somafm.com/synphaera-128-mp3', desc:'Electronic & synth ambient'},
+        {name:'Record Synthwave', url:'https://radiorecord.hostingradio.ru/synth96.aacp', desc:'Synthwave from Record'},
       ],
       'Electro / Breaks': [
         {name:'Digitalis', url:'https://ice6.somafm.com/digitalis-128-mp3', desc:'Electro-alt & indie dance'},
         {name:'Lush', url:'https://ice6.somafm.com/lush-128-mp3', desc:'Sensuous female vocals & electronica'},
+        {name:'PopTron', url:'https://ice6.somafm.com/poptron-128-mp3', desc:'Electro-pop & synthpop'},
         {name:'SF 10-33', url:'https://ice1.somafm.com/sf1033-128-mp3', desc:'Ambient scanner & city vibes'},
+      ],
+      'Hardcore & Hardstyle': [
+        {name:'Record Hard Bass', url:'https://radiorecord.hostingradio.ru/hbass96.aacp', desc:'Hard bass from Record'},
+        {name:'Record Hardstyle', url:'https://radiorecord.hostingradio.ru/teo96.aacp', desc:'Hardstyle from Record'},
+        {name:'Record Dancecore', url:'https://radiorecord.hostingradio.ru/dc96.aacp', desc:'Dancecore from Record'},
+        {name:'Record Rave FM', url:'https://radiorecord.hostingradio.ru/rave96.aacp', desc:'Rave FM from Record'},
+        {name:'Real Hardstyle Radio', url:'https://stream.realhardstyle.nl/', desc:'Euphoric & raw hardstyle'},
+        {name:'ADM Hardstyle', url:'http://kathy.torontocast.com:2450/stream', desc:'Hardstyle 24/7'},
+      ],
+      'Eurodance & Tropical': [
+        {name:'Record Eurodance', url:'https://radiorecord.hostingradio.ru/eurodance96.aacp', desc:'90s Eurodance anthems'},
+        {name:'Record Tropical', url:'https://radiorecord.hostingradio.ru/trop96.aacp', desc:'Tropical house vibes'},
+        {name:'Record Disco/Funk', url:'https://radiorecord.hostingradio.ru/discofunk96.aacp', desc:'Disco & funk from Record'},
+      ],
+      'Psytrance & Goa': [
+        {name:'1.FM Psytrance', url:'http://strm112.1.fm/psytrance_mobile_mp3', desc:'Full-on & progressive psy'},
+        {name:'Psyndora Psytrance', url:'http://cast.magicstreams.gr:9111/stream', desc:'Psytrance 24/7'},
+        {name:'Record GOA/PSY', url:'https://radiorecord.hostingradio.ru/goa96.aacp', desc:'Goa & psy from Record'},
+        {name:'Anima Amoris Goa', url:'http://amoris.sknt.ru/goa.mp3', desc:'Goa trance radio'},
       ],
     }
   },
@@ -4393,21 +4459,20 @@ const RADIO_DIR = {
     subs: {
       'DnB General': [
         {name:'Bassdrive', url:'http://ice.bassdrive.net/stream', desc:'Worldwide DnB radio'},
-        {name:'DNBRadio', url:'http://ildnb1.dnbradio.com:8000/dnbradio_main.mp3', desc:'24/7 drum & bass'},
+        {name:'NR1 DnB Radio', url:'https://radio.listen-nr1dnb.com/listen/nr1_dnb_radio/radio.mp3', desc:'24/7 drum & bass'},
         {name:'UK Bass Radio', url:'https://www.ukbassradio.com/stream', desc:'UK bass & DnB'},
       ],
       'Neurofunk': [
-        {name:'DNBRadio Neurofunk', url:'http://ildnb1.dnbradio.com:8000/dnbradio_main.mp3', desc:'Heavy neuro rollers'},
+        {name:'Record Neurofunk', url:'https://radiorecord.hostingradio.ru/neurofunk96.aacp', desc:'Heavy neuro rollers from Record'},
         {name:'Kool FM', url:'https://admin.stream.rinse.fm/proxy/kool/stream', desc:'London pirate radio legend'},
       ],
       'Liquid Funk': [
-        {name:'DnB Liquified', url:'http://antares.dribbcast.com:5000/stream', desc:'Smooth liquid DnB'},
-        {name:'Dutch Delite DnB', url:'http://radio.dutchdelite.nl:8000/dnb', desc:'Liquid & soulful DnB'},
+        {name:'Record Liquid Funk', url:'https://radiorecord.hostingradio.ru/liquidfunk96.aacp', desc:'Smooth liquid DnB from Record'},
         {name:'Record DnB Classics', url:'https://radiorecord.hostingradio.ru/drumhits96.aacp', desc:'Classic DnB anthems'},
       ],
       'Jungle': [
+        {name:'Record Jungle', url:'https://radiorecord.hostingradio.ru/jungle96.aacp', desc:'Jungle from Record'},
         {name:'Kniteforce Radio', url:'https://kniteforce.out.airtime.pro/kniteforce_a', desc:'Jungle & hardcore'},
-        {name:'Partyvibe DnB', url:'https://www.partyviberadio.com:8061/;listen.pls?sid=1', desc:'Jungle & DnB mix'},
       ],
     }
   },
@@ -4418,6 +4483,8 @@ const RADIO_DIR = {
         {name:'181.FM Old School HipHop', url:'http://listen.181fm.com/181-oldschool_128k.mp3', desc:'Classic hip-hop & RnB'},
         {name:'181.FM The Beat', url:'http://listen.181fm.com/181-beat_128k.mp3', desc:'Modern hip-hop & R&B'},
         {name:'Fluid', url:'https://ice6.somafm.com/fluid-128-mp3', desc:'Hip-hop & electronic fusion'},
+        {name:'FIP Hip-Hop', url:'http://icecast.radiofrance.fr/fiphiphop-hifi.aac', desc:'Curated hip-hop from France'},
+        {name:'WEFUNK Radio', url:'https://www.wefunkradio.com/play/radio.mp3', desc:'Funk, soul & old-school hip-hop'},
       ],
       'Lo-Fi Hip-Hop': [
         {name:'Chillofi Radio', url:'http://streams.dez.ovh:8000/radio.mp3', desc:'Lo-fi beats to study to'},
@@ -4426,6 +4493,7 @@ const RADIO_DIR = {
       'Rap': [
         {name:'90s90s HipHop & Rap', url:'http://streams.90s90s.de/hiphop/mp3-192/streams.90s90s.de/', desc:'90s golden era hip-hop'},
         {name:'Record Rap Classics', url:'https://radiorecord.hostingradio.ru/rapclassics96.aacp', desc:'Classic rap anthems'},
+        {name:'Record Trap', url:'https://radiorecord.hostingradio.ru/trap96.aacp', desc:'Trap & modern rap'},
       ],
     }
   },
@@ -4435,7 +4503,6 @@ const RADIO_DIR = {
       '80s Hits': [
         {name:'Underground 80s', url:'https://ice6.somafm.com/u80s-128-mp3', desc:'Deep cuts & alt 80s'},
         {name:'The Big 80s Station', url:'http://158.69.114.190:8065/stream/1/', desc:'Non-stop 80s hits'},
-        {name:'AceRadio 80s', url:'http://bigrradio.cdnstream1.com/5117_128', desc:'Awesome 80s channel'},
         {name:'FUN Radio 80-90', url:'http://stream.funradio.sk:8000/80-90-128.mp3', desc:'Best of 80s & 90s'},
         {name:'Record 80-х', url:'https://radiorecord.hostingradio.ru/198096.aacp', desc:'80s from Record Russia'},
       ],
@@ -4445,20 +4512,19 @@ const RADIO_DIR = {
       ],
       '80s Metal & Rock': [
         {name:'Hard Rock Heaven', url:'http://hydra.cdnstream.com:80/1521_128', desc:'80s hair metal & glam'},
-        {name:'80s Metal', url:'http://ares5.radiochoice.net/1027_a080smetal64k', desc:'80s thrash & heavy metal'},
       ],
       'Retro & Oldies': [
         {name:'Dance Wave Retro', url:'http://onair.dancewave.online:8080/retrodance.mp3', desc:'Retro dance classics'},
-        {name:'Retro80sRadio', url:'http://158.69.227.214:8113/stream/1/', desc:'Pure 80s nostalgia'},
         {name:'Classic Hits 109', url:'http://jenny.torontocast.com:8142/stream/1/', desc:'70s, 80s, 90s hits'},
-        {name:'Retro Hit Mix', url:'http://hestia.cdnstream.com:80/1340_128', desc:'Retro hits megamix'},
         {name:'Left Coast 70s', url:'https://ice6.somafm.com/seventies-128-mp3', desc:'70s/80s crossover rock'},
+        {name:'181.FM Super 70s', url:'http://listen.181fm.com/181-70s_128k.mp3', desc:'Super 70s hits'},
+        {name:'Radio Caroline', url:'http://sc6.radiocaroline.net:8040/;stream.mp3', desc:'Pirate radio legend since 1964'},
+        {name:'Technicolor Web of Sound', url:'http://streaming.live365.com/a01650', desc:'1960s psychedelic rock & pop'},
       ],
       '90s & 00s': [
         {name:'Record 90-х', url:'https://radiorecord.hostingradio.ru/sd9096.aacp', desc:'90s superdisco hits'},
         {name:'Record 00-х', url:'https://radiorecord.hostingradio.ru/200096.aacp', desc:'2000s dance anthems'},
         {name:'Record 10s', url:'https://radiorecord.hostingradio.ru/201096.aacp', desc:'2010s dance hits'},
-        {name:'Retro Grooves', url:'http://ares5.radiochoice.net/1024_a0retrogrooves64k', desc:'Retro funk & disco grooves'},
       ],
     }
   },
@@ -4466,16 +4532,26 @@ const RADIO_DIR = {
     icon: '🎷',
     subs: {
       'Jazz': [
+        {name:'Jazz24', url:'https://knkx-live-a.edge.audiocdn.com/6285_256k', desc:'24/7 jazz from Seattle'},
+        {name:'TSF Jazz Paris', url:'http://tsfjazz.ice.infomaniak.ch/tsfjazz-high.mp3', desc:'Jazz & talk from Paris'},
+        {name:'WBGO Jazz 88.3', url:'https://ais-sa8.cdnstream1.com/3629_128.mp3', desc:'Jazz & blues from Newark/NYC'},
+        {name:'WWOZ New Orleans', url:'http://wwoz-sc.streamguys.com/wwoz-hi.mp3', desc:'New Orleans jazz, funk & soul'},
+        {name:'FIP Jazz', url:'http://direct.fipradio.fr/live/fip-webradio2.mp3', desc:'Curated jazz from Radio France'},
         {name:'Sonic Universe', url:'https://ice6.somafm.com/sonicuniverse-128-mp3', desc:'Contemporary jazz'},
         {name:'Jazz FM Moscow 89.1', url:'https://nashe1.hostingradio.ru/jazz-128.mp3', desc:'Jazz from Russia'},
+        {name:'1.FM Smooth Jazz', url:'http://strm112.1.fm/smoothjazz_mobile_mp3', desc:'Contemporary smooth jazz'},
       ],
       'Soul & Funk': [
         {name:'Seven Inch Soul', url:'https://ice6.somafm.com/7soul-128-mp3', desc:'Northern soul & 60s R&B'},
-        {name:'Soulpower Radio', url:'https://s2.radio.co/sb0964023c/listen', desc:'Soul, funk & classic R&B'},
-        {name:'B4B Disco Funk', url:'https://eu10.fastcast4u.com:8120/stream/1/', desc:'Non-stop disco & funk'},
+        {name:'FIP Groove', url:'http://direct.fipradio.fr/live/fip-webradio3.mp3', desc:'Funk, soul & groove'},
+        {name:'WEFUNK Radio', url:'https://www.wefunkradio.com/play/radio.mp3', desc:'Montreal funk & soul institution'},
       ],
       'Bossa Nova': [
         {name:'Bossa Beyond', url:'https://ice6.somafm.com/bossa-128-mp3', desc:'Brazilian bossa nova & more'},
+      ],
+      'Blues': [
+        {name:'1.FM Blues Radio', url:'http://strm112.1.fm/blues_mobile_mp3', desc:'Blues radio 24/7'},
+        {name:'181.FM True Blues', url:'http://listen.181fm.com/181-blues_128k.mp3', desc:'True blues from 181'},
       ],
     }
   },
@@ -4486,15 +4562,26 @@ const RADIO_DIR = {
         {name:'Indie Pop Rocks!', url:'https://ice6.somafm.com/indiepop-128-mp3', desc:'Indie pop & alternative'},
         {name:'Covers', url:'https://ice6.somafm.com/covers-128-mp3', desc:'Best cover versions'},
         {name:'ROCK FM Moscow', url:'https://nashe1.hostingradio.ru/rock-128.mp3', desc:'Russian rock 95.2 FM'},
-        {name:'Record Rock', url:'https://radiorecord.hostingradio.ru/rock96.aacp', desc:'Rock from Record'},
+        {name:'1.FM Classic Rock', url:'http://strm112.1.fm/crock_mobile_mp3', desc:'Classic rock radio'},
+        {name:'1.FM Rock Classics', url:'http://strm112.1.fm/rockclassics_mobile_mp3', desc:'Rock classics 24/7'},
+        {name:'1.FM Alt Rock', url:'http://strm112.1.fm/x_mobile_mp3', desc:'Alternative rock hits'},
       ],
       'Metal': [
         {name:'Metal Detector', url:'https://ice6.somafm.com/metal-128-mp3', desc:'Heavy metal & hard rock'},
-        {name:'Hard Rock Heaven', url:'http://hydra.cdnstream.com:80/1521_128', desc:'80s hard rock & hair metal'},
+        {name:'KNAC Pure Rock', url:'https://stream.rcast.net/71987', desc:'Internet metal since 1998'},
+        {name:'Metal Devastation', url:'https://c13.radioboss.fm:18099/stream', desc:'Underground death/black/thrash'},
+        {name:'1.FM High Voltage', url:'http://strm112.1.fm/highvoltage_mobile_mp3', desc:'Metal & hard rock'},
       ],
       'Industrial & Dark': [
         {name:'Doomed', url:'https://ice6.somafm.com/doomed-128-mp3', desc:'Dark ambient & industrial'},
         {name:'Black Rock FM', url:'https://ice1.somafm.com/brfm-128-mp3', desc:'Burning Man radio'},
+        {name:'Ultra Dark Radio', url:'http://stream.laut.fm/ultradarkradio', desc:'Darkwave, EBM & industrial'},
+        {name:'Dark Zero Radio', url:'http://stream.laut.fm/darkzeroradio', desc:'Dark electro & post-punk'},
+        {name:'Darksynth Radio', url:'http://stream.laut.fm/darksynthradio', desc:'Darksynth & cyberpunk'},
+      ],
+      'Shoegaze & Dream Pop': [
+        {name:'DKFM Shoegaze', url:'https://radio.streemlion.com:4245/stream', desc:'24/7 shoegaze radio'},
+        {name:'Shoegaze Radio', url:'https://shoegaze.stream.laut.fm/shoegaze', desc:'Shoegaze community stream'},
       ],
     }
   },
@@ -4503,24 +4590,63 @@ const RADIO_DIR = {
     subs: {
       'Reggae & Dub': [
         {name:'Heavyweight Reggae', url:'https://ice6.somafm.com/reggae-128-mp3', desc:'Classic roots reggae'},
-        {name:'RMF Reggae', url:'http://rs8-krk2.rmfstream.pl/rmf_reggae', desc:'Polish reggae station'},
-        {name:'Alpha Boys School', url:'http://alphaboys-live.streamguys1.com/alphaboys.aac', desc:'Jamaican roots & ska'},
+        {name:'Alpha Boys School', url:'http://alphaboys-live.streamguys1.com/alphaboys.mp3', desc:'Jamaican roots & ska'},
+        {name:'Record Reggae', url:'https://radiorecord.hostingradio.ru/reggae96.aacp', desc:'Reggae from Record'},
+      ],
+      'Ska & Rocksteady': [
+        {name:"Bob's Ska Radio", url:'http://51.255.235.165:5528/stream', desc:'Ska, rocksteady & 2-tone'},
+      ],
+      'Latin': [
+        {name:'Latina Salsa', url:'http://latinasalsa.ice.infomaniak.ch/latinasalsa.mp3', desc:'Salsa music 24/7'},
+        {name:'1.FM Cafe Radio', url:'http://strm112.1.fm/caferadio_mobile_mp3', desc:'Latin, pop & world cafe'},
       ],
       'Folk & Americana': [
         {name:'Folk Forward', url:'https://ice6.somafm.com/folkfwd-128-mp3', desc:'Indie folk & americana'},
         {name:'Boot Liquor', url:'https://ice6.somafm.com/bootliquor-128-mp3', desc:'Americana & alt-country'},
+        {name:'181.FM Bluegrass', url:'http://listen.181fm.com/181-frontporch_128k.mp3', desc:'Front porch bluegrass'},
+      ],
+      'Country': [
+        {name:'.977 Country', url:'http://26343.live.streamtheworld.com/977_COUNTRY_SC', desc:'Country hits radio'},
+        {name:'181.FM Highway', url:'http://listen.181fm.com/181-highway_128k.mp3', desc:'Classic country highway'},
+        {name:'181.FM 80s Country', url:'http://listen.181fm.com/181-80scountry_128k.mp3', desc:'80s country classics'},
       ],
       'Celtic': [
         {name:'ThistleRadio', url:'https://ice6.somafm.com/thistle-128-mp3', desc:'Celtic & Scottish music'},
       ],
-      'Tiki & Exotica': [
-        {name:'Tiki Time', url:'https://ice6.somafm.com/tikitime-128-mp3', desc:'Exotica & tiki lounge'},
+      'Indian & Bollywood': [
+        {name:'1.FM Bombay Beats', url:'http://strm112.1.fm/bombaybeats_mobile_mp3', desc:'Bollywood & Indian hits'},
+      ],
+      'French Eclectic': [
+        {name:'FIP Main', url:'http://direct.fipradio.fr/live/fip-midfi.mp3', desc:'French eclectic — zero ads'},
+        {name:'FIP Rock', url:'http://direct.fipradio.fr/live/fip-webradio1.mp3', desc:'Rock curated by FIP'},
+        {name:'FIP World', url:'http://direct.fipradio.fr/live/fip-webradio4.mp3', desc:'World music from FIP'},
+        {name:'Radio Nova Paris', url:'http://novazz.ice.infomaniak.ch/novazz-128.mp3', desc:'Global sounds & jazz from Paris'},
+      ],
+      'Film & Soundtracks': [
+        {name:'Soundtrack Radio', url:'http://quincy.torontocast.com:2410/stream', desc:'Cinema & film scores 24/7'},
         {name:'SomaFM Live', url:'https://ice1.somafm.com/live-128-mp3', desc:'Live performances'},
+        {name:'SomaFM Specials', url:'https://ice1.somafm.com/specials-128-mp3', desc:'Special broadcasts & events'},
       ],
       'Scanner & Experimental': [
         {name:'Scanner Radio', url:'https://ice1.somafm.com/scanner-128-mp3', desc:'Police/fire scanner + music'},
         {name:'Mission Control', url:'https://ice6.somafm.com/missioncontrol-128-mp3', desc:'NASA mission audio + ambient'},
-        {name:'SomaFM Specials', url:'https://ice1.somafm.com/specials-128-mp3', desc:'Special broadcasts & events'},
+      ],
+      'Video Game & Chiptune': [
+        {name:'SpriteLayer VGM', url:'http://www.spritelayerradio.com:8010/all', desc:'Video game music 24/7'},
+      ],
+    }
+  },
+  'CLASSICAL & OPERA': {
+    icon: '🎻',
+    subs: {
+      'Classical': [
+        {name:'WQXR 105.9 FM', url:'https://stream.wqxr.org/wqxr-web', desc:'New York classical radio'},
+        {name:'Klassik Radio Bach', url:'http://stream.klassikradio.de/purebach/mp3-192/www.klassikradio.de/', desc:'Pure Bach 24/7'},
+      ],
+      'Opera': [
+        {name:'Klassik Radio Opera', url:'http://stream.klassikradio.de/opera/mp3-128/www.klassikradio.de/', desc:'Opera highlights'},
+        {name:'1.FM Opera House', url:'http://strm112.1.fm/opera_mobile_mp3', desc:"Otto's Opera House"},
+        {name:'1.FM Baroque', url:'http://strm112.1.fm/baroque_mobile_mp3', desc:'Baroque masterpieces'},
       ],
     }
   },
@@ -4536,15 +4662,14 @@ const RADIO_DIR = {
         {name:'Kool London', url:'https://admin.stream.rinse.fm/proxy/kool/stream', desc:'Legendary pirate radio since 1991'},
       ],
       'UK Eclectic & Arts': [
-        {name:'Dublab LA/London', url:'https://dublab.out.airtime.pro/dublab_a', desc:'Freeform radio — art, music, culture'},
+        {name:'dublab', url:'http://dublab.out.airtime.pro:8000/dublab_a', desc:'Freeform radio — art, music, culture'},
         {name:'KEXP Seattle', url:'https://kexp-mp3-128.streamguys1.com/kexp128.mp3', desc:'Listener-powered eclectic radio'},
-        {name:'FIP France', url:'http://icecast.radiofrance.fr/fip-hifi.aac', desc:'Eclectic French radio — zero ads'},
-        {name:'FIP Groove', url:'http://icecast.radiofrance.fr/fipgroove-hifi.aac', desc:'Funk, soul, groove from FIP'},
+        {name:'KCRW Eclectic 24', url:'https://streams.kcrw.com/e24_mp3', desc:'Eclectic mix from Santa Monica'},
+        {name:'KCRW Live', url:'https://streams.kcrw.com/kcrw_mp3', desc:'KCRW live broadcast'},
       ],
       'UK DnB & Bass': [
         {name:'DataBeats DnB', url:'https://streaming.radio.co/s774887f7b/listen', desc:'UK drum & bass 24/7'},
         {name:'Bassdrive UK', url:'http://bassdrive.radioca.st/stream', desc:'Worldwide DnB — UK backbone'},
-        {name:'DNBRadio UK', url:'https://dnbradio.nl/dnbradio_main.mp3', desc:'DnB radio — UK & EU'},
       ],
     }
   },
@@ -4559,28 +4684,20 @@ const RADIO_DIR = {
         {name:'laut.fm Minimal Techno', url:'http://stream.laut.fm/minimaltechno', desc:'Minimal techno purists'},
       ],
       'Deep House & Lounge': [
-        {name:'Hirschmilch House', url:'https://hirschmilch.de:7000/house.mp3', desc:'German house music radio'},
-        {name:'Hirschmilch Chillout', url:'https://hirschmilch.de:7000/chillout.mp3', desc:'German chillout & lounge'},
+        {name:'Hirschmilch Electronic', url:'https://hirschmilch.de:7501/electronic.mp3', desc:'German electronic radio'},
+        {name:'Hirschmilch Organic House', url:'https://hirschmilch.de:7501/organic-house.mp3', desc:'Organic house from Germany'},
+        {name:'Hirschmilch Prog House', url:'https://hirschmilch.de:7501/prog-house.mp3', desc:'Progressive house radio'},
         {name:'laut.fm Deep House', url:'http://stream.laut.fm/deephouse', desc:'Deep house community stream'},
         {name:'laut.fm Deep House Lounge', url:'http://stream.laut.fm/deephouselounge', desc:'Deep & atmospheric house'},
-        {name:'Dogglounge Deep House', url:'http://dogglounge.com:8000', desc:'Deep house since 2000'},
       ],
-      'DnB & Jungle': [
-        {name:'Hirschmilch Progressive', url:'https://hirschmilch.de:7000/progressive.mp3', desc:'German progressive electronic'},
-        {name:'Hirschmilch Techno', url:'https://hirschmilch.de:7000/techno.mp3', desc:'German techno stream'},
+      'DnB & Psytrance': [
+        {name:'Hirschmilch Psytrance', url:'https://hirschmilch.de:7501/psytrance.mp3', desc:'German psytrance radio'},
         {name:'laut.fm DnB', url:'http://stream.laut.fm/drumandbass', desc:'Drum & bass community radio'},
         {name:'laut.fm Jungle', url:'http://stream.laut.fm/jungleradio', desc:'Jungle & breakbeat radio'},
       ],
       'Trip-Hop & Downtempo': [
         {name:'laut.fm Trip-Hop', url:'http://stream.laut.fm/triphop', desc:'Trip-hop community stream'},
-        {name:'Stereoscenic Trip-Hop', url:'https://radio.stereoscenic.com/asp-h', desc:'24/7 trip-hop radio'},
-        {name:'RadioBob Trip-Hop', url:'http://streams.radiobob.de/bob-triphop/mp3-192/streams.radiobob.de/', desc:'German trip-hop channel'},
         {name:'FluxFM Chillhop', url:'https://streams.fluxfm.de/Chillhop/mp3-320/streams.fluxfm.de/', desc:'Chillhop from Berlin'},
-      ],
-      'Synthwave & Nightride': [
-        {name:'Nightride FM', url:'https://stream.nightride.fm/nightride.m4a', desc:'Synthwave & outrun radio'},
-        {name:'Nightride Chillsynth', url:'https://stream.nightride.fm/chillsynth.m4a', desc:'Chillsynth & retrowave'},
-        {name:'Nightwave Plaza', url:'https://plaza.one/mp3', desc:'Vaporwave & future funk'},
       ],
     }
   },
@@ -4588,19 +4705,16 @@ const RADIO_DIR = {
     icon: '🏠',
     subs: {
       'Deep & Soulful House': [
-        {name:'Dogglounge Deep', url:'http://dogglounge.com:8000', desc:'Underground deep house since 2000'},
-        {name:'laut.fm Deep House', url:'http://stream.laut.fm/deephouse', desc:'Community deep house stream'},
         {name:'FIP Electro', url:'http://icecast.radiofrance.fr/fipelectro-hifi.aac', desc:'French electro — zero commercials'},
+        {name:'laut.fm Deep House', url:'http://stream.laut.fm/deephouse', desc:'Community deep house stream'},
       ],
       'Tech & Minimal': [
         {name:'laut.fm Minimal Techno', url:'http://stream.laut.fm/minimaltechno', desc:'Minimal techno underground'},
-        {name:'Hirschmilch House', url:'https://hirschmilch.de:7000/house.mp3', desc:'German underground house'},
+        {name:'Hirschmilch Electronic', url:'https://hirschmilch.de:7501/electronic.mp3', desc:'German underground house'},
         {name:'FluxFM ClubSandwich', url:'https://streams.fluxfm.de/clubsandwich/mp3-320/streams.fluxfm.de/', desc:'Berlin club culture'},
       ],
       'Acid & Electro House': [
         {name:'DFM Electronic', url:'https://dfm.hostingradio.ru/dfm96.aacp', desc:'Electronic dance radio'},
-        {name:'181.fm UK Top 40', url:'http://listen.181fm.com/181-uktop40_128k.mp3', desc:'UK dance & pop crossover'},
-        {name:'Hunter FM 80s', url:'https://live.hunter.fm/80s_high', desc:'Retro dance & electro'},
       ],
     }
   },
@@ -4620,6 +4734,44 @@ const RADIO_DIR = {
       ],
     }
   },
+  '🌐 ECLECTIC & COMMUNITY': {
+    icon: '🌐',
+    subs: {
+      'Freeform Radio': [
+        {name:'KEXP 90.3 Seattle', url:'https://kexp-mp3-128.streamguys1.com/kexp128.mp3', desc:'Indie, world & live sessions'},
+        {name:'KCRW Eclectic 24', url:'https://streams.kcrw.com/e24_mp3', desc:'24/7 eclectic from Santa Monica'},
+        {name:'dublab LA', url:'http://dublab.out.airtime.pro:8000/dublab_a', desc:'Freeform experimental radio'},
+        {name:'Radio Paradise', url:'http://stream.radioparadise.com/aac-320', desc:'Eclectic ad-free radio'},
+        {name:'Radio Paradise Rock', url:'http://stream.radioparadise.com/rock-320', desc:'Rock mix from RP'},
+        {name:'Radio Paradise Mellow', url:'http://stream.radioparadise.com/mellow-320', desc:'Mellow mix from RP'},
+        {name:'Radio Paradise World', url:'http://stream.radioparadise.com/world-etc-320', desc:'World/etc mix from RP'},
+      ],
+      'French Public Radio': [
+        {name:'FIP Eclectic', url:'http://direct.fipradio.fr/live/fip-midfi.mp3', desc:'French eclectic — zero ads'},
+        {name:'FIP Rock', url:'http://direct.fipradio.fr/live/fip-webradio1.mp3', desc:'Rock from Radio France'},
+        {name:'FIP Jazz', url:'http://direct.fipradio.fr/live/fip-webradio2.mp3', desc:'Jazz from Radio France'},
+        {name:'FIP Groove', url:'http://direct.fipradio.fr/live/fip-webradio3.mp3', desc:'Funk & soul from FIP'},
+        {name:'FIP World', url:'http://direct.fipradio.fr/live/fip-webradio4.mp3', desc:'World music from FIP'},
+        {name:'Radio Nova Paris', url:'http://novazz.ice.infomaniak.ch/novazz-128.mp3', desc:'Global sounds & jazz'},
+      ],
+    }
+  },
+  '🎹 CHILLOUT & FOCUS': {
+    icon: '🎹',
+    subs: {
+      'Focus & Coding': [
+        {name:'freeCodeCamp Radio', url:'https://coderadio-admin-v2.freecodecamp.org/listen/coderadio/radio.mp3', desc:'24/7 instrumentals for coding'},
+        {name:'Groove Salad', url:'https://ice5.somafm.com/groovesalad-128-mp3', desc:'Ambient downtempo beats'},
+        {name:'1.FM Chillout Lounge', url:'http://strm112.1.fm/chilloutlounge_mobile_mp3', desc:'Chillout lounge radio'},
+      ],
+      'Sleep & Ambient': [
+        {name:'Ambient Sleeping Pill', url:'http://radio.stereoscenic.com/asp-h', desc:'Beat-free ambient for sleep'},
+        {name:'Drone Zone', url:'https://ice6.somafm.com/dronezone-128-mp3', desc:'Atmospheric drones'},
+        {name:'Nature Radio Rain', url:'https://maggie.torontocast.com:2020/stream/natureradiorain', desc:'Soothing rain sounds'},
+        {name:'Deep Space One', url:'https://ice6.somafm.com/deepspaceone-128-mp3', desc:'Deep ambient space music'},
+      ],
+    }
+  },
   '⚠️ PROBLEMATIC STATIONS': {
     icon: '⚠️',
     subs: {
@@ -4632,6 +4784,14 @@ const RADIO_DIR = {
         {name:'BBC 1Xtra', url:'http://stream.live.vc.bbcmedia.co.uk/bbc_1xtra', desc:'⚠️ 400 — BBC urban/dance (geo-blocked?)'},
         {name:'BBC 6 Music', url:'http://stream.live.vc.bbcmedia.co.uk/bbc_6music', desc:'⚠️ 400 — BBC alt music (geo-blocked?)'},
         {name:'Worldwide FM', url:'https://worldwidefm.out.airtime.pro/worldwidefm_a', desc:'⚠️ Timeout — Global underground'},
+        {name:'Nightride FM', url:'https://stream.nightride.fm/nightride.m4a', desc:'⚠️ 405 — Synthwave & outrun'},
+        {name:'Nightride Darksynth', url:'https://stream.nightride.fm/darksynth.m4a', desc:'⚠️ 405 — Cyberpunk darksynth'},
+        {name:'WFMU Freeform', url:'http://stream2.wfmu.org/freeform-128k', desc:'⚠️ 400 — Legendary freeform radio NJ'},
+        {name:'Intergalactic FM', url:'http://radio.intergalactic.fm/1', desc:'⚠️ 400 — Cult electronic station'},
+        {name:'Radio Schizoid Psy', url:'http://94.130.113.214:8000/schizoid', desc:'⚠️ 400 — Psytrance radio'},
+        {name:'Vintage Obscura', url:'https://radio.vintageobscura.net/stream', desc:'⚠️ 400 — Forgotten vintage tracks'},
+        {name:'Linn Jazz', url:'http://radio.linn.co.uk:8000/autodj', desc:'⚠️ 400 — Audiophile jazz'},
+        {name:'Ancient FM', url:'https://mediaserv73.live-streams.nl:18058/stream', desc:'⚠️ 400 — Medieval & Renaissance'},
       ],
     }
   },
