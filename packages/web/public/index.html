@@ -7396,7 +7396,13 @@ function closeDjPopup(){
   }
 
   function ytcLog(msg){
-    document.getElementById('ytcHelpLine').textContent = msg;
+    var hl = document.getElementById('ytcHelpLine');
+    if(!hl) return;
+    // Preserve the KB toggle button
+    var kbBtn = hl.querySelector('.ytc-kbd-toggle');
+    hl.textContent = msg;
+    if(kbBtn) hl.appendChild(document.createTextNode(' '));
+    if(kbBtn) hl.appendChild(kbBtn);
   }
 
   function esc(s){
