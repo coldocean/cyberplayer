@@ -3820,6 +3820,41 @@ window.syncAllUIs = function() {
 // MODE 4 — GLUMINATOR (Cyberpunk Slot Machine)
 // ════════════════════════════════════════════
 
+// ── GLUMINATOR SOUND SYSTEM ──
+const GLUM_SFX = {
+  spin:     'https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FTbTLu3Q39AIavE549uCBq%2Fspin.mp3',
+  coins:    'https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FytUtwJz5kyqsVOCXlmRTM%2Fcoins.mp3',
+  jackpot:  'https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FVDlHlQyG8mNKzROz72cgo%2Fjackpot.mp3',
+  reelStop: 'https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2Fswn1WxF8h8DCDcCa6SniO%2Freel-stop.mp3',
+  lineWin:  'https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2F1Xay0LxqIsnNhFjPw41si%2Fline-win.mp3',
+  lose:     'https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2FG8UOcXtmnuzZHJD_2i5JB%2Flose.mp3',
+  gamble:   'https://storage.googleapis.com/runable-templates/cli-uploads%2FU4EzLJPYhEsWbQntf5C8L39kulHTTY2E%2F2aHEAvZ8-oL48swX5Uu5U%2Fgamble.mp3'
+};
+const _glumAudioCache = {};
+function glumPlay(key, vol) {
+  try {
+    if (!_glumAudioCache[key]) _glumAudioCache[key] = new Audio(GLUM_SFX[key]);
+    const a = _glumAudioCache[key];
+    a.volume = Math.min(1, vol || 0.5);
+    a.currentTime = 0;
+    a.play().catch(()=>{});
+  } catch(e){}
+}
+function glumStop(key) {
+  try { const a = _glumAudioCache[key]; if(a){ a.pause(); a.currentTime = 0; } } catch(e){}
+}
+// Preload all sounds on first interaction
+let _glumPreloaded = false;
+function glumPreload() {
+  if (_glumPreloaded) return;
+  _glumPreloaded = true;
+  Object.keys(GLUM_SFX).forEach(k => {
+    _glumAudioCache[k] = new Audio(GLUM_SFX[k]);
+    _glumAudioCache[k].preload = 'auto';
+    _glumAudioCache[k].load();
+  });
+}
+
 const SLOT_SYMBOLS = [
   { id:'seven',   label:'7️⃣',  color:'#ffd700', glow:'#ffd700', pay:10 },  // JACKPOT – top prize
   { id:'diamond', label:'💎', color:'#00e5ff', glow:'#00e5ff', pay:7 },  // diamond
@@ -3959,6 +3994,8 @@ async function doSpin() {
   spinBtn.style.background = 'rgba(224,23,74,.2)';
   msgEl.textContent = '';
   hideDoubleUp();
+  glumPreload();
+  glumPlay('spin', 0.4);
 
   // Add spinning class to reels for blur effect
   document.querySelectorAll('.gam-reel').forEach(r => r.classList.add('reel-spinning'));
@@ -3987,6 +4024,7 @@ async function doSpin() {
     const d = await r.json();
 
     if (d.error === 'insufficient') {
+      glumStop('spin');
       clearInterval(spinInterval);
       document.querySelectorAll('.gam-reel').forEach(r => r.classList.remove('reel-spinning'));
       guestCoins = parseInt(d.coins) || 0;
@@ -4041,7 +4079,8 @@ async function doSpin() {
         el.style.textShadow = `0 0 12px ${slotReels[ri][row].glow}`;
       }
     }
-    // Reel stop thud effect
+    // Reel stop thud effect + sound
+    glumPlay('reelStop', 0.5);
     const reel = document.getElementById(`reel${ri}`);
     if (reel) {
       reel.classList.remove('reel-spinning');
@@ -4079,9 +4118,18 @@ async function doSpin() {
   }
 
   const isJackpot = winLines.length >= 2 || (winLines.length === 1 && slotReels[0][winLines[0]].pay >= 7);
+  glumStop('spin');
   renderSlot(winLines, isJackpot);
 
   if (coinsWon > 0) {
+    // Play line-win ding for each winning line with stagger
+    winLines.forEach((_, li) => setTimeout(() => glumPlay('lineWin', 0.6), li * 200));
+    // Then coins or jackpot sound
+    if (isJackpot) {
+      setTimeout(() => glumPlay('jackpot', 0.7), winLines.length * 200 + 100);
+    } else {
+      setTimeout(() => glumPlay('coins', 0.6), winLines.length * 200 + 100);
+    }
     msgEl.style.color = '#ffd700';
     const net = coinsWon - betCost;
     const multiLine = winLines.length > 1 ? '⚡ MULTI-LINE!' : '';
@@ -4101,6 +4149,7 @@ async function doSpin() {
       setTimeout(() => showDoubleUp(coinsWon), 1200);
     }
   } else {
+    glumPlay('lose', 0.35);
     msgEl.style.color = '#444';
     msgEl.textContent = `−${betCost} 🪙 NO WIN — SPIN AGAIN`;
     hideDoubleUp();
@@ -4151,6 +4200,7 @@ function collectWin() {
 
 function doDoubleUp(multiplier) {
   if (_pendingWin <= 0) return;
+  glumPlay('gamble', 0.5);
   const chance = 1 / multiplier;
   const won = Math.random() < chance;
   document.querySelectorAll('.dub-btn').forEach(b => b.disabled = true);
@@ -4164,6 +4214,7 @@ function doDoubleUp(multiplier) {
   setTimeout(() => { panel.style.background = 'rgba(80,0,0,.18)'; }, 400);
 
   if (won) {
+    setTimeout(() => glumPlay('coins', 0.6), 400);
     const newWin = _pendingWin * multiplier;
     // Add the profit (multiplier-1 * _pendingWin) to balance
     const profit = newWin - _pendingWin;
@@ -4178,6 +4229,7 @@ function doDoubleUp(multiplier) {
     document.getElementById('doubleUpWonAmt').textContent = `WIN: ${newWin} 🪙`;
     document.querySelectorAll('.dub-btn').forEach(b => b.disabled = false);
   } else {
+    setTimeout(() => glumPlay('lose', 0.5), 400);
     // Lose it all — deduct _pendingWin from balance
     guestCoins = Math.max(0, (guestCoins || 0) - _pendingWin);
     document.getElementById('coinCount').textContent = guestCoins;
@@ -7599,31 +7651,7 @@ async function hellCheckInviteParam(){
   } catch(e){ console.error('invite redeem error:', e); }
 }
 
-// Load hell messages when switching to M5
-var _origSetModeForHell = window.setMode;
-if(typeof _origSetModeForHell !== 'function'){
-  // setMode may not be wrapped yet, patch it later
-} else {
-  window.setMode = function(m){
-    _origSetModeForHell(m);
-    if(m === 5 && !hellLoaded) hellLoadMessages();
-    if(m === 5) hellRenderMessages(); // re-render to check admin status
-  };
-}
-// Also load on first visit
-setTimeout(() => {
-  const origSM = window.setMode;
-  if(origSM && origSM !== _origSetModeForHell){
-    const wrapped = origSM;
-    window.setMode = function(m){
-      wrapped(m);
-      if(m === 5){
-        if(!hellLoaded) hellLoadMessages();
-        else hellRenderMessages();
-      }
-    };
-  }
-}, 500);
+// Hell messages loading is handled inside setMode() directly (line with m===5 check)
 </script>
 
 <script>

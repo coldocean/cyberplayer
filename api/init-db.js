@@ -128,18 +128,18 @@ export default async function handler(req, res) {
       results.push('superadmin deemah updated');
     }
 
-    // Seed admin: robbmobb
+    // Seed superadmin: robbmobb
     const existing2 = await query('SELECT id FROM users WHERE LOWER(name) = ?', ['robbmobb']);
     if (!existing2.length) {
-      const id2 = 'usr_robbmobb_admin';
+      const id2 = 'usr_robbmobb_superadmin';
       const hash2 = hashPassword('yesm81337carlitto');
       await query('INSERT INTO users (id, name, email, password_hash, role, email_verified) VALUES (?, ?, ?, ?, ?, 1)',
-        [id2, 'robbmobb', 'robbmobb@digitalslayer.com', hash2, 'admin']);
-      results.push('admin robbmobb created');
+        [id2, 'robbmobb', 'robbmobb@digitalslayer.com', hash2, 'superadmin']);
+      results.push('superadmin robbmobb created');
     } else {
       const hash2 = hashPassword('yesm81337carlitto');
-      await query('UPDATE users SET password_hash = ?, role = ? WHERE LOWER(name) = ?', [hash2, 'admin', 'robbmobb']);
-      results.push('admin robbmobb updated');
+      await query('UPDATE users SET password_hash = ?, role = ? WHERE LOWER(name) = ?', [hash2, 'superadmin', 'robbmobb']);
+      results.push('superadmin robbmobb updated');
     }
 
     return res.json({ ok: true, results });
