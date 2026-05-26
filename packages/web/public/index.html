@@ -6793,6 +6793,21 @@ window.submitPayment = function() {
     <div id="hellPanelCompose" style="max-width:600px;margin:0 auto;">
       <div style="font-size:9px;letter-spacing:3px;color:#880000;margin-bottom:12px;">WRITE A NEW MESSAGE TO THE DAMNED</div>
 
+      <!-- FONT SIZE CONTROLS -->
+      <div style="border:1px solid #330000;background:rgba(20,0,0,.4);padding:10px 12px;margin-bottom:14px;">
+        <div style="font-size:8px;letter-spacing:2px;color:#660000;margin-bottom:8px;">⛧ FONT SIZES (applies to all messages)</div>
+        <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+          <div style="flex:1;min-width:140px;">
+            <label style="font-size:8px;color:#884444;letter-spacing:1px;">HEADER: <span id="hellFontHeaderVal">22</span>px</label>
+            <input id="hellFontHeaderSize" type="range" min="12" max="48" value="22" oninput="hellUpdateFontSizes()" style="width:100%;accent-color:#cc0000;height:4px;margin-top:4px;">
+          </div>
+          <div style="flex:1;min-width:140px;">
+            <label style="font-size:8px;color:#884444;letter-spacing:1px;">BODY: <span id="hellFontBodyVal">14</span>px</label>
+            <input id="hellFontBodySize" type="range" min="8" max="36" value="14" oninput="hellUpdateFontSizes()" style="width:100%;accent-color:#cc0000;height:4px;margin-top:4px;">
+          </div>
+        </div>
+      </div>
+
       <div style="margin-bottom:6px;font-size:8px;color:#660000;letter-spacing:1px;">TITLE (optional):</div>
       <input id="hellMsgTitle" type="text" placeholder="News headline from the abyss..." style="width:100%;background:#0f0000;border:1px solid #440000;color:#ff6666;font-family:'Creepster',cursive,'Share Tech Mono',monospace;font-size:12px;padding:8px;box-sizing:border-box;outline:none;margin-bottom:10px;">
 
@@ -7163,14 +7178,64 @@ function hellRenderMessages(){
     const isAdmin = (typeof authUser !== 'undefined' && authUser && (authUser.role === 'superadmin' || authUser.role === 'admin'));
     adminBtnWrap.style.display = isAdmin ? '' : 'none';
   }
+  // Apply saved font sizes to rendered cards
+  if (typeof hellApplyFontSizes === 'function') hellApplyFontSizes();
 }
 
 // ═══ NEWS EDITOR OVERLAY FUNCTIONS ═══
+// ═══ HELL FONT SIZE CONTROLS ═══
+function hellUpdateFontSizes(save) {
+  var hs = document.getElementById('hellFontHeaderSize');
+  var bs = document.getElementById('hellFontBodySize');
+  var hv = hs ? hs.value : (localStorage.getItem('hell_font_header') || '22');
+  var bv = bs ? bs.value : (localStorage.getItem('hell_font_body') || '14');
+  var hvEl = document.getElementById('hellFontHeaderVal');
+  var bvEl = document.getElementById('hellFontBodyVal');
+  if (hvEl) hvEl.textContent = hv;
+  if (bvEl) bvEl.textContent = bv;
+  // Save to localStorage
+  if (save !== false) {
+    localStorage.setItem('hell_font_header', hv);
+    localStorage.setItem('hell_font_body', bv);
+  }
+  // Apply to all rendered message cards
+  hellApplyFontSizes();
+}
+function hellApplyFontSizes() {
+  var hSize = localStorage.getItem('hell_font_header') || '22';
+  var bSize = localStorage.getItem('hell_font_body') || '14';
+  // Apply header size to all card titles (Creepster styled divs inside cards)
+  document.querySelectorAll('#hellMsgList .hell-msg-card').forEach(function(card) {
+    // Title is the first child with Creepster font or the pinnedTitle-style div
+    var children = card.children;
+    for (var i = 0; i < children.length; i++) {
+      var el = children[i];
+      var ff = (el.style.fontFamily || '').toLowerCase();
+      if (ff.indexOf('creepster') !== -1) {
+        el.style.fontSize = hSize + 'px';
+      }
+      if (el.classList.contains('hell-msg-text')) {
+        el.style.fontSize = bSize + 'px';
+      }
+    }
+  });
+}
+function hellLoadFontSizeControls() {
+  var hSize = localStorage.getItem('hell_font_header') || '22';
+  var bSize = localStorage.getItem('hell_font_body') || '14';
+  var hs = document.getElementById('hellFontHeaderSize');
+  var bs = document.getElementById('hellFontBodySize');
+  if (hs) hs.value = hSize;
+  if (bs) bs.value = bSize;
+  hellUpdateFontSizes(false);
+}
+
 function hellOpenNewsEditor(){
   const ed = document.getElementById('hellNewsEditor');
   if(!ed) return;
   ed.style.display = 'flex';
   hellSwitchTab('compose');
+  hellLoadFontSizeControls();
   // Show admins tab only for superadmin
   const adminsTab = document.getElementById('hellTabAdmins');
   const isSA = (typeof authUser !== 'undefined' && authUser && authUser.role === 'superadmin');
