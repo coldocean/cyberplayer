@@ -10,3 +10,4 @@ dist-electron
 .env.vercel
 .env
 task.md
+.env.github

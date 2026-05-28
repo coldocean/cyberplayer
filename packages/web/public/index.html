@@ -4991,7 +4991,21 @@ Object.defineProperty(window, 'radCurrentStation', { get(){ return radCurrentSta
 var radReconnectTimer = null;
 var radReconnectAttempts = 0;
 var radBufferInterval = null;
-var RAD_MAX_RECONNECT = 5;
+var RAD_MAX_RECONNECT = 50;
+// ── REBUFFERING ENGINE STATE ──
+var radWatchdogTimer = null;       // heartbeat watchdog
+var radLastProgress = 0;           // last known currentTime for stall detection
+var radLastProgressTime = 0;       // timestamp when currentTime last advanced
+var radStalledTimer = null;        // stalled event timeout
+var radWaitingTimer = null;        // waiting event timeout
+var radLowBufStart = 0;           // when low-buffer state began
+var radUseProxy = false;           // fallback to proxy on repeated failures
+var RAD_WATCHDOG_MS = 4000;        // check every 4s if stream is alive
+var RAD_STALL_TIMEOUT = 6000;      // reconnect if stalled > 6s
+var RAD_WAITING_TIMEOUT = 10000;   // reconnect if waiting > 10s
+var RAD_LOWBUF_TIMEOUT = 5000;     // reconnect if buffer < 0.5s for 5s
+var RAD_BACKOFF_BASE = 1500;       // base reconnect delay ms
+var RAD_BACKOFF_MAX = 30000;       // max backoff ceiling 30s
 // ── RENDER RADIO DIRECTORY INTO #arcRadioTracklist (M2 radio panel) ──
 // Full scrollable list — CYBERPUNK PLAYLIST style
 // Collapse state from localStorage
@@ -5199,6 +5213,15 @@ window.radPlayStation = function(station, genrePath){
 };
 
 function radStartBufferedStream(url){
+  // Clean up previous audio element completely
+  if(radAudio){
+    try{ radAudio.pause(); }catch(e){}
+    radAudio.removeAttribute('src');
+    try{ radAudio.load(); }catch(e){}
+    radAudio = null;
+  }
+  radClearAllTimers();
+
   radAudio = new Audio();
   radAudio.crossOrigin = 'anonymous';
   radAudio.preload = 'auto';
@@ -5206,42 +5229,180 @@ function radStartBufferedStream(url){
   radAudio.volume = volEl ? volEl.value / 100 : 0.8;
 
   radAudio.addEventListener('loadstart', () => radSetCacheStatus('buffering', 'BUFFERING...'));
+
   radAudio.addEventListener('canplay', () => {
     radSetCacheStatus('ready', 'STREAM READY');
     if(radPlaying) radAudio.play().catch(()=>{});
   });
+
   radAudio.addEventListener('playing', () => {
+    // ── REBUFFERING: reset counters on successful playback ──
+    radReconnectAttempts = 0;
+    radUseProxy = false;
+    radLastProgress = radAudio.currentTime;
+    radLastProgressTime = Date.now();
+    radLowBufStart = 0;
     radSetCacheStatus('ready', 'PLAYING — LIVE');
     if(radBufferInterval) clearInterval(radBufferInterval);
     radBufferInterval = setInterval(radUpdateCacheDisplay, 500);
+    // Start watchdog heartbeat
+    radStartWatchdog(url);
+    // Clear stalled/waiting timeouts since we're playing
+    clearTimeout(radStalledTimer); radStalledTimer = null;
+    clearTimeout(radWaitingTimer); radWaitingTimer = null;
   });
-  radAudio.addEventListener('waiting', () => radSetCacheStatus('buffering', 'REBUFFERING...'));
-  radAudio.addEventListener('stalled', () => radSetCacheStatus('buffering', 'STALLED...'));
+
+  radAudio.addEventListener('waiting', () => {
+    radSetCacheStatus('buffering', 'REBUFFERING...');
+    // ── REBUFFERING: if waiting persists, force reconnect ──
+    clearTimeout(radWaitingTimer);
+    radWaitingTimer = setTimeout(() => {
+      if(radPlaying && radAudio && radAudio.readyState < 3){
+        console.log('[RADIO] waiting timeout — forcing reconnect');
+        radForceReconnect(url, 'WAITING_TIMEOUT');
+      }
+    }, RAD_WAITING_TIMEOUT);
+  });
+
+  radAudio.addEventListener('stalled', () => {
+    radSetCacheStatus('buffering', 'STALLED...');
+    // ── REBUFFERING: if stalled persists, force reconnect ──
+    clearTimeout(radStalledTimer);
+    radStalledTimer = setTimeout(() => {
+      if(radPlaying && radAudio){
+        console.log('[RADIO] stalled timeout — forcing reconnect');
+        radForceReconnect(url, 'STALL_TIMEOUT');
+      }
+    }, RAD_STALL_TIMEOUT);
+  });
+
   radAudio.addEventListener('error', () => {
     radSetCacheStatus('error', 'STREAM ERROR');
-    if(radBufferInterval) clearInterval(radBufferInterval);
+    radClearAllTimers();
     radAttemptReconnect(url);
   });
-  radAudio.addEventListener('ended', () => radAttemptReconnect(url));
 
-  // Direct stream — HTTPS stations work without proxy
-  const sep = url.includes('?') ? '&' : '?';
-  radAudio.src = url + sep + '_t=' + Date.now();
+  radAudio.addEventListener('ended', () => {
+    console.log('[RADIO] stream ended — reconnecting');
+    radAttemptReconnect(url);
+  });
+
+  // ── REBUFFERING: choose direct or proxy URL ──
+  let streamUrl = url;
+  if(radUseProxy){
+    streamUrl = '/api/radio-proxy?url=' + encodeURIComponent(url);
+    console.log('[RADIO] using proxy fallback');
+  }
+  const sep = streamUrl.includes('?') ? '&' : '?';
+  radAudio.src = streamUrl + sep + '_t=' + Date.now();
   radAudio.load();
 }
 
+// ── REBUFFERING: Watchdog heartbeat — detects silent stream death ──
+function radStartWatchdog(url){
+  clearInterval(radWatchdogTimer);
+  radWatchdogTimer = setInterval(() => {
+    if(!radPlaying || !radAudio) { clearInterval(radWatchdogTimer); return; }
+    const now = Date.now();
+    const ct = radAudio.currentTime;
+    // Check if currentTime is advancing
+    if(ct > radLastProgress + 0.1){
+      radLastProgress = ct;
+      radLastProgressTime = now;
+    } else if(now - radLastProgressTime > RAD_STALL_TIMEOUT + 2000){
+      // Stream hasn't progressed in too long — silent death
+      console.log('[RADIO] watchdog: stream frozen for ' + ((now - radLastProgressTime)/1000).toFixed(1) + 's — reconnecting');
+      radForceReconnect(url, 'WATCHDOG');
+    }
+  }, RAD_WATCHDOG_MS);
+}
+
+// ── REBUFFERING: Force reconnect (destroys current audio and restarts) ──
+function radForceReconnect(url, reason){
+  console.log('[RADIO] force reconnect — reason: ' + reason);
+  if(radAudio){
+    try{ radAudio.pause(); }catch(e){}
+    radAudio.removeAttribute('src');
+    try{ radAudio.load(); }catch(e){}
+    radAudio = null;
+  }
+  radClearAllTimers();
+  radAttemptReconnect(url);
+}
+
+// ── REBUFFERING: Clear all monitoring timers ──
+function radClearAllTimers(){
+  clearTimeout(radReconnectTimer); radReconnectTimer = null;
+  clearTimeout(radStalledTimer); radStalledTimer = null;
+  clearTimeout(radWaitingTimer); radWaitingTimer = null;
+  clearInterval(radWatchdogTimer); radWatchdogTimer = null;
+  if(radBufferInterval){ clearInterval(radBufferInterval); radBufferInterval = null; }
+}
+
+// ── REBUFFERING: Network online/offline detection ──
+(function(){
+  window.addEventListener('online', function(){
+    console.log('[RADIO] network back online');
+    if(radPlaying && radCurrentStation && (!radAudio || radAudio.paused || radAudio.readyState < 2)){
+      radSetCacheStatus('buffering', 'NETWORK BACK — RECONNECTING...');
+      radReconnectAttempts = 0; // fresh start on network recovery
+      radUseProxy = false;
+      setTimeout(function(){
+        if(radPlaying && radCurrentStation){
+          radStartBufferedStream(radCurrentStation.url);
+        }
+      }, 500);
+    }
+  });
+  window.addEventListener('offline', function(){
+    console.log('[RADIO] network offline');
+    if(radPlaying) radSetCacheStatus('error', 'NETWORK OFFLINE — WAITING...');
+  });
+})();
+
 function radAttemptReconnect(url){
   if(!radPlaying || !radCurrentStation) return;
-  radReconnectAttempts++;
-  if(radReconnectAttempts > RAD_MAX_RECONNECT){
-    radSetCacheStatus('error', 'FAILED — TAP STATION TO RETRY');
+  // Don't reconnect if browser is offline — the 'online' listener handles that
+  if(!navigator.onLine){
+    radSetCacheStatus('error', 'OFFLINE — WILL RECONNECT WHEN BACK...');
     return;
   }
-  radSetCacheStatus('buffering', `RECONNECT ${radReconnectAttempts}/${RAD_MAX_RECONNECT}...`);
+  radReconnectAttempts++;
+  // ── REBUFFERING: try proxy fallback after 3 direct failures ──
+  if(radReconnectAttempts === 4 && !radUseProxy){
+    radUseProxy = true;
+    console.log('[RADIO] switching to proxy after 3 direct failures');
+  }
+  // ── REBUFFERING: after proxy also fails 3x, switch back to direct ──
+  if(radReconnectAttempts === 7 && radUseProxy){
+    radUseProxy = false;
+    console.log('[RADIO] switching back to direct after proxy failures');
+  }
+  // ── REBUFFERING: cycle between direct/proxy every 3 attempts ──
+  if(radReconnectAttempts > 7){
+    radUseProxy = (Math.floor((radReconnectAttempts - 1) / 3) % 2 === 1);
+  }
+  if(radReconnectAttempts > RAD_MAX_RECONNECT){
+    radSetCacheStatus('error', 'STREAM UNREACHABLE — TAP TO RETRY');
+    // ── REBUFFERING: even after max, keep trying slowly (every 60s) ──
+    clearTimeout(radReconnectTimer);
+    radReconnectTimer = setTimeout(() => {
+      if(radPlaying && radCurrentStation && radCurrentStation.url === url){
+        radReconnectAttempts = Math.floor(RAD_MAX_RECONNECT * 0.8); // partial reset
+        radStartBufferedStream(url);
+      }
+    }, 60000);
+    return;
+  }
+  // ── REBUFFERING: exponential backoff with ceiling ──
+  const delay = Math.min(RAD_BACKOFF_BASE * Math.pow(1.5, radReconnectAttempts - 1), RAD_BACKOFF_MAX);
+  const mode = radUseProxy ? 'PROXY' : 'DIRECT';
+  radSetCacheStatus('buffering', `RECONNECT ${radReconnectAttempts}/${RAD_MAX_RECONNECT} [${mode}]...`);
+  console.log('[RADIO] reconnect #' + radReconnectAttempts + ' in ' + (delay/1000).toFixed(1) + 's (' + mode + ')');
   clearTimeout(radReconnectTimer);
   radReconnectTimer = setTimeout(() => {
     if(radPlaying && radCurrentStation && radCurrentStation.url === url) radStartBufferedStream(url);
-  }, 2000 * radReconnectAttempts);
+  }, delay);
 }
 
 function radUpdateCacheDisplay(){
@@ -5258,8 +5419,24 @@ function radUpdateCacheDisplay(){
   if(fill) fill.style.width = pct + '%';
   // Signal bars (all modes)
   radSetSignal(radBarsFromAhead(ahead));
-  if(ahead < 2) radSetCacheStatus('buffering', `LOW BUFFER: ${ahead.toFixed(1)}s`);
-  else radSetCacheStatus('ready', `BUFFERED: ${ahead.toFixed(1)}s`);
+  if(ahead < 0.5){
+    // ── REBUFFERING: critically low buffer — start countdown to reconnect ──
+    if(!radLowBufStart) radLowBufStart = Date.now();
+    const lowDur = Date.now() - radLowBufStart;
+    if(lowDur > RAD_LOWBUF_TIMEOUT && radCurrentStation){
+      console.log('[RADIO] buffer critically low for ' + (lowDur/1000).toFixed(1) + 's — reconnecting');
+      radLowBufStart = 0;
+      radForceReconnect(radCurrentStation.url, 'LOW_BUFFER');
+      return;
+    }
+    radSetCacheStatus('buffering', `LOW BUFFER: ${ahead.toFixed(1)}s (reconnect in ${((RAD_LOWBUF_TIMEOUT - lowDur)/1000).toFixed(0)}s)`);
+  } else if(ahead < 2){
+    radLowBufStart = 0; // reset if buffer recovers above critical
+    radSetCacheStatus('buffering', `LOW BUFFER: ${ahead.toFixed(1)}s`);
+  } else {
+    radLowBufStart = 0;
+    radSetCacheStatus('ready', `BUFFERED: ${ahead.toFixed(1)}s`);
+  }
 }
 
 function radSetCacheStatus(status, text){
@@ -5282,8 +5459,12 @@ window.radSetVol = function(val){
 function radStopInternal(){
   radPlaying = false;
   if(radAudio){ radAudio.pause(); radAudio.removeAttribute('src'); radAudio.load(); radAudio = null; }
-  clearTimeout(radReconnectTimer);
-  if(radBufferInterval){ clearInterval(radBufferInterval); radBufferInterval = null; }
+  radClearAllTimers();
+  radReconnectAttempts = 0;
+  radUseProxy = false;
+  radLowBufStart = 0;
+  radLastProgress = 0;
+  radLastProgressTime = 0;
 }
 
 window.radStop = function(){
