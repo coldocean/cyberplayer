@@ -3674,12 +3674,14 @@ var m4TotalSeconds = 0;
 var m4TimerInterval = null;
 var m4Locked = false;
 var m4StaticAnim = null;
-const M4_LOCKOUT_SECONDS = 3600; // 1 hour
+var m4CountdownSeconds = 300; // 5 minutes lockout duration
+var m4CountdownInterval = null;
+const M4_LOCKOUT_SECONDS = 2400; // 40 minutes
 
 function m4StartTimer(){
   if(m4TimerInterval) return;
   m4TimerInterval = setInterval(function(){
-    if(currentMode !== 4 || m4Locked) return; // only tick when visible & not locked
+    if(currentMode !== 4 || m4Locked) return;
     m4TotalSeconds++;
     if(m4TotalSeconds >= M4_LOCKOUT_SECONDS && !m4Locked){
       m4TriggerLockout();
@@ -3689,20 +3691,46 @@ function m4StartTimer(){
 
 function m4TriggerLockout(){
   m4Locked = true;
+  m4CountdownSeconds = 300; // reset 5min countdown
   var screen = document.getElementById('m4LockoutScreen');
   if(!screen) return;
   screen.style.display = 'flex';
-  // Update time played display
   m4UpdateTimePlayed();
-  // Start static noise canvas
   m4StartStatic();
-  // Render radio in lockout panel
   m4RenderLockRadio();
+  m4UpdateCountdown();
+  // Start 5-minute countdown
+  if(m4CountdownInterval) clearInterval(m4CountdownInterval);
+  m4CountdownInterval = setInterval(function(){
+    m4CountdownSeconds--;
+    m4UpdateCountdown();
+    if(m4CountdownSeconds <= 0){
+      clearInterval(m4CountdownInterval);
+      m4CountdownInterval = null;
+      m4Unlock();
+    }
+  }, 1000);
   // Auto-show mini player
   if(radCurrentStation || radPlaying){
     var mp = document.getElementById('radioMiniPlayer');
     if(mp && !rmpOpen) toggleRadioMiniPlayer();
   }
+}
+
+function m4Unlock(){
+  m4Locked = false;
+  m4TotalSeconds = 0; // reset play timer
+  var screen = document.getElementById('m4LockoutScreen');
+  if(screen) screen.style.display = 'none';
+  if(m4StaticAnim){ cancelAnimationFrame(m4StaticAnim); m4StaticAnim = null; }
+}
+
+function m4UpdateCountdown(){
+  var el = document.getElementById('m4LockCountdown');
+  if(!el) return;
+  var m = Math.floor(m4CountdownSeconds / 60);
+  var s = m4CountdownSeconds % 60;
+  el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
 }
 
 function m4UpdateTimePlayed(){
@@ -6197,44 +6225,46 @@ window.submitPayment = function() {
 ════════════════════════════════════ -->
 <div id="mode4" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:28px;position:relative;overflow:hidden;">
 
-  <!-- ═══ MODE 4 LOCKOUT OVERLAY (after 1hr) ═══ -->
-  <div id="m4LockoutScreen" style="display:none;position:absolute;inset:0;z-index:100;background:#000;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:30px;overflow-y:auto;">
+  <!-- ═══ MODE 4 LOCKOUT OVERLAY (after 40min, locks 5min) ═══ -->
+  <div id="m4LockoutScreen" style="display:none;position:absolute;inset:0;z-index:100;background:#000;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:0;overflow-y:auto;">
     <!-- Static noise / TV off effect -->
     <div id="m4StaticNoise" style="position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;">
-      <canvas id="m4StaticCanvas" style="width:100%;height:100%;opacity:.15;"></canvas>
+      <canvas id="m4StaticCanvas" style="width:100%;height:100%;opacity:.08;"></canvas>
     </div>
-    <!-- Power off CRT shrink line -->
+    <!-- Scan line overlay -->
+    <div style="position:absolute;inset:0;pointer-events:none;z-index:1;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);"></div>
+    <!-- CRT shrink line -->
     <div style="position:absolute;top:50%;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 5%,rgba(255,255,255,.4) 30%,rgba(255,255,255,.8) 50%,rgba(255,255,255,.4) 70%,transparent 95%);transform:translateY(-50%);z-index:1;animation:m4CrtLineFlash 3s ease-out forwards;pointer-events:none;" id="m4CrtLine"></div>
+    <!-- Green border top (like screenshot) -->
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#aaff00,#aaff00,transparent);opacity:.4;z-index:3;"></div>
 
-    <div style="position:relative;z-index:2;width:min(460px,96vw);padding:0 12px;text-align:center;">
-      <!-- Warning icon -->
-      <div style="font-size:60px;margin-bottom:10px;filter:drop-shadow(0 0 20px rgba(255,68,0,.4));animation:m4WarnPulse 2s ease-in-out infinite;">⚠️</div>
-      <!-- Title -->
-      <div style="font-family:'VT323',monospace;font-size:clamp(24px,6vw,38px);letter-spacing:6px;color:#ff4400;text-shadow:0 0 20px rgba(255,68,0,.5),0 0 40px rgba(255,0,0,.2);margin-bottom:6px;">POWER SIGNAL OFF</div>
+    <div style="position:relative;z-index:2;width:min(460px,96vw);padding:40px 12px 0;text-align:center;">
+      <!-- Skull icon (matching screenshot) -->
+      <div style="font-size:72px;margin-bottom:16px;filter:drop-shadow(0 0 30px rgba(255,0,0,.3));animation:m4WarnPulse 2s ease-in-out infinite;">💀</div>
+      <!-- Main title — big red neon (matching screenshot) -->
+      <div style="font-family:'VT323',monospace;font-size:clamp(36px,10vw,56px);letter-spacing:4px;color:#ff2222;text-shadow:0 0 30px rgba(255,0,0,.6),0 0 60px rgba(255,0,0,.3),0 0 100px rgba(255,0,0,.15);line-height:1.1;margin-bottom:20px;font-weight:bold;">DO<br>SOMETHING<br>USEFUL</div>
       <!-- Subtitle -->
-      <div style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:#666;line-height:2;margin-bottom:20px;">
-        GO MAKE SOMETHING USEFUL<br>
-        <span style="color:#444;">WHILE OUR TECHNICIAN WILL FIX THE PROBLEM</span><br>
-        <span style="font-size:9px;color:#333;letter-spacing:2px;">SESSION TIME EXCEEDED · MACHINE OVERHEATED</span>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:4px;color:#555;line-height:2;margin-bottom:24px;">
+        INITIATING COUNTERMEASURES...
       </div>
-      <!-- Timer showing how long they played -->
+      <!-- Skull row decoration -->
+      <div style="font-size:14px;letter-spacing:6px;margin-bottom:20px;opacity:.5;animation:m4StaticFlicker 1.5s infinite;">💀 💀 💀 💀 💀 💀 💀</div>
+      <!-- COUNTDOWN — big center timer -->
+      <div id="m4LockCountdown" style="font-family:'VT323',monospace;font-size:clamp(48px,12vw,72px);color:#ff2222;letter-spacing:8px;text-shadow:0 0 20px rgba(255,0,0,.5),0 0 50px rgba(255,0,0,.2);margin-bottom:24px;">05:00</div>
+      <!-- IP warning (matching screenshot bottom text) -->
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:#444;margin-bottom:30px;">YOUR IP HAS BEEN LOGGED · DO SOMETHING USEFUL</div>
+
+      <!-- Time played + Status boxes -->
       <div style="display:flex;justify-content:center;gap:16px;margin-bottom:20px;">
         <div style="border:1px solid #331100;background:#0a0400;padding:8px 16px;border-radius:4px;">
           <div style="font-size:8px;color:#555;letter-spacing:2px;margin-bottom:4px;">TIME PLAYED</div>
-          <div id="m4LockTimePlayed" style="font-family:'VT323',monospace;font-size:22px;color:#ff4400;letter-spacing:3px;">01:00:00</div>
+          <div id="m4LockTimePlayed" style="font-family:'VT323',monospace;font-size:22px;color:#ff4400;letter-spacing:3px;">00:40:00</div>
         </div>
-        <div style="border:1px solid #002a00;background:#000a00;padding:8px 16px;border-radius:4px;">
-          <div style="font-size:8px;color:#555;letter-spacing:2px;margin-bottom:4px;">STATUS</div>
-          <div style="font-family:'VT323',monospace;font-size:22px;color:#ff2200;letter-spacing:3px;animation:m4WarnPulse 1.5s infinite;">OFFLINE</div>
+        <div style="border:1px solid #220000;background:#0a0000;padding:8px 16px;border-radius:4px;">
+          <div style="font-size:8px;color:#555;letter-spacing:2px;margin-bottom:4px;">LOCKOUT</div>
+          <div style="font-family:'VT323',monospace;font-size:22px;color:#ff2200;letter-spacing:3px;animation:m4WarnPulse 1.5s infinite;">5 MIN</div>
         </div>
       </div>
-      <!-- Technician ASCII art -->
-      <div style="font-family:monospace;font-size:8px;color:#222;line-height:1.4;margin-bottom:20px;white-space:pre;">    🔧 TECHNICIAN EN ROUTE 🔧
-  ┌─────────────────────────┐
-  │  ╔═══╗   REPAIRING...   │
-  │  ║ ⚡ ║   ████░░░░ 48%   │
-  │  ╚═══╝   PLEASE WAIT    │
-  └─────────────────────────┘</div>
 
       <!-- Message: listen to radio while waiting -->
       <div style="font-size:10px;color:#aaff00;letter-spacing:3px;margin-bottom:12px;text-shadow:0 0 8px rgba(170,255,0,.3);">📡 LISTEN TO RADIO WHILE YOU WAIT</div>
