@@ -1054,6 +1054,10 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
    RADIO (shared across all modes)
 ═══════════════════════════════════════════ */
 @keyframes radPulse{0%,100%{opacity:1}50%{opacity:.3}}
+/* ── MODE 4 LOCKOUT ANIMATIONS ── */
+@keyframes m4WarnPulse{0%,100%{opacity:1;filter:brightness(1);}50%{opacity:.6;filter:brightness(.7);}}
+@keyframes m4CrtLineFlash{0%{opacity:1;height:2px;}30%{opacity:.8;height:2px;}100%{opacity:0;height:0px;}}
+@keyframes m4StaticFlicker{0%{opacity:.15;}10%{opacity:.2;}20%{opacity:.1;}30%{opacity:.18;}40%{opacity:.12;}50%{opacity:.22;}60%{opacity:.08;}70%{opacity:.16;}80%{opacity:.2;}90%{opacity:.1;}100%{opacity:.15;}}
 @keyframes radSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 .rad-live{color:var(--red);font-size:7px;margin-left:4px;animation:radPulse 1.5s infinite;}
 .rad-cache-status{width:6px;height:6px;border-radius:50%;background:#333;flex-shrink:0;}
@@ -2305,25 +2309,41 @@ body.skin-5 #mode4 .slot-mid{border-color:rgba(255,215,0,.15) !important;backgro
         &nbsp;&nbsp;70 180 320 600 1k 3k 6k 12k 14k 16k
       </div>
 
-      <!-- playlist header -->
-      <div class="cli-pl-header">
-        <span>— Playlist —</span>
-        <span class="cli-pl-toggle" onclick="cliToggleShuffle()" id="cliShuffleLabel">[Shuffle]</span>
-        <span class="cli-pl-toggle" onclick="cliToggleRepeat()" id="cliRepeatLabel">[Repeat: Off]</span>
-
-        <span style="margin-left:auto;">—</span>
+      <!-- ═══ CLI RADIO PANEL (replaces playlist + upload) ═══ -->
+      <div id="cliRadioPanel" style="display:flex;flex-direction:column;width:100%;min-height:260px;border:1px solid #2a2a00;background:#000;box-sizing:border-box;margin-top:6px;">
+        <!-- RADIO header -->
+        <div style="font-family:'VT323',monospace;font-size:20px;letter-spacing:8px;padding:6px 10px;border-bottom:1px solid #2a2a00;color:#aaff00;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+          <span>R A D I O</span>
+          <span id="cliRadCountNum" style="font-size:12px;font-family:'Share Tech Mono',monospace;letter-spacing:2px;color:#444;">0 stations</span>
+        </div>
+        <!-- Now-playing strip -->
+        <div class="rad-now-strip" style="flex-shrink:0;">
+          <div class="rad-now-dot" id="cliRadioPanelDot"></div>
+          <div style="flex:1;min-width:0;">
+            <div class="rad-now-name" id="cliRadioPanelName">NO STATION TUNED IN</div>
+            <div style="font-size:7px;color:#333;letter-spacing:1px;margin-top:1px;" id="cliRadioPanelGenre">click a station below</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
+            <span style="font-size:7px;color:#333;letter-spacing:1px;">VOL</span>
+            <input type="range" id="cliRadioPanelVol" min="0" max="100" value="80" style="width:48px;height:2px;-webkit-appearance:none;background:#1a1a00;outline:none;cursor:pointer;accent-color:#aaff00;" oninput="radSetVol(this.value)">
+          </div>
+          <div class="rad-signal" id="cliRadioPanelSignal" title="Signal">
+            <div class="rad-signal-bar" id="cliPanelSigB1" style="height:4px;"></div>
+            <div class="rad-signal-bar" id="cliPanelSigB2" style="height:6px;"></div>
+            <div class="rad-signal-bar" id="cliPanelSigB3" style="height:8px;"></div>
+            <div class="rad-signal-bar" id="cliPanelSigB4" style="height:10px;"></div>
+            <div class="rad-signal-bar" id="cliPanelSigB5" style="height:13px;"></div>
+          </div>
+          <div class="arc-radio-bufbar" style="width:40px;flex-shrink:0;"><div id="cliRadioPanelBufFill" class="rad-cache-fill"></div></div>
+          <div class="arc-radio-buftext" id="cliRadioPanelBufText" style="font-size:7px;color:#333;min-width:60px;">IDLE</div>
+          <button id="cliRadioPanelStopBtn" onclick="radStop()" style="display:none;background:none;border:1px solid var(--red);color:var(--red);padding:3px 8px;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:1px;cursor:pointer;white-space:nowrap;flex-shrink:0;">■ STOP</button>
+        </div>
+        <!-- Full scrollable station list -->
+        <div id="cliRadioPanelList" style="flex:1;overflow-y:auto;min-height:200px;max-height:400px;"></div>
       </div>
+      <!-- ═══ END CLI RADIO PANEL ═══ -->
 
-      <!-- playlist -->
-      <div class="cli-pl-list" id="cliPlList"><div class="cli-pl-empty">EMPTY · ADD FILES BELOW</div></div>
-
-      <!-- upload -->
-      <div class="cli-upload-area" id="cliDropArea" onclick="cliClickUpload()" ondragover="cliDragOver(event)" ondragleave="cliDragLeave(event)" ondrop="cliDrop(event)">
-        <span id="cliUploadLabel">[+] UPLOAD — 🪙100 COINS PER SONG (DARK SOUL)</span>
-      </div>
-      <input type="file" id="cliFileInput" accept=".mp3,audio/*" multiple="" style="display:none" onchange="cliHandleFiles(this.files)">
-
-      <!-- RADIO (M3) -->
+      <!-- LEGACY RADIO (M3) — hidden, kept for old cli toggle -->
       <div class="cli-radio-wrap" id="cliRadioWrap">
         <div class="cli-radio-hdr" onclick="cliToggleRadio()">
           <span style="color:#aaff00;">📡</span>
@@ -2717,8 +2737,27 @@ function setMode(m) {
   if (m===0) setTimeout(()=>{ ytcOnShow(); },50);
   if (m===2) setTimeout(()=>{ arcRenderList(); arcDrawWave(currentAudio&&!currentAudio.paused); resizeArcCanvas(); },50);
   if (m===1) setTimeout(()=>{ wampRenderList(); wampDrawVu(currentAudio&&!currentAudio.paused); },50);
-  if (m===3) setTimeout(()=>{ cliRenderList(); cliInitSpectrum(); },50);
-  if (m===4) setTimeout(()=>{ const el=document.getElementById('slotCoinCount'); if(el) el.textContent=loggedInUser?'∞':guestCoins; },50);
+  if (m===3) setTimeout(()=>{
+    cliRenderList(); cliInitSpectrum();
+    // Auto-render radio panel and show mini player
+    cliRenderRadioPanel();
+    if(radCurrentStation || radPlaying){
+      var mp = document.getElementById('radioMiniPlayer');
+      if(mp && !rmpOpen) toggleRadioMiniPlayer();
+    }
+  },50);
+  if (m===4) setTimeout(()=>{
+    const el=document.getElementById('slotCoinCount'); if(el) el.textContent=loggedInUser?'∞':guestCoins;
+    // Start cumulative M4 timer
+    m4StartTimer();
+    // If already locked out, re-show lockout screen
+    if(m4Locked){
+      var ls = document.getElementById('m4LockoutScreen');
+      if(ls) ls.style.display = 'flex';
+      m4RenderLockRadio();
+      m4StartStatic();
+    }
+  },50);
   if (m===5) { setTimeout(()=>{ if(!hellLoaded) hellLoadMessages(); else hellRenderMessages(); },50); }
 }
 
@@ -3628,9 +3667,239 @@ function drawWinLines(winLines) {
   grid.appendChild(svg);
 }
 
+// ════════════════════════════════════════════════
+// MODE 4 — 1 HOUR CUMULATIVE LOCKOUT
+// ════════════════════════════════════════════════
+var m4TotalSeconds = 0;
+var m4TimerInterval = null;
+var m4Locked = false;
+var m4StaticAnim = null;
+const M4_LOCKOUT_SECONDS = 3600; // 1 hour
+
+function m4StartTimer(){
+  if(m4TimerInterval) return;
+  m4TimerInterval = setInterval(function(){
+    if(currentMode !== 4 || m4Locked) return; // only tick when visible & not locked
+    m4TotalSeconds++;
+    if(m4TotalSeconds >= M4_LOCKOUT_SECONDS && !m4Locked){
+      m4TriggerLockout();
+    }
+  }, 1000);
+}
+
+function m4TriggerLockout(){
+  m4Locked = true;
+  var screen = document.getElementById('m4LockoutScreen');
+  if(!screen) return;
+  screen.style.display = 'flex';
+  // Update time played display
+  m4UpdateTimePlayed();
+  // Start static noise canvas
+  m4StartStatic();
+  // Render radio in lockout panel
+  m4RenderLockRadio();
+  // Auto-show mini player
+  if(radCurrentStation || radPlaying){
+    var mp = document.getElementById('radioMiniPlayer');
+    if(mp && !rmpOpen) toggleRadioMiniPlayer();
+  }
+}
+
+function m4UpdateTimePlayed(){
+  var el = document.getElementById('m4LockTimePlayed');
+  if(!el) return;
+  var h = Math.floor(m4TotalSeconds/3600);
+  var m = Math.floor((m4TotalSeconds%3600)/60);
+  var s = m4TotalSeconds%60;
+  el.textContent = String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+
+function m4StartStatic(){
+  var canvas = document.getElementById('m4StaticCanvas');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  canvas.width = 200; canvas.height = 150;
+  function drawStatic(){
+    var imgData = ctx.createImageData(canvas.width, canvas.height);
+    for(var i=0;i<imgData.data.length;i+=4){
+      var v = Math.random()*255;
+      imgData.data[i]=v; imgData.data[i+1]=v; imgData.data[i+2]=v; imgData.data[i+3]=255;
+    }
+    ctx.putImageData(imgData,0,0);
+    m4StaticAnim = requestAnimationFrame(drawStatic);
+  }
+  drawStatic();
+}
+
+function m4RenderLockRadio(){
+  // Render full radio list into lockout panel
+  var tl = document.getElementById('m4LockRadioList');
+  if(!tl || typeof RADIO_DIR === 'undefined') return;
+  tl.innerHTML = '';
+  var totalStations = 0;
+  for(var genre in RADIO_DIR){
+    var data = RADIO_DIR[genre];
+    var gBlock = document.createElement('div');
+    gBlock.className = 'rad-genre-block';
+    var gHdr = document.createElement('div');
+    gHdr.className = 'rad-genre-hdr';
+    gHdr.innerHTML = '<span class="rad-genre-hdr-icon">'+data.icon+'</span><span>'+genre.toUpperCase()+'</span>';
+    gBlock.appendChild(gHdr);
+    for(var sub in data.subs){
+      var stations = data.subs[sub];
+      var subBlock = document.createElement('div');
+      subBlock.className = 'rad-sub-block';
+      var subHdr = document.createElement('div');
+      subHdr.className = 'rad-sub-hdr';
+      subHdr.textContent = '— ' + sub.toUpperCase();
+      subBlock.appendChild(subHdr);
+      for(var si=0;si<stations.length;si++){
+        totalStations++;
+        var st = stations[si];
+        var isActive = radCurrentStation && radCurrentStation.url === st.url;
+        var row = document.createElement('div');
+        row.className = 'rad-row' + (isActive ? ' active' : '');
+        var iconEl = document.createElement('span');
+        iconEl.className = 'rad-row-icon';
+        iconEl.textContent = data.icon;
+        var nameEl = document.createElement('div');
+        nameEl.className = 'rad-row-name';
+        nameEl.textContent = st.name;
+        var descEl = document.createElement('div');
+        descEl.className = 'rad-row-desc';
+        descEl.textContent = st.desc || '';
+        row.appendChild(iconEl);
+        row.appendChild(nameEl);
+        row.appendChild(descEl);
+        if(isActive){
+          var liveEl = document.createElement('span');
+          liveEl.className = 'rad-row-live';
+          liveEl.textContent = '● LIVE';
+          row.appendChild(liveEl);
+        } else {
+          var playEl = document.createElement('span');
+          playEl.className = 'rad-row-play';
+          playEl.textContent = '▶';
+          row.appendChild(playEl);
+        }
+        (function(_st,_g,_s){ row.onclick = function(){ radPlayStation(_st, _g+' › '+_s); m4RenderLockRadio(); }; })(st,genre,sub);
+        subBlock.appendChild(row);
+      }
+      gBlock.appendChild(subBlock);
+    }
+    tl.appendChild(gBlock);
+  }
+  var countEl = document.getElementById('m4LockRadCountNum');
+  if(countEl) countEl.textContent = totalStations + ' stations';
+  // Sync now-playing strip
+  m4SyncLockRadioStrip();
+}
+
+function m4SyncLockRadioStrip(){
+  var dot = document.getElementById('m4LockRadioDot');
+  var name = document.getElementById('m4LockRadioName');
+  var genre = document.getElementById('m4LockRadioGenre');
+  if(!dot||!name) return;
+  if(radCurrentStation){
+    name.textContent = radCurrentStation.name || 'UNKNOWN';
+    genre.textContent = radCurrentStation._genre || '';
+    dot.className = 'rad-now-dot' + (radPlaying ? ' ready' : ' buffering');
+  } else {
+    name.textContent = 'NO STATION TUNED IN';
+    genre.textContent = 'click a station below';
+    dot.className = 'rad-now-dot';
+  }
+  var stopBtn = document.getElementById('m4LockRadioStopBtn');
+  if(stopBtn) stopBtn.style.display = radPlaying ? 'inline-block' : 'none';
+}
+
+// ════════════════════════════════════════════════
+// CLI RADIO PANEL — render full station list into Mode 3
+// ════════════════════════════════════════════════
+function cliRenderRadioPanel(){
+  var tl = document.getElementById('cliRadioPanelList');
+  if(!tl || typeof RADIO_DIR === 'undefined') return;
+  tl.innerHTML = '';
+  var totalStations = 0;
+  for(var genre in RADIO_DIR){
+    var data = RADIO_DIR[genre];
+    var gBlock = document.createElement('div');
+    gBlock.className = 'rad-genre-block';
+    var gHdr = document.createElement('div');
+    gHdr.className = 'rad-genre-hdr';
+    gHdr.innerHTML = '<span class="rad-genre-hdr-icon">'+data.icon+'</span><span>'+genre.toUpperCase()+'</span>';
+    gBlock.appendChild(gHdr);
+    for(var sub in data.subs){
+      var stations = data.subs[sub];
+      var subBlock = document.createElement('div');
+      subBlock.className = 'rad-sub-block';
+      var subHdr = document.createElement('div');
+      subHdr.className = 'rad-sub-hdr';
+      subHdr.textContent = '— ' + sub.toUpperCase();
+      subBlock.appendChild(subHdr);
+      for(var si=0;si<stations.length;si++){
+        totalStations++;
+        var st = stations[si];
+        var isActive = radCurrentStation && radCurrentStation.url === st.url;
+        var row = document.createElement('div');
+        row.className = 'rad-row' + (isActive ? ' active' : '');
+        var iconEl = document.createElement('span');
+        iconEl.className = 'rad-row-icon';
+        iconEl.textContent = data.icon;
+        var nameEl = document.createElement('div');
+        nameEl.className = 'rad-row-name';
+        nameEl.textContent = st.name;
+        var descEl = document.createElement('div');
+        descEl.className = 'rad-row-desc';
+        descEl.textContent = st.desc || '';
+        row.appendChild(iconEl);
+        row.appendChild(nameEl);
+        row.appendChild(descEl);
+        if(isActive){
+          var liveEl = document.createElement('span');
+          liveEl.className = 'rad-row-live';
+          liveEl.textContent = '● LIVE';
+          row.appendChild(liveEl);
+        } else {
+          var playEl = document.createElement('span');
+          playEl.className = 'rad-row-play';
+          playEl.textContent = '▶';
+          row.appendChild(playEl);
+        }
+        (function(_st,_g,_s){ row.onclick = function(){ radPlayStation(_st, _g+' › '+_s); cliRenderRadioPanel(); }; })(st,genre,sub);
+        subBlock.appendChild(row);
+      }
+      gBlock.appendChild(subBlock);
+    }
+    tl.appendChild(gBlock);
+  }
+  var countEl = document.getElementById('cliRadCountNum');
+  if(countEl) countEl.textContent = totalStations + ' stations';
+  cliSyncRadioPanelStrip();
+}
+
+function cliSyncRadioPanelStrip(){
+  var dot = document.getElementById('cliRadioPanelDot');
+  var name = document.getElementById('cliRadioPanelName');
+  var genre = document.getElementById('cliRadioPanelGenre');
+  if(!dot||!name) return;
+  if(radCurrentStation){
+    name.textContent = radCurrentStation.name || 'UNKNOWN';
+    genre.textContent = radCurrentStation._genre || '';
+    dot.className = 'rad-now-dot' + (radPlaying ? ' ready' : ' buffering');
+  } else {
+    name.textContent = 'NO STATION TUNED IN';
+    genre.textContent = 'click a station below';
+    dot.className = 'rad-now-dot';
+  }
+  var stopBtn = document.getElementById('cliRadioPanelStopBtn');
+  if(stopBtn) stopBtn.style.display = radPlaying ? 'inline-block' : 'none';
+}
+
 async function doSpin() {
   if (slotSpinning) return;
   if (banActive) return;
+  if (m4Locked) return; // lockout active
 
   const spinBtn = document.getElementById('slotSpinBtn');
   const msgEl = document.getElementById('slotMsg');
@@ -4425,7 +4694,7 @@ window.cliToggleRadio = function(){
 // ── SIGNAL BARS — set 0-5 bars across all modes ──
 function radSetSignal(bars){
   // bars = 0..5
-  ['arc','wamp','cli'].forEach(prefix=>{
+  ['arc','wamp','cli','cliPanel','m4Lock'].forEach(prefix=>{
     for(let i=1;i<=5;i++){
       const el=document.getElementById(prefix+'SigB'+i);
       if(el) el.style.background = i<=bars ? (bars<=1?'var(--red)':bars<=3?'var(--yellow)':'var(--cyan)') : '#333';
@@ -4488,6 +4757,9 @@ window.radPlayStation = function(station, genrePath){
   if(wampBody && wampBody.style.display!=='none') radRenderFlatList('wampRadioList');
   const cliBody=document.getElementById('cliRadioBody');
   if(cliBody && cliBody.style.display!=='none') radRenderFlatList('cliRadioList');
+  // Re-render CLI radio panel and M4 lockout radio
+  cliRenderRadioPanel();
+  if(m4Locked) m4RenderLockRadio();
 
   radSetSignal(0);
   radSetCacheStatus('buffering','CONNECTING...');
@@ -4699,6 +4971,12 @@ function radUpdateCacheDisplay(){
   // M2 buf bar
   const fill = document.getElementById('arcRadioBufFill');
   if(fill) fill.style.width = pct + '%';
+  // CLI panel buf bar (M3)
+  const cliFill = document.getElementById('cliRadioPanelBufFill');
+  if(cliFill) cliFill.style.width = pct + '%';
+  // M4 lockout buf bar
+  const m4Fill = document.getElementById('m4LockRadioBufFill');
+  if(m4Fill) m4Fill.style.width = pct + '%';
   // Signal bars (all modes)
   radSetSignal(radBarsFromAhead(ahead));
   if(ahead < 0.5){
@@ -4727,6 +5005,16 @@ function radSetCacheStatus(status, text){
   const txt = document.getElementById('arcRadioBufText');
   if(dot){ dot.className = 'rad-now-dot'; if(status) dot.classList.add(status); }
   if(txt && text) txt.textContent = text;
+  // CLI panel (M3)
+  const cliDot = document.getElementById('cliRadioPanelDot');
+  const cliTxt = document.getElementById('cliRadioPanelBufText');
+  if(cliDot){ cliDot.className = 'rad-now-dot'; if(status) cliDot.classList.add(status); }
+  if(cliTxt && text) cliTxt.textContent = text;
+  // M4 lockout panel
+  const m4Dot = document.getElementById('m4LockRadioDot');
+  const m4Txt = document.getElementById('m4LockRadioBufText');
+  if(m4Dot){ m4Dot.className = 'rad-now-dot'; if(status) m4Dot.classList.add(status); }
+  if(m4Txt && text) m4Txt.textContent = text;
 }
 
 window.radSetVol = function(val){
@@ -4781,12 +5069,41 @@ window.radStop = function(){
   if(wStat) wStat.textContent='OFF';
   const cStat=document.getElementById('cliRadioStatus');
   if(cStat){ cStat.textContent='— OFF'; cStat.style.color='#444'; }
+  // Reset CLI radio panel (M3)
+  const cliPDot=document.getElementById('cliRadioPanelDot');
+  const cliPName=document.getElementById('cliRadioPanelName');
+  const cliPGenre=document.getElementById('cliRadioPanelGenre');
+  const cliPStop=document.getElementById('cliRadioPanelStopBtn');
+  const cliPBuf=document.getElementById('cliRadioPanelBufFill');
+  const cliPTxt=document.getElementById('cliRadioPanelBufText');
+  if(cliPDot) cliPDot.className='rad-now-dot';
+  if(cliPName) cliPName.textContent='NO STATION TUNED IN';
+  if(cliPGenre) cliPGenre.textContent='click a station below';
+  if(cliPStop) cliPStop.style.display='none';
+  if(cliPBuf) cliPBuf.style.width='0%';
+  if(cliPTxt) cliPTxt.textContent='IDLE';
+  // Reset M4 lockout radio panel
+  const m4Dot=document.getElementById('m4LockRadioDot');
+  const m4Name=document.getElementById('m4LockRadioName');
+  const m4Genre=document.getElementById('m4LockRadioGenre');
+  const m4Stop=document.getElementById('m4LockRadioStopBtn');
+  const m4Buf=document.getElementById('m4LockRadioBufFill');
+  const m4Txt=document.getElementById('m4LockRadioBufText');
+  if(m4Dot) m4Dot.className='rad-now-dot';
+  if(m4Name) m4Name.textContent='NO STATION TUNED IN';
+  if(m4Genre) m4Genre.textContent='click a station below';
+  if(m4Stop) m4Stop.style.display='none';
+  if(m4Buf) m4Buf.style.width='0%';
+  if(m4Txt) m4Txt.textContent='IDLE';
   // Re-render lists
   if(arcCurrentPanel==='radio') radRenderArcRadio();
   const wampBody=document.getElementById('wampRadioBody');
   if(wampBody && wampBody.style.display!=='none') radRenderFlatList('wampRadioList');
   const cliBody=document.getElementById('cliRadioBody');
   if(cliBody && cliBody.style.display!=='none') radRenderFlatList('cliRadioList');
+  // Re-render new radio panels
+  cliRenderRadioPanel();
+  if(m4Locked) m4RenderLockRadio();
 };
 
 // ── INIT: render M1/M3 flat lists on load since bodies are open by default ──
@@ -5879,6 +6196,94 @@ window.submitPayment = function() {
      MODE 4 — GLUMINATOR (Blade Runner Arcade)
 ════════════════════════════════════ -->
 <div id="mode4" style="display:none;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;width:100%;padding-top:28px;position:relative;overflow:hidden;">
+
+  <!-- ═══ MODE 4 LOCKOUT OVERLAY (after 1hr) ═══ -->
+  <div id="m4LockoutScreen" style="display:none;position:absolute;inset:0;z-index:100;background:#000;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:30px;overflow-y:auto;">
+    <!-- Static noise / TV off effect -->
+    <div id="m4StaticNoise" style="position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;">
+      <canvas id="m4StaticCanvas" style="width:100%;height:100%;opacity:.15;"></canvas>
+    </div>
+    <!-- Power off CRT shrink line -->
+    <div style="position:absolute;top:50%;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 5%,rgba(255,255,255,.4) 30%,rgba(255,255,255,.8) 50%,rgba(255,255,255,.4) 70%,transparent 95%);transform:translateY(-50%);z-index:1;animation:m4CrtLineFlash 3s ease-out forwards;pointer-events:none;" id="m4CrtLine"></div>
+
+    <div style="position:relative;z-index:2;width:min(460px,96vw);padding:0 12px;text-align:center;">
+      <!-- Warning icon -->
+      <div style="font-size:60px;margin-bottom:10px;filter:drop-shadow(0 0 20px rgba(255,68,0,.4));animation:m4WarnPulse 2s ease-in-out infinite;">⚠️</div>
+      <!-- Title -->
+      <div style="font-family:'VT323',monospace;font-size:clamp(24px,6vw,38px);letter-spacing:6px;color:#ff4400;text-shadow:0 0 20px rgba(255,68,0,.5),0 0 40px rgba(255,0,0,.2);margin-bottom:6px;">POWER SIGNAL OFF</div>
+      <!-- Subtitle -->
+      <div style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:3px;color:#666;line-height:2;margin-bottom:20px;">
+        GO MAKE SOMETHING USEFUL<br>
+        <span style="color:#444;">WHILE OUR TECHNICIAN WILL FIX THE PROBLEM</span><br>
+        <span style="font-size:9px;color:#333;letter-spacing:2px;">SESSION TIME EXCEEDED · MACHINE OVERHEATED</span>
+      </div>
+      <!-- Timer showing how long they played -->
+      <div style="display:flex;justify-content:center;gap:16px;margin-bottom:20px;">
+        <div style="border:1px solid #331100;background:#0a0400;padding:8px 16px;border-radius:4px;">
+          <div style="font-size:8px;color:#555;letter-spacing:2px;margin-bottom:4px;">TIME PLAYED</div>
+          <div id="m4LockTimePlayed" style="font-family:'VT323',monospace;font-size:22px;color:#ff4400;letter-spacing:3px;">01:00:00</div>
+        </div>
+        <div style="border:1px solid #002a00;background:#000a00;padding:8px 16px;border-radius:4px;">
+          <div style="font-size:8px;color:#555;letter-spacing:2px;margin-bottom:4px;">STATUS</div>
+          <div style="font-family:'VT323',monospace;font-size:22px;color:#ff2200;letter-spacing:3px;animation:m4WarnPulse 1.5s infinite;">OFFLINE</div>
+        </div>
+      </div>
+      <!-- Technician ASCII art -->
+      <div style="font-family:monospace;font-size:8px;color:#222;line-height:1.4;margin-bottom:20px;white-space:pre;">    🔧 TECHNICIAN EN ROUTE 🔧
+  ┌─────────────────────────┐
+  │  ╔═══╗   REPAIRING...   │
+  │  ║ ⚡ ║   ████░░░░ 48%   │
+  │  ╚═══╝   PLEASE WAIT    │
+  └─────────────────────────┘</div>
+
+      <!-- Message: listen to radio while waiting -->
+      <div style="font-size:10px;color:#aaff00;letter-spacing:3px;margin-bottom:12px;text-shadow:0 0 8px rgba(170,255,0,.3);">📡 LISTEN TO RADIO WHILE YOU WAIT</div>
+
+      <!-- Embedded radio panel (same green style) -->
+      <div id="m4LockRadioPanel" style="display:flex;flex-direction:column;width:100%;min-height:260px;border:1px solid #2a2a00;background:#000;box-sizing:border-box;text-align:left;">
+        <div style="font-family:'VT323',monospace;font-size:20px;letter-spacing:8px;padding:6px 10px;border-bottom:1px solid #2a2a00;color:#aaff00;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+          <span>R A D I O</span>
+          <span id="m4LockRadCountNum" style="font-size:12px;font-family:'Share Tech Mono',monospace;letter-spacing:2px;color:#444;">0 stations</span>
+        </div>
+        <div class="rad-now-strip" style="flex-shrink:0;">
+          <div class="rad-now-dot" id="m4LockRadioDot"></div>
+          <div style="flex:1;min-width:0;">
+            <div class="rad-now-name" id="m4LockRadioName">NO STATION TUNED IN</div>
+            <div style="font-size:7px;color:#333;letter-spacing:1px;margin-top:1px;" id="m4LockRadioGenre">click a station below</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
+            <span style="font-size:7px;color:#333;letter-spacing:1px;">VOL</span>
+            <input type="range" id="m4LockRadioVol" min="0" max="100" value="80" style="width:48px;height:2px;-webkit-appearance:none;background:#1a1a00;outline:none;cursor:pointer;accent-color:#aaff00;" oninput="radSetVol(this.value)">
+          </div>
+          <div class="rad-signal" id="m4LockRadioSignal" title="Signal">
+            <div class="rad-signal-bar" id="m4LockSigB1" style="height:4px;"></div>
+            <div class="rad-signal-bar" id="m4LockSigB2" style="height:6px;"></div>
+            <div class="rad-signal-bar" id="m4LockSigB3" style="height:8px;"></div>
+            <div class="rad-signal-bar" id="m4LockSigB4" style="height:10px;"></div>
+            <div class="rad-signal-bar" id="m4LockSigB5" style="height:13px;"></div>
+          </div>
+          <div class="arc-radio-bufbar" style="width:40px;flex-shrink:0;"><div id="m4LockRadioBufFill" class="rad-cache-fill"></div></div>
+          <div class="arc-radio-buftext" id="m4LockRadioBufText" style="font-size:7px;color:#333;min-width:60px;">IDLE</div>
+          <button id="m4LockRadioStopBtn" onclick="radStop()" style="display:none;background:none;border:1px solid var(--red);color:var(--red);padding:3px 8px;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:1px;cursor:pointer;white-space:nowrap;flex-shrink:0;">■ STOP</button>
+        </div>
+        <div id="m4LockRadioList" style="flex:1;overflow-y:auto;min-height:200px;max-height:400px;"></div>
+      </div>
+
+      <!-- Easter egg view access buttons -->
+      <div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <button onclick="document.getElementById('hellCageScreen').style.display='flex';document.getElementById('hellCageScreen').style.opacity='1';" style="background:transparent;border:1px solid #220000;color:#441111;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:2px;padding:6px 12px;cursor:pointer;transition:all .3s;">🔥 HELL CAGE</button>
+        <button onclick="document.getElementById('treasureOverlay').classList.add('active');" style="background:transparent;border:1px solid #1a1a00;color:#443300;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:2px;padding:6px 12px;cursor:pointer;transition:all .3s;">💀 TREASURE</button>
+        <button onclick="document.getElementById('gluminatorConfirmPopup').style.display='flex';" style="background:transparent;border:1px solid #0a0a1a;color:#333355;font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:2px;padding:6px 12px;cursor:pointer;transition:all .3s;">⚡ GLUMiNATOR</button>
+      </div>
+
+      <!-- Footer -->
+      <div style="margin-top:16px;padding-bottom:80px;">
+        <div style="font-size:8px;color:#222;letter-spacing:2px;">GLUMiNATOR™ · MACHINE PROTECTION SYSTEM · v1.0</div>
+        <div style="font-size:7px;color:#181818;letter-spacing:1px;margin-top:4px;">CONTACT dm13@digitalslayer.com FOR EXTENDED SESSIONS</div>
+      </div>
+    </div>
+  </div>
+  <!-- ═══ END MODE 4 LOCKOUT ═══ -->
 
   <!-- NEON AMBIENT GLOW (Blade Runner atmosphere) -->
   <div style="position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;">
