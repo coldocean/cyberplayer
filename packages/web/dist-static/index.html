@@ -5942,21 +5942,37 @@ window.joinAsDarkSoul = async function() {
   isDarkSoul = true;
   localStorage.setItem('cp_dark_soul', '1');
   
-  // After 2.5s — show blood covering the form, THEN dismiss
+  // After 2.5s — blood has covered the form, now transition out
   setTimeout(() => {
-    document.body.classList.add('dark-soul-enter');
-    // Hide overlay WITHOUT clearing blood (don't call authHideOverlay which wipes blood)
+    // Move blood container to body so it stays visible when overlay hides
+    document.body.appendChild(bloodContainer);
+    bloodContainer.style.position = 'fixed';
+    bloodContainer.style.inset = '0';
+    bloodContainer.style.zIndex = '999999';
+    
+    // Stop passive blood engine (just kill timer, don't clear blood)
+    if (window._bloodEngine) { clearTimeout(window._bloodEngine); window._bloodEngine = null; }
+    window._bloodOpenedAt = null;
+    
+    // Hide overlay (blood is now on body, stays visible)
     document.getElementById('authOverlay').style.display = 'none';
-    _stopBloodEngine(); // stop passive engine only
+    
+    document.body.classList.add('dark-soul-enter');
     setTimeout(() => {
       jesusFromSky('⚡ +100 🪙 ZEUS THA GEEP SON GREETS YOU');
     }, 500);
     document.getElementById('coinHud').style.display = 'block';
     document.getElementById('coinCount').textContent = guestCoins;
     loadGuestCoins();
+    
+    // After transition, clean up blood
     setTimeout(() => {
       bloodContainer.innerHTML = '';
       bloodContainer.style.display = 'none';
+      // Move blood container back into overlay for future use
+      document.getElementById('authOverlay').appendChild(bloodContainer);
+      bloodContainer.style.position = 'absolute';
+      bloodContainer.style.zIndex = '1';
       document.body.classList.remove('dark-soul-enter');
     }, 2200);
   }, 2500);
